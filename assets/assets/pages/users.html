@@ -1,0 +1,2279 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manajemen Pengguna - Platform Padi Desa</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+
+    <!-- Theme System (Light & Dark Mode) -->
+    <link rel="stylesheet" href="../css/theme.css" />
+    <script src="../js/theme.js"></script>
+
+    <style>
+        /* ========================================
+           RESET & BASE
+        ======================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0f1e;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ========================================
+           SCROLLBAR
+        ======================================== */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(34, 197, 94, 0.3);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(34, 197, 94, 0.5);
+        }
+
+        /* ========================================
+           NAVBAR
+        ======================================== */
+        .navbar {
+            background: rgba(10, 15, 30, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-brand {
+            font-size: 22px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .navbar-brand .logo-icon {
+            font-size: 28px;
+        }
+
+        .navbar-brand .logo-text {
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .navbar-brand .logo-sub {
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 400;
+        }
+
+        .navbar-menu {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .navbar-menu a {
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.3s;
+            padding: 8px 16px;
+            border-radius: 10px;
+        }
+
+        .navbar-menu a:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .navbar-menu a.active {
+            color: #4ade80;
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .navbar-menu .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 6px 16px 6px 10px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .navbar-menu .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.25);
+        }
+
+        .navbar-menu .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar-menu .user-name {
+            font-weight: 600;
+            font-size: 13px;
+            line-height: 1.2;
+        }
+
+        .navbar-menu .user-role {
+            font-size: 10px;
+            font-weight: 600;
+            color: #4ade80;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.08);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.12);
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
+            transform: translateY(-1px);
+        }
+
+        /* ========================================
+           MAIN CONTENT
+        ======================================== */
+        .main-content {
+            max-width: 1320px;
+            margin: 0 auto;
+            padding: 32px 36px 60px;
+        }
+
+        /* ========================================
+           PAGE HEADER
+        ======================================== */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .header-title-group h1 {
+            font-size: 28px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-title-group h1 .accent {
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-title-group .subtitle {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* ========================================
+           BUTTONS
+        ======================================== */
+        .btn-primary {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 20px rgba(34, 197, 94, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(34, 197, 94, 0.45);
+            background: linear-gradient(135deg, #34d399, #22c55e);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 11px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-1px);
+        }
+
+        /* ========================================
+           STATS CARDS
+        ======================================== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 18px;
+            padding: 22px 24px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            opacity: 0.8;
+            transition: 0.4s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 35px -10px rgba(0, 0, 0, 0.5);
+        }
+
+        .stat-card.green::before {
+            background: linear-gradient(90deg, #4ade80, #22c55e);
+        }
+
+        .stat-card.blue::before {
+            background: linear-gradient(90deg, #60a5fa, #3b82f6);
+        }
+
+        .stat-card.yellow::before {
+            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+        }
+
+        .stat-card.purple::before {
+            background: linear-gradient(90deg, #c084fc, #9333ea);
+        }
+
+        .stat-card .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .stat-icon-wrap {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .stat-card.green .stat-icon-wrap {
+            background: rgba(34, 197, 94, 0.12);
+        }
+
+        .stat-card.blue .stat-icon-wrap {
+            background: rgba(59, 130, 246, 0.12);
+        }
+
+        .stat-card.yellow .stat-icon-wrap {
+            background: rgba(245, 158, 11, 0.12);
+        }
+
+        .stat-card.purple .stat-icon-wrap {
+            background: rgba(147, 51, 234, 0.12);
+        }
+
+        .stat-card .stat-label {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.45);
+            font-weight: 500;
+        }
+
+        .stat-card .stat-value {
+            font-size: 32px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-top: 4px;
+        }
+
+        .stat-card.green .stat-value {
+            color: #4ade80;
+        }
+
+        .stat-card.blue .stat-value {
+            color: #60a5fa;
+        }
+
+        .stat-card.yellow .stat-value {
+            color: #fbbf24;
+        }
+
+        .stat-card.purple .stat-value {
+            color: #c084fc;
+        }
+
+        .stat-card .stat-sub {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.3);
+            margin-top: 4px;
+        }
+
+        /* ========================================
+           ROLE INFORMATION BANNER
+        ======================================== */
+        .role-banner {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.05), rgba(59, 130, 246, 0.03));
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 18px 24px;
+            margin-bottom: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .role-banner-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .role-banner-info .icon {
+            font-size: 26px;
+        }
+
+        .role-banner-info h4 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .role-banner-info p {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-top: 2px;
+        }
+
+        .role-badges-summary {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .role-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .role-pill.admin {
+            background: rgba(245, 158, 11, 0.12);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.25);
+        }
+
+        .role-pill.kades {
+            background: rgba(59, 130, 246, 0.12);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.25);
+        }
+
+        .role-pill.petani {
+            background: rgba(34, 197, 94, 0.12);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.25);
+        }
+
+        /* ========================================
+           TABLE CONTAINER & CONTROLS
+        ======================================== */
+        .table-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 24px;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .table-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 260px;
+            max-width: 420px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 18px 12px 42px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #22c55e;
+            background: rgba(255, 255, 255, 0.07);
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+        }
+
+        .search-box .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+            color: rgba(255, 255, 255, 0.3);
+            pointer-events: none;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .custom-select {
+            padding: 11px 16px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .custom-select:focus {
+            outline: none;
+            border-color: #22c55e;
+        }
+
+        .custom-select option {
+            background: #111827;
+            color: #fff;
+        }
+
+        /* ========================================
+           TABLE STYLES
+        ======================================== */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        thead {
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        th {
+            padding: 16px 20px;
+            font-size: 12px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.45);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            white-space: nowrap;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            transition: all 0.25s ease;
+        }
+
+        tbody tr:hover {
+            background: rgba(255, 255, 255, 0.035);
+        }
+
+        td {
+            padding: 16px 20px;
+            vertical-align: middle;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        /* User Profile in Row */
+        .user-cell {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .user-cell .user-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            color: #fff;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        .user-cell .user-avatar.admin {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border: 2px solid rgba(245, 158, 11, 0.4);
+        }
+
+        .user-cell .user-avatar.kades {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            border: 2px solid rgba(59, 130, 246, 0.4);
+        }
+
+        .user-cell .user-avatar.petani {
+            background: linear-gradient(135deg, #22c55e, #15803d);
+            border: 2px solid rgba(34, 197, 94, 0.4);
+        }
+
+        .user-cell .user-meta {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-cell .user-name {
+            font-weight: 600;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .user-cell .user-id {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.3);
+            margin-top: 2px;
+        }
+
+        /* Role Badges */
+        .badge-role {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            white-space: nowrap;
+        }
+
+        .badge-role.admin {
+            background: rgba(245, 158, 11, 0.12);
+            color: #fbbf24;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .badge-role.kades {
+            background: rgba(59, 130, 246, 0.12);
+            color: #60a5fa;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .badge-role.petani {
+            background: rgba(34, 197, 94, 0.12);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        /* Status Badge */
+        .badge-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-status.active {
+            background: rgba(34, 197, 94, 0.1);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+
+        .badge-status.inactive {
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .badge-status.active .status-dot {
+            background: #22c55e;
+            box-shadow: 0 0 8px #22c55e;
+        }
+
+        .badge-status.inactive .status-dot {
+            background: #ef4444;
+        }
+
+        /* Action Buttons */
+        .actions-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-action {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .btn-action:hover {
+            transform: scale(1.1);
+        }
+
+        .btn-action.view:hover {
+            background: rgba(59, 130, 246, 0.2);
+            border-color: rgba(59, 130, 246, 0.4);
+            color: #60a5fa;
+        }
+
+        .btn-action.edit:hover {
+            background: rgba(245, 158, 11, 0.2);
+            border-color: rgba(245, 158, 11, 0.4);
+            color: #fbbf24;
+        }
+
+        .btn-action.toggle:hover {
+            background: rgba(34, 197, 94, 0.2);
+            border-color: rgba(34, 197, 94, 0.4);
+            color: #4ade80;
+        }
+
+        .btn-action.delete:hover {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: rgba(239, 68, 68, 0.4);
+            color: #f87171;
+        }
+
+        /* Table Footer / Pagination */
+        .table-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+            margin-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 13px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-state .icon {
+            font-size: 48px;
+            margin-bottom: 14px;
+            opacity: 0.3;
+        }
+
+        .empty-state h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .empty-state p {
+            color: rgba(255, 255, 255, 0.25);
+            font-size: 13px;
+            margin-top: 6px;
+        }
+
+        /* Loading Spinner */
+        .loading-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .spinner {
+            width: 36px;
+            height: 36px;
+            border: 3px solid rgba(255, 255, 255, 0.06);
+            border-top: 3px solid #4ade80;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ========================================
+           MODALS (POPUP)
+        ======================================== */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .modal-backdrop.open {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-box {
+            background: #0f172a;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 22px;
+            width: 100%;
+            max-width: 540px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+            animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+
+        @keyframes scaleUp {
+            from {
+                transform: scale(0.92);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: 22px 28px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            background: #0f172a;
+            z-index: 10;
+        }
+
+        .modal-header h3 {
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .modal-body {
+            padding: 24px 28px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 8px;
+        }
+
+        .form-group label .required {
+            color: #f87171;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            transition: 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #22c55e;
+            background: rgba(255, 255, 255, 0.07);
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.15);
+        }
+
+        .form-control option {
+            background: #111827;
+            color: #fff;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .password-wrap {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        .form-help {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.35);
+            margin-top: 6px;
+            line-height: 1.4;
+        }
+
+        .modal-footer {
+            padding: 20px 28px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 0 0 22px 22px;
+        }
+
+        /* Detail Card Grid */
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-top: 16px;
+        }
+
+        .detail-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 12px 16px;
+        }
+
+        .detail-item .label {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.4);
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .detail-item .val {
+            font-size: 14px;
+            color: #fff;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+
+        /* ========================================
+           TOAST NOTIFICATION
+        ======================================== */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #111827;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 14px 22px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            border-left: 4px solid #22c55e;
+        }
+
+        .toast.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .toast.info {
+            border-left: 4px solid #3b82f6;
+        }
+
+        .toast .toast-icon {
+            font-size: 20px;
+        }
+
+        .toast .toast-msg {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        /* Demo Role Switcher Quick Pill */
+        .demo-bar {
+            background: rgba(245, 158, 11, 0.08);
+            border: 1px dashed rgba(245, 158, 11, 0.25);
+            border-radius: 12px;
+            padding: 10px 16px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.7);
+            flex-wrap: wrap;
+        }
+
+        .demo-bar-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-demo-switch {
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.04);
+            color: #fff;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-demo-switch:hover {
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        /* ========================================
+           RESPONSIVE
+        ======================================== */
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 14px 20px;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .navbar-menu {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .main-content {
+                padding: 20px 16px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .table-toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                max-width: 100%;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <!-- Theme System CSS -->
+    <link rel="stylesheet" href="../css/theme.css" />
+</head>
+
+<body>
+
+    <!-- ========================================
+         NAVBAR
+    ======================================== -->
+    <nav class="navbar">
+        <a href="dashboard.html" class="navbar-brand">
+            <span class="logo-icon">🌾</span>
+            <span>
+                <span class="logo-text">Platform Padi</span>
+                <span class="logo-sub">Desa</span>
+            </span>
+        </a>
+        <div class="navbar-menu">
+            <a href="dashboard.html">📊 Dashboard</a>
+            <a href="farms.html">🌾 Lahan</a>
+            <a href="users.html" class="active">👥 Pengguna</a>
+            <a href="ai-assistant.html">🤖 AI Assistant</a>
+            <button id="themeToggleBtn" type="button" class="theme-toggle-btn" onclick="toggleTheme()" title="Beralih Mode Terang / Gelap">
+                <span class="theme-toggle-icon">☀️</span>
+                <span class="theme-toggle-text">Terang</span>
+            </button>
+            <div class="user-info">
+                <div class="avatar" id="userAvatar">👤</div>
+                <div class="user-details">
+                    <span class="user-name" id="userName">User</span>
+                    <span class="user-role" id="userRole">PETANI</span>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="handleLogout()">🚪 Logout</button>
+        </div>
+    </nav>
+
+    <!-- ========================================
+         MAIN CONTENT
+    ======================================== -->
+    <div class="main-content">
+
+        <!-- DEMO ROLE SWITCHER HELPER -->
+        <div class="demo-bar">
+            <div>
+                ⚡ <strong>Aturan Hak Akses:</strong> Anda login sebagai <span id="currentRoleText" style="color:#4ade80; font-weight:700;">PETANI</span>. (Hanya <strong>ADMIN</strong> yang dapat menambah & mengedit pengguna sistem. Penambahan lahan oleh <strong>ADMIN & KEPALA DESA</strong>).
+            </div>
+            <div class="demo-bar-actions">
+                <button class="btn-demo-switch" onclick="switchDemoAccount('admin@example.com')" title="Masuk sebagai Administrator">👑 Jadi Admin</button>
+                <button class="btn-demo-switch" onclick="switchDemoAccount('kepala@example.com')" title="Masuk sebagai Kepala Desa">🏛️ Jadi Kades</button>
+                <button class="btn-demo-switch" onclick="switchDemoAccount('petani@example.com')" title="Masuk sebagai Petani">🌾 Jadi Petani</button>
+            </div>
+        </div>
+
+        <!-- PAGE HEADER -->
+        <div class="page-header">
+            <div class="header-title-group">
+                <h1>👥 Manajemen <span class="accent">Pengguna</span></h1>
+                <p class="subtitle">Kelola seluruh pengguna, hak akses pemangku kepentingan desa, dan perizinan sistem pertanian</p>
+            </div>
+            <div class="header-actions" id="headerActions">
+                <button class="btn-secondary" onclick="loadAllData()" title="Muat Ulang Data">
+                    🔄 Refresh
+                </button>
+                <a href="user-create.html" id="btnFullForm" class="btn-secondary" title="Buka Halaman Form Tambah Pengguna">
+                    📝 Form Penuh
+                </a>
+                <button class="btn-primary" id="btnQuickCreate" onclick="openCreateModal()">
+                    ➕ Tambah Pengguna
+                </button>
+                <span id="adminOnlyBadge" style="display:none; font-size:12px; color:rgba(255,255,255,0.45); background:rgba(255,255,255,0.04); padding:10px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.07);">
+                    🔒 Tambah Pengguna Hanya untuk Admin
+                </span>
+            </div>
+        </div>
+
+        <!-- STATS OVERVIEW -->
+        <div class="stats-grid">
+            <div class="stat-card green">
+                <div class="stat-header">
+                    <span class="stat-label">Total Pengguna</span>
+                    <div class="stat-icon-wrap">👥</div>
+                </div>
+                <div class="stat-value" id="statTotalUsers">0</div>
+                <div class="stat-sub" id="statActiveUsers">0 akun aktif</div>
+            </div>
+
+            <div class="stat-card green">
+                <div class="stat-header">
+                    <span class="stat-label">Petani Sawah</span>
+                    <div class="stat-icon-wrap">🌾</div>
+                </div>
+                <div class="stat-value" id="statPetaniCount">0</div>
+                <div class="stat-sub">Pengelola lahan utama</div>
+            </div>
+
+            <div class="stat-card blue">
+                <div class="stat-header">
+                    <span class="stat-label">Kepala Desa & Aparatur</span>
+                    <div class="stat-icon-wrap">🏛️</div>
+                </div>
+                <div class="stat-value" id="statKadesCount">0</div>
+                <div class="stat-sub">Monitoring pangan desa</div>
+            </div>
+
+            <div class="stat-card yellow">
+                <div class="stat-header">
+                    <span class="stat-label">Administrator</span>
+                    <div class="stat-icon-wrap">👑</div>
+                </div>
+                <div class="stat-value" id="statAdminCount">0</div>
+                <div class="stat-sub">Pengelola sistem penuh</div>
+            </div>
+        </div>
+
+        <!-- ROLE INFORMATION BANNER -->
+        <div class="role-banner">
+            <div class="role-banner-info">
+                <div class="icon">💡</div>
+                <div>
+                    <h4>Struktur Hak Akses Pemangku Kepentingan (Stakeholders)</h4>
+                    <p>Hak kelola pengguna dan lahan diatur secara ketat berdasarkan kewenangan masing-masing peran</p>
+                </div>
+            </div>
+            <div class="role-badges-summary">
+                <span class="role-pill admin">👑 ADMIN: Satu-satunya yang Dapat Menambah Pengguna & Lahan</span>
+                <span class="role-pill kades">🏛️ KEPALA DESA: Pengawasan Desa & Menambah Data Lahan</span>
+                <span class="role-pill petani">🌾 PETANI: Pencatatan Panen & Konsultasi AI (Mode Baca)</span>
+            </div>
+        </div>
+
+        <!-- TABLE CARD -->
+        <div class="table-card">
+            <!-- TOOLBAR: SEARCH & FILTERS -->
+            <div class="table-toolbar">
+                <div class="search-box">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" id="searchInput" placeholder="Cari nama, email, atau desa..." oninput="handleSearchInput()" />
+                </div>
+                <div class="filter-group">
+                    <select class="custom-select" id="roleFilter" onchange="applyFilters()">
+                        <option value="ALL">Semua Peran</option>
+                        <option value="PETANI">Petani</option>
+                        <option value="KEPALA_DESA">Kepala Desa</option>
+                        <option value="ADMIN">Administrator</option>
+                    </select>
+
+                    <select class="custom-select" id="statusFilter" onchange="applyFilters()">
+                        <option value="ALL">Semua Status</option>
+                        <option value="true">🟢 Aktif</option>
+                        <option value="false">🔴 Nonaktif</option>
+                    </select>
+
+                    <select class="custom-select" id="desaFilter" onchange="applyFilters()">
+                        <option value="ALL">Semua Desa</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- TABLE CONTENT -->
+            <div class="table-responsive">
+                <table id="usersTable">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">#</th>
+                            <th>Pengguna</th>
+                            <th>Email Kontak</th>
+                            <th>Peran (Role)</th>
+                            <th>Wilayah / Desa</th>
+                            <th>Kepemilikan Lahan</th>
+                            <th>Status Akun</th>
+                            <th>Bergabung</th>
+                            <th style="text-align: right;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        <tr>
+                            <td colspan="9">
+                                <div class="loading-state">
+                                    <div class="spinner"></div>
+                                    <p style="color: rgba(255,255,255,0.4); font-size:14px;">Memuat data pengguna...</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- TABLE FOOTER -->
+            <div class="table-footer">
+                <div id="tableInfo">Menampilkan 0 pengguna</div>
+                <div style="font-size:12px; color:rgba(255,255,255,0.3);">
+                    🌾 Platform Padi Desa &bull; Data tersinkronisasi langsung dengan server backend
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ========================================
+         MODAL 1: TAMBAH PENGGUNA (QUICK CREATE)
+    ======================================== -->
+    <div class="modal-backdrop" id="createModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>➕ Tambah Pengguna Baru</h3>
+                <button type="button" class="modal-close" onclick="closeModal('createModal')">✕</button>
+            </div>
+            <form id="createForm" onsubmit="handleCreateUser(event)">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Nama Lengkap <span class="required">*</span></label>
+                        <input type="text" class="form-control" id="createName" required placeholder="Contoh: Budi Santoso" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Alamat Email <span class="required">*</span></label>
+                        <input type="email" class="form-control" id="createEmail" required placeholder="budi@example.com" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Password Akun <span class="required">*</span></label>
+                        <div class="password-wrap">
+                            <input type="password" class="form-control" id="createPassword" required minlength="6" placeholder="Minimal 6 karakter" />
+                            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('createPassword')">👁️</button>
+                        </div>
+                        <div class="form-help">Gunakan kombinasi yang aman untuk autentikasi pengguna</div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Peran / Role <span class="required">*</span></label>
+                            <select class="form-control" id="createRole" required onchange="handleRoleDescription('createRole', 'createRoleHelp')">
+                                <option value="PETANI">Petani (Default)</option>
+                                <option value="KEPALA_DESA">Kepala Desa</option>
+                                <option value="ADMIN">Administrator</option>
+                            </select>
+                            <div class="form-help" id="createRoleHelp">Petani: Mengelola data lahan pribadi & panen</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Desa / Wilayah Binaan</label>
+                            <input type="text" class="form-control" id="createDesa" placeholder="Contoh: Desa Sukamakmur" />
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="display:flex; align-items:center; gap:10px; margin-top:10px;">
+                        <input type="checkbox" id="createIsActive" checked style="width:18px; height:18px; accent-color:#22c55e;" />
+                        <label for="createIsActive" style="margin-bottom:0; cursor:pointer;">
+                            Aktifkan akun ini secara langsung
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeModal('createModal')">Batal</button>
+                    <button type="submit" class="btn-primary" id="btnSubmitCreate">Simpan Pengguna</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================
+         MODAL 2: EDIT PENGGUNA
+    ======================================== -->
+    <div class="modal-backdrop" id="editModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>✏️ Edit Data Pengguna</h3>
+                <button type="button" class="modal-close" onclick="closeModal('editModal')">✕</button>
+            </div>
+            <form id="editForm" onsubmit="handleUpdateUser(event)">
+                <input type="hidden" id="editId" />
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label>Nama Lengkap <span class="required">*</span></label>
+                        <input type="text" class="form-control" id="editName" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Alamat Email <span class="required">*</span></label>
+                        <input type="email" class="form-control" id="editEmail" required />
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Peran / Role <span class="required">*</span></label>
+                            <select class="form-control" id="editRole" required>
+                                <option value="PETANI">Petani</option>
+                                <option value="KEPALA_DESA">Kepala Desa</option>
+                                <option value="ADMIN">Administrator</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Desa / Wilayah</label>
+                            <input type="text" class="form-control" id="editDesa" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Ubah Password (Opsional)</label>
+                        <div class="password-wrap">
+                            <input type="password" class="form-control" id="editPassword" placeholder="Kosongkan jika tidak ingin mengubah password" minlength="6" />
+                            <button type="button" class="password-toggle" onclick="togglePasswordVisibility('editPassword')">👁️</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="display:flex; align-items:center; gap:10px;">
+                        <input type="checkbox" id="editIsActive" style="width:18px; height:18px; accent-color:#22c55e;" />
+                        <label for="editIsActive" style="margin-bottom:0; cursor:pointer;">
+                            Status Akun Aktif
+                        </label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeModal('editModal')">Batal</button>
+                    <button type="submit" class="btn-primary" id="btnSubmitEdit">Perbarui Pengguna</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================
+         MODAL 3: DETAIL PENGGUNA
+    ======================================== -->
+    <div class="modal-backdrop" id="detailModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>👁️ Detail Informasi Pengguna</h3>
+                <button type="button" class="modal-close" onclick="closeModal('detailModal')">✕</button>
+            </div>
+            <div class="modal-body" id="detailModalBody">
+                <!-- Content dynamically populated -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeModal('detailModal')">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================
+         MODAL 4: KONFIRMASI HAPUS
+    ======================================== -->
+    <div class="modal-backdrop" id="deleteModal">
+        <div class="modal-box" style="max-width: 440px;">
+            <div class="modal-header">
+                <h3 style="color:#f87171;">⚠️ Konfirmasi Hapus</h3>
+                <button type="button" class="modal-close" onclick="closeModal('deleteModal')">✕</button>
+            </div>
+            <div class="modal-body" style="text-align: center; padding: 28px 24px;">
+                <div style="font-size: 48px; margin-bottom: 16px;">🗑️</div>
+                <h4 id="deleteUserName" style="font-size: 17px; margin-bottom: 8px;">Hapus Pengguna?</h4>
+                <p style="color: rgba(255,255,255,0.45); font-size: 13px; line-height: 1.6;">
+                    Apakah Anda yakin ingin menghapus pengguna ini? Tindakan ini bersifat permanen dan juga akan menghapus data lahan terkait pengguna ini.
+                </p>
+                <input type="hidden" id="deleteUserId" />
+            </div>
+            <div class="modal-footer" style="justify-content: center;">
+                <button type="button" class="btn-secondary" onclick="closeModal('deleteModal')">Batal</button>
+                <button type="button" class="btn-primary" style="background:#ef4444;" onclick="executeDeleteUser()">Hapus Permanen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================
+         TOAST NOTIFICATION
+    ======================================== -->
+    <div class="toast" id="toast">
+        <span class="toast-icon" id="toastIcon">✅</span>
+        <span class="toast-msg" id="toastMsg">Notifikasi</span>
+    </div>
+
+    <!-- ========================================
+         JAVASCRIPT
+    ======================================== -->
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+
+        // 1. Sesi & Autentikasi
+        let token = localStorage.getItem('accessToken');
+        let user = JSON.parse(localStorage.getItem('user') || 'null');
+
+        // Jika belum ada user, arahkan ke login
+        if (!token || !user) {
+            window.location.href = 'login.html';
+        }
+
+        // Tampilkan info user di navbar
+        const roleEmojis = {
+            'ADMIN': '👑',
+            'KEPALA_DESA': '🏛️',
+            'PETANI': '🌾'
+        };
+
+        function updateNavbarProfile() {
+            if (user) {
+                document.getElementById('userName').textContent = user.name || 'User';
+                document.getElementById('userAvatar').textContent = roleEmojis[user.role] || '👤';
+                document.getElementById('userRole').textContent = user.role || 'PETANI';
+                document.getElementById('currentRoleText').textContent = `${roleEmojis[user.role] || ''} ${user.role}`;
+
+                // Aturan hak akses penambahan pengguna: HANYA ADMIN
+                const isAdmin = user.role === 'ADMIN';
+                const btnQuick = document.getElementById('btnQuickCreate');
+                const btnFull = document.getElementById('btnFullForm');
+                const adminBadge = document.getElementById('adminOnlyBadge');
+
+                if (btnQuick && btnFull && adminBadge) {
+                    if (isAdmin) {
+                        btnQuick.style.display = 'inline-flex';
+                        btnFull.style.display = 'inline-flex';
+                        adminBadge.style.display = 'none';
+                    } else {
+                        btnQuick.style.display = 'none';
+                        btnFull.style.display = 'none';
+                        adminBadge.style.display = 'inline-flex';
+                    }
+                }
+            }
+        }
+        updateNavbarProfile();
+
+        // Sinkronkan profil user yang sedang login dengan database terbaru
+        async function syncCurrentUserProfile() {
+            try {
+                if (!token) return;
+                const res = await fetch(`${API_URL}/auth/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.success && data.data) {
+                    user = { ...user, ...data.data };
+                    localStorage.setItem('user', JSON.stringify(user));
+                    updateNavbarProfile();
+                }
+            } catch (err) {
+                console.warn('Sync user profile warning:', err);
+            }
+        }
+
+        // 2. State Data Pengguna
+        let allUsersData = [];
+        let filteredUsersData = [];
+
+        // 3. Muat Data Pengguna & Statistik
+        async function loadAllData() {
+            showTableLoading();
+            await Promise.all([fetchUsers(), fetchUserStats(), syncCurrentUserProfile()]);
+        }
+
+        async function fetchUsers() {
+            try {
+                const res = await fetch(`${API_URL}/users`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (res.status === 401) {
+                    showToast('Sesi kedaluwarsa, silakan login ulang', 'error');
+                    setTimeout(() => { window.location.href = 'login.html'; }, 1500);
+                    return;
+                }
+
+                const data = await res.json();
+                if (data.success) {
+                    allUsersData = data.data || [];
+                    populateDesaFilter(allUsersData);
+                    applyFilters();
+                } else {
+                    throw new Error(data.message || 'Gagal mengambil data pengguna');
+                }
+            } catch (err) {
+                console.error('Fetch users error:', err);
+                renderTableError(err.message);
+                showToast(`Error: ${err.message}`, 'error');
+            }
+        }
+
+        async function fetchUserStats() {
+            try {
+                const res = await fetch(`${API_URL}/users/stats`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const data = await res.json();
+                if (data.success && data.data) {
+                    const s = data.data.summary;
+                    document.getElementById('statTotalUsers').textContent = s.totalUsers || 0;
+                    document.getElementById('statActiveUsers').textContent = `${s.activeUsers || 0} akun aktif`;
+                    document.getElementById('statPetaniCount').textContent = s.totalPetani || 0;
+                    document.getElementById('statKadesCount').textContent = s.totalKades || 0;
+                    document.getElementById('statAdminCount').textContent = s.totalAdmin || 0;
+                }
+            } catch (err) {
+                console.warn('Fetch user stats error:', err);
+            }
+        }
+
+        // 4. Render Table
+        function renderTable(users) {
+            const tbody = document.getElementById('usersTableBody');
+            const info = document.getElementById('tableInfo');
+
+            info.textContent = `Menampilkan ${users.length} dari ${allUsersData.length} total pengguna`;
+
+            if (users.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9">
+                            <div class="empty-state">
+                                <div class="icon">🔍</div>
+                                <h3>Tidak ada pengguna ditemukan</h3>
+                                <p>Coba sesuaikan kata kunci pencarian atau filter peran/status.</p>
+                                <button class="btn-primary" style="margin-top:16px;" onclick="openCreateModal()">
+                                    ➕ Tambah Pengguna Baru
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = users.map((u, index) => {
+                const roleClass = (u.role || '').toLowerCase().replace('_', '');
+                const roleBadgeClass = u.role === 'ADMIN' ? 'admin' : (u.role === 'KEPALA_DESA' ? 'kades' : 'petani');
+                const roleEmoji = roleEmojis[u.role] || '👤';
+
+                // Initial Avatar
+                const initial = u.name ? u.name.charAt(0).toUpperCase() : 'U';
+
+                // Farm Summary
+                const farmText = u.farmCount > 0
+                    ? `<span style="color:#4ade80; font-weight:600;">🌾 ${u.farmCount} Lahan</span> <span style="font-size:11px; color:rgba(255,255,255,0.4);">(${u.totalLuasHa || 0} Ha)</span>`
+                    : `<span style="color:rgba(255,255,255,0.3); font-size:12px;">Belum ada lahan</span>`;
+
+                // Status
+                const statusBadge = u.isActive
+                    ? `<span class="badge-status active"><span class="status-dot"></span> Aktif</span>`
+                    : `<span class="badge-status inactive"><span class="status-dot"></span> Nonaktif</span>`;
+
+                // Date
+                const dateStr = u.createdAt ? new Date(u.createdAt).toLocaleDateString('id-ID', {
+                    day: '2-digit',
+                    month: 'short',
+                    year: 'numeric'
+                }) : '-';
+
+                return `
+                    <tr>
+                        <td style="color:rgba(255,255,255,0.3); font-weight:600;">${index + 1}</td>
+                        <td>
+                            <div class="user-cell">
+                                <div class="user-avatar ${roleBadgeClass}">${initial}</div>
+                                <div class="user-meta">
+                                    <span class="user-name">${escapeHtml(u.name)}</span>
+                                    <span class="user-id">ID: ${u.id.substring(0, 10)}...</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <span style="font-family:monospace; color:rgba(255,255,255,0.85);">${escapeHtml(u.email)}</span>
+                        </td>
+                        <td>
+                            <span class="badge-role ${roleBadgeClass}">
+                                ${roleEmoji} ${u.role}
+                            </span>
+                        </td>
+                        <td>
+                            <span style="display:inline-flex; align-items:center; gap:4px; color:rgba(255,255,255,0.7);">
+                                📍 ${escapeHtml(u.desa || 'Belum diatur')}
+                            </span>
+                        </td>
+                        <td>${farmText}</td>
+                        <td>${statusBadge}</td>
+                        <td style="color:rgba(255,255,255,0.4); font-size:12px;">${dateStr}</td>
+                        <td style="text-align: right;">
+                            <div class="actions-group" style="justify-content: flex-end;">
+                                <button class="btn-action view" title="Lihat Detail" onclick="openDetailModal('${u.id}')">👁️</button>
+                                ${user && user.role === 'ADMIN' ? `
+                                    <button class="btn-action edit" title="Edit Pengguna" onclick="openEditModal('${u.id}')">✏️</button>
+                                    <button class="btn-action toggle" title="${u.isActive ? 'Nonaktifkan' : 'Aktifkan'}" onclick="handleToggleStatus('${u.id}')">🔄</button>
+                                    <button class="btn-action delete" title="Hapus Pengguna" onclick="openDeleteModal('${u.id}', '${escapeHtml(u.name)}')">🗑️</button>
+                                ` : `
+                                    <span style="font-size:11px; color:rgba(255,255,255,0.3); padding:4px 6px;" title="Aksi edit/hapus hanya dapat dilakukan oleh Admin">🔒 Hanya Baca</span>
+                                `}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function showTableLoading() {
+            document.getElementById('usersTableBody').innerHTML = `
+                <tr>
+                    <td colspan="9">
+                        <div class="loading-state">
+                            <div class="spinner"></div>
+                            <p style="color: rgba(255,255,255,0.4); font-size:14px;">Memuat data pengguna...</p>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        function renderTableError(msg) {
+            document.getElementById('usersTableBody').innerHTML = `
+                <tr>
+                    <td colspan="9">
+                        <div class="empty-state">
+                            <div class="icon">⚠️</div>
+                            <h3 style="color:#f87171;">Gagal Memuat Data Pengguna</h3>
+                            <p>${escapeHtml(msg)}</p>
+                            <p style="margin-top:4px;">Pastikan backend server aktif di <strong>http://localhost:5000</strong></p>
+                            <button class="btn-primary" style="margin-top:16px;" onclick="loadAllData()">
+                                🔄 Coba Muat Ulang
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
+        // 5. Filter & Search
+        function populateDesaFilter(users) {
+            const desaSelect = document.getElementById('desaFilter');
+            const currentVal = desaSelect.value;
+            const desaSet = new Set();
+
+            users.forEach(u => {
+                if (u.desa && u.desa.trim() !== '') {
+                    desaSet.add(u.desa.trim());
+                }
+            });
+
+            desaSelect.innerHTML = '<option value="ALL">Semua Desa</option>';
+            Array.from(desaSet).sort().forEach(desa => {
+                const opt = document.createElement('option');
+                opt.value = desa;
+                opt.textContent = desa;
+                desaSelect.appendChild(opt);
+            });
+
+            if (currentVal && desaSet.has(currentVal)) {
+                desaSelect.value = currentVal;
+            }
+        }
+
+        function handleSearchInput() {
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const searchKeyword = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+            const roleFilter = document.getElementById('roleFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            const desaFilter = document.getElementById('desaFilter').value;
+
+            filteredUsersData = allUsersData.filter(u => {
+                // Search
+                if (searchKeyword) {
+                    const matchName = (u.name || '').toLowerCase().includes(searchKeyword);
+                    const matchEmail = (u.email || '').toLowerCase().includes(searchKeyword);
+                    const matchDesa = (u.desa || '').toLowerCase().includes(searchKeyword);
+                    if (!matchName && !matchEmail && !matchDesa) return false;
+                }
+
+                // Role
+                if (roleFilter !== 'ALL') {
+                    if (u.role !== roleFilter) return false;
+                }
+
+                // Status
+                if (statusFilter !== 'ALL') {
+                    const isTargetActive = statusFilter === 'true';
+                    if (u.isActive !== isTargetActive) return false;
+                }
+
+                // Desa
+                if (desaFilter !== 'ALL') {
+                    if ((u.desa || '').trim() !== desaFilter) return false;
+                }
+
+                return true;
+            });
+
+            renderTable(filteredUsersData);
+        }
+
+        // 6. Action Handlers: Create User
+        function openCreateModal() {
+            if (!user || user.role !== 'ADMIN') {
+                showToast('Akses Ditolak: Hanya Administrator yang berwenang menambahkan pengguna baru.', 'error');
+                return;
+            }
+            document.getElementById('createForm').reset();
+            document.getElementById('createRole').value = 'PETANI';
+            document.getElementById('createIsActive').checked = true;
+            handleRoleDescription('createRole', 'createRoleHelp');
+            openModal('createModal');
+        }
+
+        async function handleCreateUser(e) {
+            e.preventDefault();
+            const submitBtn = document.getElementById('btnSubmitCreate');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Menyimpan...';
+
+            const payload = {
+                name: document.getElementById('createName').value.trim(),
+                email: document.getElementById('createEmail').value.trim(),
+                password: document.getElementById('createPassword').value,
+                role: document.getElementById('createRole').value,
+                desa: document.getElementById('createDesa').value.trim(),
+                isActive: document.getElementById('createIsActive').checked
+            };
+
+            try {
+                const res = await fetch(`${API_URL}/users`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    closeModal('createModal');
+                    showToast(`Pengguna "${payload.name}" berhasil ditambahkan!`, 'success');
+                    await loadAllData();
+                } else {
+                    throw new Error(data.message || 'Gagal menambahkan pengguna');
+                }
+            } catch (err) {
+                showToast(err.message, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Simpan Pengguna';
+            }
+        }
+
+        // 7. Action Handlers: Edit User
+        function openEditModal(id) {
+            const targetUser = allUsersData.find(u => u.id === id);
+            if (!targetUser) return;
+
+            document.getElementById('editId').value = targetUser.id;
+            document.getElementById('editName').value = targetUser.name || '';
+            document.getElementById('editEmail').value = targetUser.email || '';
+            document.getElementById('editRole').value = targetUser.role || 'PETANI';
+            document.getElementById('editDesa').value = targetUser.desa || '';
+            document.getElementById('editPassword').value = '';
+            document.getElementById('editIsActive').checked = Boolean(targetUser.isActive);
+
+            openModal('editModal');
+        }
+
+        async function handleUpdateUser(e) {
+            e.preventDefault();
+            const id = document.getElementById('editId').value;
+            const submitBtn = document.getElementById('btnSubmitEdit');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Memperbarui...';
+
+            const payload = {
+                name: document.getElementById('editName').value.trim(),
+                email: document.getElementById('editEmail').value.trim(),
+                role: document.getElementById('editRole').value,
+                desa: document.getElementById('editDesa').value.trim(),
+                isActive: document.getElementById('editIsActive').checked
+            };
+
+            const pwd = document.getElementById('editPassword').value;
+            if (pwd && pwd.trim() !== '') {
+                payload.password = pwd.trim();
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/users/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    closeModal('editModal');
+                    showToast(`Pengguna "${payload.name}" berhasil diperbarui!`, 'success');
+
+                    // Jika pengguna yang diedit adalah akun yang sedang login saat ini, segera perbarui state dan navbar
+                    if (user && (user.id === id || user.email === payload.email)) {
+                        user.name = data.data?.name || payload.name;
+                        user.role = data.data?.role || payload.role;
+                        user.desa = data.data?.desa || payload.desa;
+                        user.email = data.data?.email || payload.email;
+                        localStorage.setItem('user', JSON.stringify(user));
+                        if (data.newToken) {
+                            localStorage.setItem('accessToken', data.newToken);
+                            token = data.newToken;
+                        }
+                        updateNavbarProfile();
+                    }
+
+                    await loadAllData();
+                } else {
+                    throw new Error(data.message || 'Gagal memperbarui pengguna');
+                }
+            } catch (err) {
+                showToast(err.message, 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Perbarui Pengguna';
+            }
+        }
+
+        // 8. Action Handlers: Toggle Status
+        async function handleToggleStatus(id) {
+            const targetUser = allUsersData.find(u => u.id === id);
+            if (!targetUser) return;
+
+            try {
+                const res = await fetch(`${API_URL}/users/${id}/status`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    showToast(data.message || 'Status pengguna berhasil diperbarui!', 'success');
+                    await loadAllData();
+                } else {
+                    throw new Error(data.message || 'Gagal mengubah status');
+                }
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        // 9. Action Handlers: Delete User
+        function openDeleteModal(id, name) {
+            document.getElementById('deleteUserId').value = id;
+            document.getElementById('deleteUserName').textContent = `Hapus "${name}"?`;
+            openModal('deleteModal');
+        }
+
+        async function executeDeleteUser() {
+            const id = document.getElementById('deleteUserId').value;
+            try {
+                const res = await fetch(`${API_URL}/users/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    closeModal('deleteModal');
+                    showToast(data.message || 'Pengguna berhasil dihapus!', 'success');
+                    await loadAllData();
+                } else {
+                    throw new Error(data.message || 'Gagal menghapus pengguna');
+                }
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        }
+
+        // 10. Action Handlers: Detail User
+        async function openDetailModal(id) {
+            const modalBody = document.getElementById('detailModalBody');
+            modalBody.innerHTML = `
+                <div class="loading-state">
+                    <div class="spinner"></div>
+                    <p style="color: rgba(255,255,255,0.4); font-size:13px;">Memuat detail akun...</p>
+                </div>
+            `;
+            openModal('detailModal');
+
+            try {
+                const res = await fetch(`${API_URL}/users/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    const u = data.data;
+                    const roleBadgeClass = u.role === 'ADMIN' ? 'admin' : (u.role === 'KEPALA_DESA' ? 'kades' : 'petani');
+                    const roleEmoji = roleEmojis[u.role] || '👤';
+
+                    let farmListHtml = '<p style="color:rgba(255,255,255,0.3); font-size:12px; margin-top:8px;">Belum memiliki lahan terdaftar.</p>';
+                    if (u.farms && u.farms.length > 0) {
+                        farmListHtml = `
+                            <div style="margin-top:12px; display:flex; flex-direction:column; gap:8px;">
+                                ${u.farms.map(f => `
+                                    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.05); border-radius:10px; padding:10px 14px; display:flex; justify-content:space-between; align-items:center;">
+                                        <div>
+                                            <strong style="color:#fff; font-size:13px;">🌾 ${escapeHtml(f.name)}</strong>
+                                            <div style="font-size:11px; color:rgba(255,255,255,0.4); margin-top:2px;">
+                                                Luas: ${f.luas} Hektar &bull; Varietas: ${f.crops?.map(c => c.variety).join(', ') || 'Belum ditanami'}
+                                            </div>
+                                        </div>
+                                        <span style="font-size:11px; color:#4ade80; font-weight:600;">Aktif</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                    }
+
+                    modalBody.innerHTML = `
+                        <div style="display:flex; align-items:center; gap:16px; margin-bottom:18px;">
+                            <div class="user-avatar ${roleBadgeClass}" style="width:54px; height:54px; font-size:22px;">
+                                ${u.name ? u.name.charAt(0).toUpperCase() : 'U'}
+                            </div>
+                            <div>
+                                <h3 style="font-size:18px; font-weight:700; color:#fff;">${escapeHtml(u.name)}</h3>
+                                <p style="color:rgba(255,255,255,0.4); font-size:13px;">${escapeHtml(u.email)}</p>
+                                <div style="margin-top:6px;">
+                                    <span class="badge-role ${roleBadgeClass}">${roleEmoji} ${u.role}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <div class="label">Status Akun</div>
+                                <div class="val">${u.isActive ? '<span style="color:#4ade80;">● Aktif</span>' : '<span style="color:#f87171;">● Nonaktif</span>'}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="label">Wilayah / Desa</div>
+                                <div class="val">📍 ${escapeHtml(u.desa || 'Belum diatur')}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="label">Tanggal Pendaftaran</div>
+                                <div class="val">${new Date(u.createdAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' })}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="label">Terakhir Diperbarui</div>
+                                <div class="val">${new Date(u.updatedAt).toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })}</div>
+                            </div>
+                        </div>
+
+                        <div style="margin-top:20px; border-top:1px solid rgba(255,255,255,0.06); padding-top:16px;">
+                            <h4 style="font-size:13px; font-weight:700; text-transform:uppercase; color:rgba(255,255,255,0.5); letter-spacing:0.5px;">
+                                Kepemilikan Lahan Pertanian (${u.farms ? u.farms.length : 0})
+                            </h4>
+                            ${farmListHtml}
+                        </div>
+                    `;
+                } else {
+                    throw new Error(data.message || 'Gagal memuat detail pengguna');
+                }
+            } catch (err) {
+                modalBody.innerHTML = `
+                    <div style="text-align:center; padding:30px 10px; color:#f87171;">
+                        <p>⚠️ ${escapeHtml(err.message)}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // 11. Modal Utilities
+        function openModal(id) {
+            document.getElementById(id).classList.add('open');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('open');
+        }
+
+        // Tutup modal jika klik backdrop di luar box
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal-backdrop')) {
+                e.target.classList.remove('open');
+            }
+        });
+
+        // 12. Helper UI: Show/Hide Password
+        function togglePasswordVisibility(fieldId) {
+            const input = document.getElementById(fieldId);
+            if (input.type === 'password') {
+                input.type = 'text';
+            } else {
+                input.type = 'password';
+            }
+        }
+
+        function handleRoleDescription(selectId, helpId) {
+            const val = document.getElementById(selectId).value;
+            const help = document.getElementById(helpId);
+            if (val === 'ADMIN') {
+                help.textContent = 'Admin: Otoritas tertinggi, dapat menambah/mengedit/menghapus semua pengguna.';
+            } else if (val === 'KEPALA_DESA') {
+                help.textContent = 'Kepala Desa: Memantau hasil pangan & ketahanan desa, dapat menambah pengguna.';
+            } else {
+                help.textContent = 'Petani: Mengelola lahan pertanian pribadi, aktivitas tani, dan konsultasi AI.';
+            }
+        }
+
+        // 13. Toast Notification
+        let toastTimeout;
+        function showToast(msg, type = 'info') {
+            const toast = document.getElementById('toast');
+            const msgEl = document.getElementById('toastMsg');
+            const iconEl = document.getElementById('toastIcon');
+
+            clearTimeout(toastTimeout);
+
+            toast.className = `toast ${type}`;
+            msgEl.textContent = msg;
+
+            if (type === 'success') iconEl.textContent = '✅';
+            else if (type === 'error') iconEl.textContent = '❌';
+            else iconEl.textContent = 'ℹ️';
+
+            toast.classList.add('show');
+
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3500);
+        }
+
+        // 14. Demo Quick Role Switcher
+        async function switchDemoAccount(email) {
+            showToast(`Beralih ke akun demo: ${email}...`, 'info');
+            try {
+                const res = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password: 'Demo@123456' })
+                });
+
+                const data = await res.json();
+                if (data.success && data.data?.accessToken) {
+                    localStorage.setItem('accessToken', data.data.accessToken);
+                    localStorage.setItem('user', JSON.stringify(data.data.user));
+                    token = data.data.accessToken;
+                    user = data.data.user;
+
+                    updateNavbarProfile();
+                    showToast(`Berhasil login sebagai ${user.role} (${user.name})!`, 'success');
+                    await loadAllData();
+                } else {
+                    throw new Error(data.message || 'Gagal login demo');
+                }
+            } catch (err) {
+                showToast(`Gagal ganti akun: ${err.message}`, 'error');
+            }
+        }
+
+        // 15. Logout
+        function handleLogout() {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+
+        // Utility: Escape HTML
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text
+                .toString()
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        // Inisialisasi Pertama
+        loadAllData();
+    </script>
+</body>
+
+</html>

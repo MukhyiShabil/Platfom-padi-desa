@@ -1,0 +1,94 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// USER
+// ============================================
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("PETANI")
+  desa      String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  farms     Farm[]
+
+  @@map("users")
+}
+
+// ============================================
+// FARM (LAHAN)
+// ============================================
+model Farm {
+  id        String   @id @default(cuid())
+  name      String
+  luas      Float
+  location  String?
+  desa      String?
+  notes     String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  crops     Crop[]
+
+  @@map("farms")
+}
+
+// ============================================
+// CROP (TANAMAN)
+// ============================================
+model Crop {
+  id        String   @id @default(cuid())
+  farmId    String
+  farm      Farm     @relation(fields: [farmId], references: [id])
+  variety   String
+  status    String   @default("ACTIVE")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  harvests  Harvest[]
+  activities Activity[]
+
+  @@map("crops")
+}
+
+// ============================================
+// HARVEST (PANEN)
+// ============================================
+model Harvest {
+  id        String   @id @default(cuid())
+  cropId    String
+  crop      Crop     @relation(fields: [cropId], references: [id])
+  totalKg   Float
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+
+  @@map("harvests")
+}
+
+// ============================================
+// ACTIVITY (AKTIVITAS)
+// ============================================
+model Activity {
+  id          String   @id @default(cuid())
+  cropId      String
+  crop        Crop     @relation(fields: [cropId], references: [id])
+  type        String
+  description String?
+  date        DateTime @default(now())
+  createdAt   DateTime @default(now())
+
+  @@map("activities")
+}

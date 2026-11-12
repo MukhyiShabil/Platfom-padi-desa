@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Platform Padi Desa</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+
+    <!-- Theme System (Light & Dark Mode) -->
+    <link rel="stylesheet" href="../css/theme.css" />
+    <script src="../js/theme.js"></script>
+
+    <style>
+        /* ========================================
+           RESET & BASE
+        ======================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #0f172a 0%, #1a472a 50%, #0f172a 100%);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Background Animation */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(22, 163, 74, 0.15) 0%, transparent 70%);
+            top: -200px;
+            right: -200px;
+            border-radius: 50%;
+            animation: floatBg 8s ease-in-out infinite;
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(22, 163, 74, 0.1) 0%, transparent 70%);
+            bottom: -150px;
+            left: -150px;
+            border-radius: 50%;
+            animation: floatBg 10s ease-in-out infinite reverse;
+        }
+
+        @keyframes floatBg {
+
+            0%,
+            100% {
+                transform: translate(0, 0) scale(1);
+            }
+
+            50% {
+                transform: translate(30px, -30px) scale(1.1);
+            }
+        }
+
+        /* Floating particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            font-size: 20px;
+            opacity: 0.3;
+            animation: floatParticle 15s linear infinite;
+        }
+
+        @keyframes floatParticle {
+            0% {
+                transform: translateY(100vh) rotate(0deg) scale(0);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.3;
+            }
+
+            90% {
+                opacity: 0.3;
+            }
+
+            100% {
+                transform: translateY(-10vh) rotate(720deg) scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* ========================================
+           CARD LOGIN
+        ======================================== */
+        .auth-card {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 3rem 2.5rem;
+            max-width: 440px;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.8s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Glow border */
+        .auth-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 26px;
+            background: linear-gradient(135deg, #22c55e, #16a34a, #15803d, #22c55e);
+            background-size: 300% 300%;
+            z-index: -1;
+            opacity: 0.4;
+            animation: gradientMove 4s ease infinite;
+        }
+
+        @keyframes gradientMove {
+
+            0%,
+            100% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        /* ========================================
+           LOGO
+        ======================================== */
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo .icon {
+            font-size: 4.5rem;
+            display: block;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1) rotate(0deg);
+            }
+
+            50% {
+                transform: scale(1.05) rotate(-3deg);
+            }
+        }
+
+        .logo h2 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: #fff;
+            margin-top: 0.5rem;
+            letter-spacing: -0.5px;
+        }
+
+        .logo h2 span {
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.875rem;
+            font-weight: 300;
+            margin-top: 4px;
+        }
+
+        /* ========================================
+           FORM
+        ======================================== */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 0.4rem;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 20px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            font-size: 0.95rem;
+            color: #fff;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.25);
+        }
+
+        .form-control:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #22c55e;
+            box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.15);
+        }
+
+        /* ========================================
+           BUTTON
+        ======================================== */
+        .btn-login {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            position: relative;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .btn-login::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.6s;
+        }
+
+        .btn-login:hover::before {
+            left: 100%;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(34, 197, 94, 0.3);
+        }
+
+        .btn-login:active {
+            transform: scale(0.97);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* ========================================
+           ALERT
+        ======================================== */
+        .alert {
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            display: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+            display: block;
+        }
+
+        .alert-success {
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            color: #86efac;
+            display: block;
+        }
+
+        /* ========================================
+           LINKS
+        ======================================== */
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-4 {
+            margin-top: 1.25rem;
+        }
+
+        .text-muted {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.85rem;
+        }
+
+        .text-primary {
+            color: #4ade80;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .text-primary:hover {
+            color: #86efac;
+            text-decoration: underline;
+        }
+
+        /* ========================================
+           DEMO BOX
+        ======================================== */
+        .demo-box {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 1.25rem;
+            margin-top: 1.5rem;
+        }
+
+        .demo-box .demo-title {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.3);
+            text-align: center;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .demo-item {
+            text-align: center;
+            padding: 8px 4px;
+            border-radius: 8px;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .demo-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .demo-item .name {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .demo-item .name.admin {
+            color: #fbbf24;
+        }
+
+        .demo-item .name.kades {
+            color: #60a5fa;
+        }
+
+        .demo-item .name.petani {
+            color: #4ade80;
+        }
+
+        .demo-item .email {
+            font-size: 0.6rem;
+            color: rgba(255, 255, 255, 0.3);
+            display: block;
+            margin-top: 2px;
+        }
+
+        .demo-password {
+            text-align: center;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.3);
+            margin-top: 0.75rem;
+            padding-top: 0.75rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .demo-password strong {
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 600;
+        }
+
+        /* ========================================
+           DEBUG INFO
+        ======================================== */
+        .debug-info {
+            background: rgba(251, 191, 36, 0.06);
+            border: 1px solid rgba(251, 191, 36, 0.1);
+            border-radius: 10px;
+            padding: 10px 14px;
+            margin-top: 1rem;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .debug-info strong {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* ========================================
+           RESPONSIVE
+        ======================================== */
+        @media (max-width: 480px) {
+            .auth-card {
+                padding: 2rem 1.5rem;
+                border-radius: 20px;
+            }
+
+            .logo .icon {
+                font-size: 3.5rem;
+            }
+
+            .logo h2 {
+                font-size: 1.4rem;
+            }
+
+            .form-control {
+                padding: 12px 16px;
+                font-size: 0.9rem;
+            }
+
+            .demo-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.3rem;
+            }
+
+            .demo-item .name {
+                font-size: 0.65rem;
+            }
+
+            .demo-item .email {
+                font-size: 0.5rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .auth-card {
+                padding: 1.5rem 1rem;
+            }
+
+            .demo-grid {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+    <!-- Theme System CSS -->
+    <link rel="stylesheet" href="../css/theme.css" />
+</head>
+
+<body class="login-body">
+
+    <!-- Theme Toggle Button -->
+    <button id="themeToggleBtn" type="button" class="theme-toggle-btn" onclick="toggleTheme()" style="position:fixed; top:20px; right:20px; z-index:999;" title="Beralih Mode Terang / Gelap">
+        <span class="theme-toggle-icon">☀️</span>
+        <span class="theme-toggle-text">Terang</span>
+    </button>
+
+    <!-- Background Particles -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Login Card -->
+    <div class="auth-card">
+
+        <!-- Logo -->
+        <div class="logo">
+            <span class="icon">🌾</span>
+            <h2><span>Platform Padi</span> Desa</h2>
+            <p>Masuk ke akun Anda</p>
+        </div>
+
+        <!-- Form Login -->
+        <form id="loginForm">
+            <div class="form-group">
+                <label>📧 Email</label>
+                <input type="email" id="email" class="form-control" placeholder="admin@example.com"
+                    value="admin@example.com" required />
+            </div>
+
+            <div class="form-group">
+                <label>🔒 Password</label>
+                <input type="password" id="password" class="form-control" placeholder="••••••••" value="Demo@123456"
+                    required />
+            </div>
+
+            <div id="errorMessage" class="alert alert-danger" style="display: none;"></div>
+
+            <button type="submit" id="loginBtn" class="btn-login">
+                🚀 Login
+            </button>
+        </form>
+
+        <p class="text-center mt-4 text-muted">
+            Belum punya akun? <a href="#" class="text-primary">Daftar</a>
+        </p>
+
+        <!-- Demo Accounts -->
+        <div class="demo-box">
+            <p class="demo-title">🔑 Akun Demo</p>
+            <div class="demo-grid">
+                <div class="demo-item" onclick="fillLogin('admin@example.com', 'Demo@123456')">
+                    <div class="name admin">👑 Admin</div>
+                    <span class="email">admin@example.com</span>
+                </div>
+                <div class="demo-item" onclick="fillLogin('kepala@example.com', 'Demo@123456')">
+                    <div class="name kades">🏛️ Kepala Desa</div>
+                    <span class="email">kepala@example.com</span>
+                </div>
+                <div class="demo-item" onclick="fillLogin('petani@example.com', 'Demo@123456')">
+                    <div class="name petani">🌾 Petani</div>
+                    <span class="email">petani@example.com</span>
+                </div>
+            </div>
+            <div class="demo-password">
+                Password: <strong>Demo@123456</strong>
+            </div>
+        </div>
+
+        <!-- Debug Info -->
+        <div class="debug-info" id="debugInfo">
+            <strong>🔍 Status:</strong> <span id="debugStatus">Memeriksa koneksi...</span>
+        </div>
+    </div>
+
+    <!-- ========================================
+    JAVASCRIPT
+    ======================================== -->
+    <script>
+        // ==========================================
+        // 1. BACKGROUND PARTICLES
+        // ==========================================
+        const particles = ['🌾', '🌱', '🍃', '🌿', '☀️', '💧'];
+        const container = document.getElementById('particles');
+
+        for (let i = 0; i < 15; i++) {
+            const el = document.createElement('span');
+            el.className = 'particle';
+            el.textContent = particles[Math.floor(Math.random() * particles.length)];
+            el.style.left = Math.random() * 100 + '%';
+            el.style.fontSize = (12 + Math.random() * 20) + 'px';
+            el.style.animationDuration = (12 + Math.random() * 20) + 's';
+            el.style.animationDelay = (Math.random() * 20) + 's';
+            container.appendChild(el);
+        }
+
+        // ==========================================
+        // 2. FILL LOGIN (KLIK AKUN DEMO)
+        // ==========================================
+        function fillLogin(email, password) {
+            document.getElementById('email').value = email;
+            document.getElementById('password').value = password;
+
+            // Highlight effect
+            const emailInput = document.getElementById('email');
+            const passInput = document.getElementById('password');
+            emailInput.style.borderColor = '#22c55e';
+            passInput.style.borderColor = '#22c55e';
+            setTimeout(() => {
+                emailInput.style.borderColor = '';
+                passInput.style.borderColor = '';
+            }, 1000);
+
+            // Update debug
+            const debug = document.getElementById('debugStatus');
+            debug.textContent = '✅ Akun dipilih: ' + email;
+            debug.style.color = '#4ade80';
+        }
+
+        // ==========================================
+        // 3. CEK KONEKSI BACKEND
+        // ==========================================
+        async function checkBackend() {
+            const debug = document.getElementById('debugStatus');
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/health');
+                const data = await response.json();
+
+                if (response.ok) {
+                    debug.textContent = '✅ Backend terhubung! ' + data.message;
+                    debug.style.color = '#4ade80';
+                } else {
+                    debug.textContent = '❌ Backend error: ' + (data.message || 'Unknown');
+                    debug.style.color = '#fca5a5';
+                }
+            } catch (error) {
+                debug.textContent = '❌ Backend tidak berjalan. Jalankan: npm run dev';
+                debug.style.color = '#fca5a5';
+            }
+        }
+
+        // ==========================================
+        // 4. CEK APAKAH SUDAH LOGIN
+        // ==========================================
+        if (localStorage.getItem('accessToken')) {
+            window.location.href = 'dashboard.html';
+        }
+
+        // ==========================================
+        // 5. PROSES LOGIN
+        // ==========================================
+        document.getElementById('loginForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const btn = document.getElementById('loginBtn');
+            const errorDiv = document.getElementById('errorMessage');
+            const debug = document.getElementById('debugStatus');
+
+            btn.disabled = true;
+            btn.textContent = '⏳ Loading...';
+            errorDiv.style.display = 'none';
+            debug.textContent = '🔄 Mencoba login...';
+            debug.style.color = 'rgba(255, 255, 255, 0.4)';
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Simpan token dan user
+                    localStorage.setItem('accessToken', data.data.accessToken);
+                    localStorage.setItem('user', JSON.stringify(data.data.user));
+
+                    debug.textContent = '✅ Login berhasil! Redirect...';
+                    debug.style.color = '#4ade80';
+
+                    // Redirect ke dashboard
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 500);
+                } else {
+                    errorDiv.textContent = data.message || 'Login gagal. Periksa email dan password.';
+                    errorDiv.style.display = 'block';
+                    debug.textContent = '❌ Login gagal: ' + (data.message || 'Unknown');
+                    debug.style.color = '#fca5a5';
+                }
+            } catch (error) {
+                errorDiv.textContent = '❌ Gagal koneksi ke server. Pastikan backend berjalan.';
+                errorDiv.style.display = 'block';
+                debug.textContent = '❌ Error: ' + error.message;
+                debug.style.color = '#fca5a5';
+                console.error('Login error:', error);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🚀 Login';
+            }
+        });
+
+        // ==========================================
+        // 6. ENTER KEY
+        // ==========================================
+        document.getElementById('password').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+            }
+        });
+
+        // ==========================================
+        // 7. JALANKAN
+        // ==========================================
+        window.onload = function () {
+            checkBackend();
+            console.log('🌾 Platform Padi Desa - Login Page');
+            console.log('🔑 Gunakan akun demo untuk login');
+        };
+    </script>
+
+</body>
+
+</html>

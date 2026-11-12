@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Data Lahan - Platform Padi Desa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+
+    <!-- Theme System (Light & Dark Mode) -->
+    <link rel="stylesheet" href="../css/theme.css" />
+    <script src="../js/theme.js"></script>
+    <style>
+        /* ========================================
+           RESET & BASE
+        ======================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0f1e;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        /* ========================================
+           NAVBAR
+        ======================================== */
+        .navbar {
+            background: rgba(10, 15, 30, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-brand {
+            font-size: 22px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .navbar-brand .logo-icon {
+            font-size: 28px;
+        }
+
+        .navbar-brand .logo-text {
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .navbar-brand .logo-sub {
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 400;
+        }
+
+        .navbar-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .navbar-menu a {
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.3s;
+            padding: 6px 14px;
+            border-radius: 8px;
+        }
+
+        .navbar-menu a:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .navbar-menu a.active {
+            color: #4ade80;
+            background: rgba(34, 197, 94, 0.08);
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.08);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.1);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.15);
+        }
+
+        /* ========================================
+           MAIN CONTENT
+        ======================================== */
+        .main-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 32px 40px;
+        }
+
+        /* ========================================
+           PAGE HEADER
+        ======================================== */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .page-header .subtitle {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        /* ========================================
+           BUTTONS
+        ======================================== */
+        .btn-primary {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #fff;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3);
+        }
+
+        .btn-view {
+            background: rgba(96, 165, 250, 0.1);
+            color: #60a5fa;
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .btn-view:hover {
+            background: rgba(96, 165, 250, 0.2);
+        }
+
+        .btn-edit {
+            background: rgba(251, 191, 36, 0.1);
+            color: #fbbf24;
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .btn-edit:hover {
+            background: rgba(251, 191, 36, 0.2);
+        }
+
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-delete:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        /* ========================================
+           FARMS GRID
+        ======================================== */
+        .farms-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .farm-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 24px;
+            transition: 0.3s;
+        }
+
+        .farm-card:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.08);
+            transform: translateY(-4px);
+        }
+
+        .farm-card .farm-name {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .farm-card .farm-meta {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .farm-card .farm-stats {
+            display: flex;
+            gap: 16px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .farm-card .farm-stats span {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .farm-card .farm-stats strong {
+            color: #fff;
+        }
+
+        .farm-card .farm-actions {
+            margin-top: 14px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* ========================================
+           EMPTY STATE
+        ======================================== */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            grid-column: 1 / -1;
+        }
+
+        .empty-state .icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.2;
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .empty-state p {
+            color: rgba(255, 255, 255, 0.15);
+            margin-top: 8px;
+        }
+
+        .empty-state .btn-primary {
+            margin-top: 16px;
+            display: inline-block;
+        }
+
+        /* ========================================
+           LOADING
+        ======================================== */
+        .loading-state {
+            text-align: center;
+            padding: 60px 20px;
+            grid-column: 1 / -1;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.04);
+            border-top: 3px solid #4ade80;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-state p {
+            color: rgba(255, 255, 255, 0.3);
+            margin-top: 16px;
+        }
+
+        /* ========================================
+           MODALS (POPUP KONFIRMASI)
+        ======================================== */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .modal-backdrop.open {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-box {
+            background: #0f172a;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 22px;
+            width: 100%;
+            max-width: 440px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+            animation: scaleUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+
+        @keyframes scaleUp {
+            from {
+                transform: scale(0.92);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            background: #0f172a;
+            z-index: 10;
+        }
+
+        .modal-header h3 {
+            font-size: 18px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-close {
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            color: rgba(255, 255, 255, 0.5);
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+
+        .modal-body {
+            padding: 28px 24px;
+            text-align: center;
+        }
+
+        .delete-icon-circle {
+            width: 64px;
+            height: 64px;
+            background: rgba(239, 68, 68, 0.12);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            margin: 0 auto 16px;
+        }
+
+        .delete-target-badge {
+            font-size: 13px;
+            color: #fca5a5;
+            background: rgba(239, 68, 68, 0.08);
+            border: 1px dashed rgba(239, 68, 68, 0.25);
+            padding: 8px 14px;
+            border-radius: 8px;
+            display: inline-block;
+            margin-top: 12px;
+            word-break: break-word;
+        }
+
+        .modal-footer {
+            padding: 18px 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 0 0 22px 22px;
+        }
+
+        .btn-modal-cancel {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 11px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-modal-cancel:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .btn-modal-delete {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: #fff;
+            border: none;
+            padding: 11px 26px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-modal-delete:hover {
+            background: linear-gradient(135deg, #f87171, #ef4444);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.45);
+        }
+
+        .btn-modal-delete:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ========================================
+           TOAST NOTIFICATION
+        ======================================== */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #111827;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 14px 22px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            font-size: 14px;
+            color: #fff;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            border-left: 4px solid #22c55e;
+        }
+
+        .toast.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .toast.info {
+            border-left: 4px solid #3b82f6;
+        }
+
+        /* ========================================
+           RESPONSIVE
+        ======================================== */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 14px 20px;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .navbar-menu {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .main-content {
+                padding: 20px 16px;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .page-header h1 {
+                font-size: 22px;
+            }
+
+            .farms-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .farm-card .farm-actions {
+                flex-direction: column;
+            }
+
+            .farm-card .farm-actions a,
+            .farm-card .farm-actions button {
+                text-align: center;
+            }
+        }
+    </style>
+    <!-- Theme System CSS -->
+    <link rel="stylesheet" href="../css/theme.css" />
+</head>
+
+<body>
+
+    <!-- ========================================
+    NAVBAR
+    ======================================== -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <span class="logo-icon">🌾</span>
+            <span>
+                <span class="logo-text">Platform Padi</span>
+                <span class="logo-sub">Desa</span>
+            </span>
+        </div>
+        <div class="navbar-menu">
+            <a href="dashboard.html">📊 Dashboard</a>
+            <a href="farms.html" class="active">🌾 Lahan</a>
+            <a href="users.html">👥 Pengguna</a>
+            <a href="ai-assistant.html">🤖 AI Assistant</a>
+            <button id="themeToggleBtn" type="button" class="theme-toggle-btn" onclick="toggleTheme()" title="Beralih Mode Terang / Gelap">
+                <span class="theme-toggle-icon">☀️</span>
+                <span class="theme-toggle-text">Terang</span>
+            </button>
+            <a href="#" onclick="handleLogout()" class="logout-btn">🚪 Logout</a>
+        </div>
+    </nav>
+
+    <!-- ========================================
+    MAIN CONTENT
+    ======================================== -->
+    <div class="main-content">
+        <div class="page-header">
+            <div>
+                <h1>🌾 Data Lahan</h1>
+                <div class="subtitle">Kelola semua lahan pertanian &bull; Hak tambah lahan oleh <strong>Admin & Kepala Desa</strong></div>
+            </div>
+            <div id="farmHeaderActions">
+                <a href="farm-create.html" id="btnAddFarm" class="btn-primary">+ Tambah Lahan</a>
+                <span id="petaniFarmBadge" style="display:none; font-size:12px; color:rgba(255,255,255,0.45); background:rgba(255,255,255,0.04); padding:10px 16px; border-radius:12px; border:1px solid rgba(255,255,255,0.06);">
+                    🔒 Penambahan Lahan Dikelola Admin & Kepala Desa
+                </span>
+            </div>
+        </div>
+
+        <div class="farms-grid" id="farmsGrid">
+            <div class="loading-state">
+                <div class="spinner"></div>
+                <p>Memuat data lahan...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================
+         MODAL KONFIRMASI HAPUS
+    ======================================== -->
+    <div class="modal-backdrop" id="deleteModal" onclick="handleBackdropClick(event)">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 style="color:#f87171;">⚠️ Konfirmasi Hapus</h3>
+                <button type="button" class="modal-close" onclick="closeDeleteModal()" title="Tutup">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="delete-icon-circle">🗑️</div>
+                <h4 style="font-size: 18px; font-weight: 700; margin-bottom: 8px; color: #fff;">Apakah Anda yakin ingin menghapus?</h4>
+                <p style="color: rgba(255, 255, 255, 0.55); font-size: 13.5px; line-height: 1.6; margin-bottom: 4px;">
+                    Lahan ini akan dihapus secara permanen beserta data tanaman terkait. Tindakan ini tidak dapat dibatalkan.
+                </p>
+                <div class="delete-target-badge">
+                    🌾 <strong id="deleteFarmNameHighlight" style="color: #fff;">-</strong>
+                </div>
+                <input type="hidden" id="deleteFarmId" />
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modal-cancel" onclick="closeDeleteModal()">Batal</button>
+                <button type="button" class="btn-modal-delete" id="btnConfirmDelete" onclick="executeDeleteFarm()">Hapus</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================
+         TOAST NOTIFICATION
+    ======================================== -->
+    <div class="toast" id="toast">
+        <span class="toast-icon" id="toastIcon">✅</span>
+        <span class="toast-msg" id="toastMsg">Notifikasi</span>
+    </div>
+
+    <!-- ========================================
+    JAVASCRIPT
+    ======================================== -->
+    <script>
+        // ==========================================
+        // 1. CEK LOGIN
+        // ==========================================
+        const token = localStorage.getItem('accessToken');
+        const user = JSON.parse(localStorage.getItem('user') || 'null');
+
+        if (!token || !user) {
+            window.location.href = 'login.html';
+        }
+
+        const canManageFarms = user && (user.role === 'ADMIN' || user.role === 'KEPALA_DESA');
+
+        // Tampilkan/sembunyikan tombol tambah lahan berdasarkan hak akses
+        const btnAddFarm = document.getElementById('btnAddFarm');
+        const petaniFarmBadge = document.getElementById('petaniFarmBadge');
+        if (canManageFarms) {
+            btnAddFarm.style.display = 'inline-block';
+            petaniFarmBadge.style.display = 'none';
+        } else {
+            btnAddFarm.style.display = 'none';
+            petaniFarmBadge.style.display = 'inline-block';
+        }
+
+        // ==========================================
+        // 2. LOGOUT
+        // ==========================================
+        function handleLogout() {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+
+        // Helper: Escape HTML
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text
+                .toString()
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
+
+        // ==========================================
+        // 3. AMBIL DATA LAHAN
+        // ==========================================
+        async function fetchFarms() {
+            const grid = document.getElementById('farmsGrid');
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/farms', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success && data.data.length > 0) {
+                    grid.innerHTML = data.data.map(farm => `
+                        <div class="farm-card">
+                            <div class="farm-name">${escapeHtml(farm.name)}</div>
+                            <div class="farm-meta">📍 ${escapeHtml(farm.location || 'Lokasi tidak diatur')} • ${escapeHtml(farm.desa || 'Desa tidak diatur')}</div>
+                            <div style="font-size:12px; color:#86efac; margin-bottom:10px; font-weight:600; display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                                <span>👤 Pemilik:</span>
+                                <span style="color:#fff;">${escapeHtml(farm.user?.name || 'Petani Belum Diatur')}</span>
+                                ${farm.user?.email ? `<span style="color:rgba(255,255,255,0.35); font-weight:normal; font-size:11px;">(${escapeHtml(farm.user.email)})</span>` : ''}
+                            </div>
+                            <div class="farm-stats">
+                                <span>📐 <strong>${farm.luas}</strong> Ha</span>
+                                <span>🌱 <strong>${farm.crops?.length || 0}</strong> tanaman</span>
+                            </div>
+                            <div class="farm-actions">
+                                <a href="farm-detail.html?id=${farm.id}" class="btn-view">👁️ Detail</a>
+                                ${canManageFarms ? `
+                                    <a href="farm-edit.html?id=${farm.id}" class="btn-edit">✏️ Edit</a>
+                                    <button onclick="openDeleteModal('${farm.id}', '${escapeHtml(farm.name)}')" class="btn-delete">🗑️ Hapus</button>
+                                ` : `
+                                    <span style="font-size:11px; color:rgba(255,255,255,0.3); padding:6px 10px;">🔒 Hanya Baca</span>
+                                `}
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    grid.innerHTML = `
+                        <div class="empty-state">
+                            <div class="icon">🌾</div>
+                            <h3>Belum ada lahan terdaftar</h3>
+                            <p>${canManageFarms ? 'Tambahkan lahan pertanian sekarang' : 'Belum ada data lahan yang terdaftar untuk akun Anda'}</p>
+                            ${canManageFarms ? `
+                                <a href="farm-create.html" class="btn-primary" style="margin-top:16px;">+ Tambah Lahan</a>
+                            ` : `
+                                <p style="color:rgba(255,255,255,0.35); font-size:12px; margin-top:8px;">
+                                    💡 Penambahan lahan dilakukan oleh Administrator atau Kepala Desa binaan Anda.
+                                </p>
+                            `}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">⚠️</div>
+                        <h3>Gagal memuat data</h3>
+                        <p>Pastikan backend berjalan di http://127.0.0.1:5000</p>
+                        <button onclick="fetchFarms()" style="margin-top:16px; padding:8px 24px; background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.08); border-radius:8px; color:#4ade80; cursor:pointer;">🔄 Coba Lagi</button>
+                    </div>
+                `;
+            }
+        }
+
+        // ==========================================
+        // 4. HAPUS LAHAN (MODAL KONFIRMASI)
+        // ==========================================
+        function openDeleteModal(id, name) {
+            document.getElementById('deleteFarmId').value = id;
+            document.getElementById('deleteFarmNameHighlight').textContent = name || 'Lahan Pertanian';
+            document.getElementById('deleteModal').classList.add('open');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('open');
+        }
+
+        function handleBackdropClick(event) {
+            if (event.target.id === 'deleteModal') {
+                closeDeleteModal();
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeDeleteModal();
+            }
+        });
+
+        // Alias agar pemanggilan fungsi lama tetap bekerja dengan modal
+        function deleteFarm(id, name) {
+            openDeleteModal(id, name);
+        }
+
+        async function executeDeleteFarm() {
+            const id = document.getElementById('deleteFarmId').value;
+            if (!id) return;
+
+            const btnConfirm = document.getElementById('btnConfirmDelete');
+            const originalContent = btnConfirm.innerHTML;
+            btnConfirm.disabled = true;
+            btnConfirm.innerHTML = '⏳ Menghapus...';
+
+            try {
+                const response = await fetch(`http://127.0.0.1:5000/api/farms/${id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    closeDeleteModal();
+                    showToast('✅ Lahan berhasil dihapus!', 'success');
+                    fetchFarms();
+                } else {
+                    showToast('❌ ' + (data.message || 'Gagal menghapus lahan'), 'error');
+                }
+            } catch (error) {
+                console.error('Error delete farm:', error);
+                showToast('❌ Gagal menghapus lahan, periksa server backend', 'error');
+            } finally {
+                btnConfirm.disabled = false;
+                btnConfirm.innerHTML = originalContent;
+            }
+        }
+
+        // ==========================================
+        // TOAST NOTIFIKASI
+        // ==========================================
+        let toastTimeout;
+        function showToast(msg, type = 'info') {
+            const toast = document.getElementById('toast');
+            const msgEl = document.getElementById('toastMsg');
+            const iconEl = document.getElementById('toastIcon');
+
+            clearTimeout(toastTimeout);
+
+            toast.className = `toast ${type}`;
+            msgEl.textContent = msg;
+
+            if (type === 'success') iconEl.textContent = '✅';
+            else if (type === 'error') iconEl.textContent = '❌';
+            else iconEl.textContent = 'ℹ️';
+
+            toast.classList.add('show');
+
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3500);
+        }
+
+        // ==========================================
+        // 5. JALANKAN
+        // ==========================================
+        fetchFarms();
+        console.log('🌾 Halaman Data Lahan');
+    </script>
+
+</body>
+
+</html>

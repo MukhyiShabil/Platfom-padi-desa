@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Assistant - Platform Padi Desa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+
+    <!-- Theme System (Light & Dark Mode) -->
+    <link rel="stylesheet" href="../css/theme.css" />
+    <script src="../js/theme.js"></script>
+    <style>
+        /* ========================================
+           RESET & BASE
+        ======================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0f1e;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        /* ========================================
+           NAVBAR
+        ======================================== */
+        .navbar {
+            background: rgba(10, 15, 30, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-brand {
+            font-size: 22px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .navbar-brand .logo-icon {
+            font-size: 28px;
+        }
+
+        .navbar-brand .logo-text {
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .navbar-brand .logo-sub {
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 400;
+        }
+
+        .navbar-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .navbar-menu a {
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.3s;
+            padding: 6px 14px;
+            border-radius: 8px;
+        }
+
+        .navbar-menu a:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .navbar-menu a.active {
+            color: #4ade80;
+            background: rgba(34, 197, 94, 0.08);
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.08);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.1);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            border: none;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.15);
+        }
+
+        /* ========================================
+           MAIN CONTENT
+        ======================================== */
+        .main-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 32px 20px;
+        }
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .page-header .subtitle {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        /* ========================================
+           CHAT CONTAINER
+        ======================================== */
+        .chat-container {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 24px;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ========================================
+           MODEL SELECTION BAR
+        ======================================== */
+        .model-selection-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 14px 18px;
+            background: rgba(34, 197, 94, 0.04);
+            border: 1px solid rgba(34, 197, 94, 0.12);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+
+        .model-selection-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .model-icon {
+            font-size: 26px;
+            background: rgba(34, 197, 94, 0.1);
+            padding: 8px;
+            border-radius: 10px;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .model-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .model-desc {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.45);
+            margin-top: 2px;
+        }
+
+        .model-dropdown-wrap {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .model-select-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .ai-model-select {
+            background: rgba(15, 23, 42, 0.9);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.25);
+            border-radius: 8px;
+            padding: 8px 14px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .ai-model-select:hover,
+        .ai-model-select:focus {
+            border-color: #4ade80;
+            background: rgba(20, 32, 60, 0.95);
+        }
+
+        .ai-model-select option {
+            background: #0f172a;
+            color: #ffffff;
+            padding: 8px;
+        }
+
+        .model-pills {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin-bottom: 14px;
+        }
+
+        .model-pills::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .model-pills::-webkit-scrollbar-thumb {
+            background: rgba(34, 197, 94, 0.3);
+            border-radius: 10px;
+        }
+
+        .model-pill {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            color: rgba(255, 255, 255, 0.6);
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .model-pill:hover {
+            border-color: rgba(34, 197, 94, 0.3);
+            color: #fff;
+            background: rgba(34, 197, 94, 0.06);
+        }
+
+        .model-pill.active {
+            background: rgba(34, 197, 94, 0.15);
+            border-color: rgba(34, 197, 94, 0.4);
+            color: #4ade80;
+            box-shadow: 0 0 12px rgba(34, 197, 94, 0.1);
+        }
+
+        .ai-model-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 50px;
+            background: rgba(74, 222, 128, 0.12);
+            color: #4ade80;
+            border: 1px solid rgba(74, 222, 128, 0.2);
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+
+        /* ========================================
+           CHAT MESSAGES
+        ======================================== */
+        .chat-messages {
+            flex: 1;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            padding-right: 8px;
+        }
+
+        .chat-messages::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .chat-messages::-webkit-scrollbar-thumb {
+            background: rgba(34, 197, 94, 0.3);
+            border-radius: 10px;
+        }
+
+        .message {
+            margin-bottom: 16px;
+            padding: 14px 18px;
+            border-radius: 12px;
+            max-width: 85%;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.user {
+            background: rgba(34, 197, 94, 0.08);
+            border: 1px solid rgba(34, 197, 94, 0.1);
+            margin-left: auto;
+            color: #fff;
+        }
+
+        .message.ai {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            margin-right: auto;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .message .sender {
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.3);
+            margin-bottom: 4px;
+        }
+
+        .message.user .sender {
+            color: #4ade80;
+        }
+
+        .message .text {
+            font-size: 14px;
+            line-height: 1.7;
+            white-space: pre-wrap;
+        }
+
+        .message img.msg-img {
+            max-width: 100%;
+            max-height: 260px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            display: block;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .image-preview-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            background: rgba(34, 197, 94, 0.06);
+            border: 1px solid rgba(34, 197, 94, 0.15);
+            border-radius: 12px;
+            margin-bottom: 8px;
+        }
+
+        .preview-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .preview-container img {
+            width: 48px;
+            height: 48px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            display: block;
+        }
+
+        .preview-remove {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #ef4444;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+
+        .preview-label {
+            font-size: 12px;
+            color: #4ade80;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 260px;
+            font-weight: 500;
+        }
+
+        .btn-photo {
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            color: #4ade80;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .btn-photo:hover {
+            background: rgba(34, 197, 94, 0.12);
+            border-color: rgba(34, 197, 94, 0.25);
+            transform: translateY(-2px);
+        }
+
+        .message .time {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.15);
+            margin-top: 6px;
+            text-align: right;
+        }
+
+        /* ========================================
+           TYPING INDICATOR
+        ======================================== */
+        .typing-indicator {
+            display: none;
+            padding: 12px 18px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 14px;
+        }
+
+        .typing-indicator .dots {
+            display: inline-block;
+            animation: typing 1.4s infinite;
+        }
+
+        @keyframes typing {
+            0% {
+                opacity: 0.2;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.2;
+            }
+        }
+
+        /* ========================================
+           CHAT INPUT
+        ======================================== */
+        .chat-input {
+            display: flex;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 14px 18px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            transition: 0.3s;
+        }
+
+        .chat-input input:focus {
+            outline: none;
+            border-color: #22c55e;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .chat-input input::placeholder {
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        .chat-input button {
+            padding: 14px 28px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s;
+            white-space: nowrap;
+        }
+
+        .chat-input button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3);
+        }
+
+        .chat-input button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* ========================================
+           QUICK QUESTIONS
+        ======================================== */
+        .quick-questions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+
+        .quick-questions button {
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 50px;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .quick-questions button:hover {
+            background: rgba(34, 197, 94, 0.08);
+            border-color: rgba(34, 197, 94, 0.1);
+            color: #4ade80;
+        }
+
+        /* ========================================
+           EMPTY STATE
+        ======================================== */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .empty-state .icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.2;
+        }
+
+        .empty-state h3 {
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 600;
+        }
+
+        .empty-state p {
+            color: rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        /* ========================================
+           RESPONSIVE
+        ======================================== */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 14px 20px;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .navbar-menu {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .main-content {
+                padding: 20px 16px;
+            }
+
+            .page-header h1 {
+                font-size: 22px;
+            }
+
+            .chat-container {
+                padding: 16px;
+            }
+
+            .message {
+                max-width: 95%;
+            }
+
+            .chat-input {
+                flex-direction: column;
+            }
+
+            .chat-input button {
+                width: 100%;
+            }
+
+            .quick-questions {
+                justify-content: center;
+            }
+        }
+    </style>
+    <!-- Theme System CSS -->
+    <link rel="stylesheet" href="../css/theme.css" />
+</head>
+
+<body>
+
+    <!-- ========================================
+    NAVBAR
+    ======================================== -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <span class="logo-icon">🌾</span>
+            <span>
+                <span class="logo-text">Platform Padi</span>
+                <span class="logo-sub">Desa</span>
+            </span>
+        </div>
+        <div class="navbar-menu">
+            <a href="dashboard.html">📊 Dashboard</a>
+            <a href="farms.html">🌾 Lahan</a>
+            <a href="users.html">👥 Pengguna</a>
+            <a href="ai-assistant.html" class="active">🤖 AI Assistant</a>
+            <button id="themeToggleBtn" type="button" class="theme-toggle-btn" onclick="toggleTheme()" title="Beralih Mode Terang / Gelap">
+                <span class="theme-toggle-icon">☀️</span>
+                <span class="theme-toggle-text">Terang</span>
+            </button>
+            <button class="logout-btn" onclick="handleLogout()">🚪 Logout</button>
+        </div>
+    </nav>
+
+    <!-- ========================================
+    MAIN CONTENT
+    ======================================== -->
+    <div class="main-content">
+        <div class="page-header">
+            <h1>🤖 AI Assistant</h1>
+            <div class="subtitle">Tanya jawab tentang pertanian padi</div>
+        </div>
+
+        <div class="chat-container">
+            <!-- Model Selection Bar -->
+            <div class="model-selection-bar">
+                <div class="model-selection-info">
+                    <span class="model-icon" id="activeModelIcon">🦙</span>
+                    <div>
+                        <div class="model-title" id="activeModelTitle">Llama 3.3 70B Versatile</div>
+                        <div class="model-desc" id="activeModelDesc">Meta (via Groq) &bull; Model cerdas &amp; penalaran mendalam</div>
+                    </div>
+                </div>
+                <div class="model-dropdown-wrap">
+                    <label for="aiModelSelect" class="model-select-label">Versi AI:</label>
+                    <select id="aiModelSelect" class="ai-model-select" onchange="changeAIModel(this.value)">
+                        <option value="llama-3.3-70b" selected>🦙 Llama 3.3 70B (Meta · Rekomendasi)</option>
+                        <option value="gemini-1.5-flash">✨ Gemini 1.5 Flash (Google · Cepat)</option>
+                        <option value="gemini-2.0-flash">🚀 Gemini 2.0 Flash (Google · Next-Gen)</option>
+                        <option value="gemini-1.5-pro">⭐ Gemini 1.5 Pro (Google · Cerdas)</option>
+                        <option value="llama-3.1-8b">⚡ Llama 3.1 8B Instant (Meta · Kilat)</option>
+                        <option value="gemma-2-9b">💎 Gemma 2 9B (Google · Ringan)</option>
+                        <option value="mixtral-8x7b">🌪️ Mixtral 8x7B (Mistral · Stabil)</option>
+                        <option value="gpt-oss-120b">🧠 GPT OSS 120B (Open Source)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Quick Model Switch Pills -->
+            <div class="model-pills">
+                <button type="button" class="model-pill active" data-model="llama-3.3-70b" onclick="selectModelPill('llama-3.3-70b')">🦙 Llama 3.3 70B</button>
+                <button type="button" class="model-pill" data-model="gemini-1.5-flash" onclick="selectModelPill('gemini-1.5-flash')">✨ Gemini 1.5 Flash</button>
+                <button type="button" class="model-pill" data-model="gemini-2.0-flash" onclick="selectModelPill('gemini-2.0-flash')">🚀 Gemini 2.0 Flash</button>
+                <button type="button" class="model-pill" data-model="gemini-1.5-pro" onclick="selectModelPill('gemini-1.5-pro')">⭐ Gemini 1.5 Pro</button>
+                <button type="button" class="model-pill" data-model="llama-3.1-8b" onclick="selectModelPill('llama-3.1-8b')">⚡ Llama 3.1 8B</button>
+                <button type="button" class="model-pill" data-model="gemma-2-9b" onclick="selectModelPill('gemma-2-9b')">💎 Gemma 2 9B</button>
+                <button type="button" class="model-pill" data-model="mixtral-8x7b" onclick="selectModelPill('mixtral-8x7b')">🌪️ Mixtral 8x7B</button>
+                <button type="button" class="model-pill" data-model="gpt-oss-120b" onclick="selectModelPill('gpt-oss-120b')">🧠 GPT OSS 120B</button>
+            </div>
+
+            <!-- Chat Messages -->
+            <div class="chat-messages" id="chatMessages">
+                <div class="empty-state" id="emptyState">
+                    <div class="icon">🌾</div>
+                    <h3>Mulai Bertanya</h3>
+                    <p>Tanyakan tentang pertanian padi, hama, pupuk, atau panen</p>
+                </div>
+            </div>
+
+            <!-- Typing Indicator -->
+            <div class="typing-indicator" id="typingIndicator">
+                <span class="dots">...</span> AI sedang mengetik...
+            </div>
+
+            <!-- Quick Questions -->
+            <div class="quick-questions">
+                <button onclick="sendQuickQuestion('Siapa saya?')">❓ Siapa Saya?</button>
+                <button onclick="sendQuickQuestion('Ada berapa jumlah pengguna di platform ini?')">👥 Jumlah Pengguna</button>
+                <button onclick="sendQuickQuestion('Cara mengatasi hama wereng?')">🐛 Hama Wereng</button>
+                <button onclick="sendQuickQuestion('Pupuk apa yang bagus untuk padi?')">🌱 Pupuk</button>
+                <button onclick="sendQuickQuestion('Kapan waktu panen padi?')">🌾 Panen</button>
+                <button onclick="sendQuickQuestion('Penyakit blas pada padi?')">🦠 Penyakit</button>
+                <button onclick="document.getElementById('photoInput').click()">📷 Analisis Foto Tanaman</button>
+            </div>
+
+            <!-- Image Preview Bar (hidden by default) -->
+            <div id="imagePreviewBar" class="image-preview-bar" style="display:none;">
+                <div class="preview-container">
+                    <img id="imagePreview" src="" alt="Preview Foto" />
+                    <button type="button" class="preview-remove" onclick="removeSelectedImage()" title="Hapus foto">✕</button>
+                </div>
+                <span class="preview-label" id="imageName">foto.jpg</span>
+            </div>
+
+            <!-- Chat Input -->
+            <div class="chat-input">
+                <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="handleImageSelected(event)" />
+                <button type="button" class="btn-photo" onclick="document.getElementById('photoInput').click()" title="Unggah Foto Tanaman">📷 Foto</button>
+                <input type="text" id="questionInput" placeholder="Tanyakan sesuatu atau unggah foto tanaman..." />
+                <button id="sendBtn" onclick="sendMessage()">📤 Kirim</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================
+    JAVASCRIPT
+    ======================================== -->
+    <script>
+        // ==========================================
+        // 1. CEK LOGIN & SESI
+        // ==========================================
+        let token = localStorage.getItem('accessToken');
+        let user = JSON.parse(localStorage.getItem('user') || 'null');
+
+        if (!token || !user) {
+            window.location.href = 'login.html';
+        }
+
+        async function refreshSessionIfNeeded() {
+            try {
+                const currentToken = localStorage.getItem('accessToken');
+                const currentUser = JSON.parse(localStorage.getItem('user') || 'null');
+                const res = await fetch('http://127.0.0.1:5000/api/auth/refresh', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': currentToken ? `Bearer ${currentToken}` : ''
+                    },
+                    body: JSON.stringify({ email: currentUser?.email, token: currentToken })
+                });
+                const resData = await res.json();
+                if (resData.success && resData.data?.accessToken) {
+                    localStorage.setItem('accessToken', resData.data.accessToken);
+                    token = resData.data.accessToken;
+                    if (resData.data.user) {
+                        localStorage.setItem('user', JSON.stringify(resData.data.user));
+                        user = resData.data.user;
+                    }
+                    console.log('✅ Sesi token berhasil diperbarui otomatis');
+                    return resData.data.accessToken;
+                }
+            } catch (err) {
+                console.warn('Refresh session note:', err);
+            }
+            return null;
+        }
+
+        refreshSessionIfNeeded();
+
+        // Selalu sinkronkan profil user teranyar dari server
+        async function syncCurrentUserProfile() {
+            try {
+                if (!token) return;
+                const res = await fetch('http://127.0.0.1:5000/api/auth/me', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const resData = await res.json();
+                if (resData.success && resData.data) {
+                    user = { ...user, ...resData.data };
+                    localStorage.setItem('user', JSON.stringify(user));
+                }
+            } catch (err) {
+                console.warn('Sync profile note:', err);
+            }
+        }
+        syncCurrentUserProfile();
+
+        async function handleReLogin() {
+            const refreshed = await refreshSessionIfNeeded();
+            if (refreshed) {
+                alert('Sesi berhasil diperbarui! Silakan kirim pertanyaan Anda kembali.');
+            } else {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // ==========================================
+        // 2. LOGOUT
+        // ==========================================
+        function handleLogout() {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+
+        // ==========================================
+        // 3. AMBIL ELEMENT & MODEL AI
+        // ==========================================
+        const chatMessages = document.getElementById('chatMessages');
+        const questionInput = document.getElementById('questionInput');
+        const sendBtn = document.getElementById('sendBtn');
+        const typingIndicator = document.getElementById('typingIndicator');
+        const emptyState = document.getElementById('emptyState');
+
+        const MODEL_METADATA = {
+            'llama-3.3-70b': {
+                name: 'Llama 3.3 70B Versatile',
+                provider: 'Meta (via Groq)',
+                desc: 'Model cerdas &amp; penalaran mendalam untuk analisis pertanian',
+                icon: '🦙'
+            },
+            'gemini-1.5-flash': {
+                name: 'Gemini 1.5 Flash',
+                provider: 'Google DeepMind',
+                desc: 'AI generasi terbaru dari Google, cepat dan responsif',
+                icon: '✨'
+            },
+            'gemini-2.0-flash': {
+                name: 'Gemini 2.0 Flash',
+                provider: 'Google DeepMind',
+                desc: 'Model generasi berikutnya dari Google berkecepatan tinggi',
+                icon: '🚀'
+            },
+            'gemini-1.5-pro': {
+                name: 'Gemini 1.5 Pro',
+                provider: 'Google DeepMind',
+                desc: 'Penalaran tingkat tinggi dan pemahaman konteks mendalam',
+                icon: '⭐'
+            },
+            'llama-3.1-8b': {
+                name: 'Llama 3.1 8B Instant',
+                provider: 'Meta (via Groq)',
+                desc: 'Model ultra cepat dan efisien',
+                icon: '⚡'
+            },
+            'gemma-2-9b': {
+                name: 'Gemma 2 9B',
+                provider: 'Google (via Groq)',
+                desc: 'Model terbuka Google yang tangkas dan presisi',
+                icon: '💎'
+            },
+            'mixtral-8x7b': {
+                name: 'Mixtral 8x7B',
+                provider: 'Mistral AI (via Groq)',
+                desc: 'Arsitektur MoE handal untuk beragam solusi pertanian',
+                icon: '🌪️'
+            },
+            'gpt-oss-120b': {
+                name: 'GPT OSS 120B',
+                provider: 'Open Source (via Groq)',
+                desc: 'Model berkapasitas besar untuk penalaran komprehensif',
+                icon: '🧠'
+            }
+        };
+
+        let currentAIModel = localStorage.getItem('selectedAiModel') || 'llama-3.3-70b';
+
+        function initAIModel() {
+            const select = document.getElementById('aiModelSelect');
+            if (select) {
+                select.value = currentAIModel;
+            }
+            updateModelUI(currentAIModel);
+        }
+
+        function changeAIModel(modelId) {
+            currentAIModel = modelId;
+            localStorage.setItem('selectedAiModel', modelId);
+            updateModelUI(modelId);
+        }
+
+        function selectModelPill(modelId) {
+            const select = document.getElementById('aiModelSelect');
+            if (select) select.value = modelId;
+            changeAIModel(modelId);
+        }
+
+        function updateModelUI(modelId) {
+            const meta = MODEL_METADATA[modelId] || MODEL_METADATA['llama-3.3-70b'];
+            const iconElem = document.getElementById('activeModelIcon');
+            const titleElem = document.getElementById('activeModelTitle');
+            const descElem = document.getElementById('activeModelDesc');
+
+            if (iconElem) iconElem.textContent = meta.icon;
+            if (titleElem) titleElem.textContent = meta.name;
+            if (descElem) descElem.innerHTML = `${meta.provider} &bull; ${meta.desc}`;
+
+            document.querySelectorAll('.model-pill').forEach(btn => {
+                if (btn.getAttribute('data-model') === modelId) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        // ==========================================
+        // 4. KIRIM PESAN & ANALISIS GAMBAR
+        // ==========================================
+        let selectedImageFile = null;
+
+        function handleImageSelected(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                alert('Silakan pilih file gambar (JPG, PNG, WebP)');
+                event.target.value = '';
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Ukuran gambar maksimal 5 MB');
+                event.target.value = '';
+                return;
+            }
+
+            selectedImageFile = file;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById('imagePreview').src = e.target.result;
+                document.getElementById('imageName').textContent = file.name;
+                document.getElementById('imagePreviewBar').style.display = 'flex';
+                questionInput.placeholder = 'Tanyakan tentang foto ini (opsional)...';
+                questionInput.focus();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeSelectedImage() {
+            selectedImageFile = null;
+            const photoInput = document.getElementById('photoInput');
+            if (photoInput) photoInput.value = '';
+            const previewBar = document.getElementById('imagePreviewBar');
+            if (previewBar) previewBar.style.display = 'none';
+            const imgPreview = document.getElementById('imagePreview');
+            if (imgPreview) imgPreview.src = '';
+            questionInput.placeholder = 'Tanyakan sesuatu atau unggah foto tanaman...';
+        }
+
+        async function sendMessage() {
+            const question = questionInput.value.trim();
+            const photoFile = selectedImageFile;
+
+            if (!question && !photoFile) return;
+
+            let photoDataUrl = null;
+            if (photoFile) {
+                const imgElem = document.getElementById('imagePreview');
+                photoDataUrl = imgElem ? imgElem.src : null;
+            }
+
+            // Tambahkan pesan user dengan gambar jika ada
+            addMessage('user', question || (photoFile ? '📷 Analisis foto tanaman ini' : ''), photoDataUrl);
+
+            questionInput.value = '';
+            sendBtn.disabled = true;
+            removeSelectedImage();
+
+            // Tampilkan typing indicator
+            typingIndicator.style.display = 'block';
+            typingIndicator.innerHTML = photoFile
+                ? '<span class="dots">...</span> 🌾 AI sedang menganalisis foto tanaman...'
+                : '<span class="dots">...</span> AI sedang mengetik...';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            try {
+                let response;
+
+                if (photoFile) {
+                    const formData = new FormData();
+                    formData.append('image', photoFile);
+                    if (question) {
+                        formData.append('question', question);
+                    }
+                    formData.append('model', currentAIModel);
+
+                    response = await fetch('http://127.0.0.1:5000/api/ai/analyze', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: formData
+                    });
+                } else {
+                    response = await fetch('http://127.0.0.1:5000/api/ai/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ question, model: currentAIModel })
+                    });
+                }
+
+                // Simpan token baru jika server mengirimkan pembaruan otomatis
+                const newToken = response.headers.get('x-new-token');
+                if (newToken) {
+                    localStorage.setItem('accessToken', newToken);
+                    token = newToken;
+                    syncCurrentUserProfile();
+                }
+
+                let data = await response.json();
+
+                // Jika server merespon 401 atau token kedaluwarsa, coba refresh otomatis dan retry sekali
+                if (response.status === 401 || (data.message && data.message.toLowerCase().includes('token'))) {
+                    console.log('🔄 Token expired terdeteksi, memperbarui token secara otomatis...');
+                    const refreshedToken = await refreshSessionIfNeeded();
+                    if (refreshedToken) {
+                        token = refreshedToken;
+                        if (photoFile) {
+                            const retryFormData = new FormData();
+                            retryFormData.append('image', photoFile);
+                            if (question) retryFormData.append('question', question);
+                            retryFormData.append('model', currentAIModel);
+                            response = await fetch('http://127.0.0.1:5000/api/ai/analyze', {
+                                method: 'POST',
+                                headers: { 'Authorization': `Bearer ${token}` },
+                                body: retryFormData
+                            });
+                        } else {
+                            response = await fetch('http://127.0.0.1:5000/api/ai/chat', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${token}`
+                                },
+                                body: JSON.stringify({ question, model: currentAIModel })
+                            });
+                        }
+                        const retryNewToken = response.headers.get('x-new-token');
+                        if (retryNewToken) {
+                            localStorage.setItem('accessToken', retryNewToken);
+                            token = retryNewToken;
+                            syncCurrentUserProfile();
+                        }
+                        data = await response.json();
+                    }
+                }
+
+                typingIndicator.style.display = 'none';
+
+                if (data.success) {
+                    const badge = (data.data.icon ? data.data.icon + ' ' : '') + (data.data.modelName || currentAIModel);
+                    addMessage('ai', data.data.answer, null, badge);
+                    if (data.data.isDummy) {
+                        addMessage('ai', '💡 Jawaban ini adalah respon otomatis.');
+                    }
+                } else {
+                    const errMsg = data.message || 'Terjadi kesalahan. Silakan coba lagi.';
+                    if (errMsg.toLowerCase().includes('token') || errMsg.toLowerCase().includes('login')) {
+                        addMessage('ai', '⚠️ Sesi Anda telah berakhir. <button onclick="handleReLogin()" style="background:#22c55e;color:#fff;border:none;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin-left:6px;">Perbarui Sekarang</button>');
+                    } else {
+                        addMessage('ai', '❌ ' + errMsg);
+                    }
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                typingIndicator.style.display = 'none';
+                addMessage('ai', '❌ Gagal terhubung ke server. Pastikan backend berjalan.');
+            }
+
+            sendBtn.disabled = false;
+            questionInput.focus();
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function cleanAIText(text) {
+            if (!text) return '';
+            let cleaned = text;
+            cleaned = cleaned.replace(/<br\s*\/?>/gi, '\n');
+            cleaned = cleaned.replace(/^[\s]*[-*_]{3,}[\s]*$/gm, '');
+            cleaned = cleaned.replace(/\*/g, '');
+            cleaned = cleaned.replace(/^[\s]*\|.*\|[\s]*$/gm, function (line) {
+                if (line.includes('---')) return '';
+                return line.replace(/\|/g, ' ').trim();
+            });
+            cleaned = cleaned.replace(/\|/g, '');
+            cleaned = cleaned.replace(/^[\s]*#+\s*/gm, '');
+            cleaned = cleaned.replace(/\n{3,}/g, '\n\n');
+            return cleaned.trim();
+        }
+
+        // ==========================================
+        // 5. TAMBAHKAN PESAN KE CHAT
+        // ==========================================
+        function addMessage(type, text, imageUrl = null, modelInfo = null) {
+            // Hapus empty state
+            const emptyEl = document.getElementById('emptyState');
+            if (emptyEl) emptyEl.remove();
+
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${type}`;
+
+            const sender = document.createElement('div');
+            sender.className = 'sender';
+            if (type === 'user') {
+                sender.textContent = '👤 Anda';
+            } else {
+                const badgeHtml = modelInfo ? `<span class="ai-model-badge">${modelInfo}</span>` : '';
+                sender.innerHTML = `🤖 AI Assistant ${badgeHtml}`;
+            }
+            messageDiv.appendChild(sender);
+
+            if (imageUrl) {
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.className = 'msg-img';
+                img.alt = 'Foto Unggahan';
+                messageDiv.appendChild(img);
+            }
+
+            if (text) {
+                const textDiv = document.createElement('div');
+                textDiv.className = 'text';
+                textDiv.textContent = type === 'ai' ? cleanAIText(text) : text;
+                messageDiv.appendChild(textDiv);
+            }
+
+            const time = document.createElement('div');
+            time.className = 'time';
+            const now = new Date();
+            time.textContent = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            messageDiv.appendChild(time);
+
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // ==========================================
+        // 6. QUICK QUESTION
+        // ==========================================
+        function sendQuickQuestion(question) {
+            questionInput.value = question;
+            sendMessage();
+        }
+
+        // ==========================================
+        // 7. ENTER KEY
+        // ==========================================
+        questionInput.addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // ==========================================
+        // 8. LOG & INIT
+        // ==========================================
+        console.log('🤖 AI Assistant - Siap membantu!');
+        console.log('👤 User:', user);
+        console.log('🔑 Token:', token ? '✅ Ada' : '❌ Tidak ada');
+
+        initAIModel();
+    </script>
+
+</body>
+
+</html>

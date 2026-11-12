@@ -1,0 +1,2084 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Platform Padi Desa</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+
+    <!-- Theme System (Light & Dark Mode) -->
+    <link rel="stylesheet" href="../css/theme.css" />
+    <script src="../js/theme.js"></script>
+
+    <style>
+        /* ========================================
+           RESET & BASE
+        ======================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0f1e;
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        /* ========================================
+           SCROLLBAR
+        ======================================== */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(229, 233, 231, 0.89);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(34, 197, 94, 0.5);
+        }
+
+        /* ========================================
+           NAVBAR
+        ======================================== */
+        .navbar {
+            background: rgba(10, 15, 30, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-brand {
+            font-size: 22px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .navbar-brand .logo-icon {
+            font-size: 28px;
+        }
+
+        .navbar-brand .logo-text {
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .navbar-brand .logo-sub {
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 400;
+        }
+
+        .navbar-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .navbar-menu a {
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.3s;
+            padding: 6px 14px;
+            border-radius: 8px;
+        }
+
+        .navbar-menu a:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .navbar-menu a.active {
+            color: #4ade80;
+            background: rgba(34, 197, 94, 0.08);
+        }
+
+        .navbar-menu .user-info {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 8px 16px 8px 12px;
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 50px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .navbar-menu .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.25);
+        }
+
+        .navbar-menu .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .navbar-menu .user-name {
+            font-weight: 600;
+            font-size: 14px;
+            line-height: 1.2;
+        }
+
+        .navbar-menu .user-role {
+            font-size: 10px;
+            font-weight: 600;
+            color: #4ade80;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.08);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.1);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+            border: none;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.15);
+            transform: scale(1.04);
+        }
+
+        /* ========================================
+           MAIN CONTENT
+        ======================================== */
+        .main-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 32px 40px 40px;
+        }
+
+        /* ========================================
+           WELCOME SECTION
+        ======================================== */
+        .welcome-section {
+            margin-bottom: 32px;
+            padding: 28px 32px;
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.04), rgba(34, 197, 94, 0.01));
+            border: 1px solid rgba(34, 197, 94, 0.06);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(34, 197, 94, 0.05), transparent 70%);
+            border-radius: 50%;
+        }
+
+        .welcome-section .greeting {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .welcome-section .greeting .wave {
+            font-size: 32px;
+            animation: wave 2.5s ease-in-out infinite;
+        }
+
+        @keyframes wave {
+
+            0%,
+            100% {
+                transform: rotate(0deg);
+            }
+
+            25% {
+                transform: rotate(20deg);
+            }
+
+            75% {
+                transform: rotate(-10deg);
+            }
+        }
+
+        .welcome-section h1 {
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .welcome-section h1 .highlight {
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .welcome-section p {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 15px;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .welcome-section .role-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            padding: 2px 16px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.2);
+        }
+
+        /* ========================================
+           STATS GRID
+        ======================================== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 22px 24px;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            opacity: 0;
+            transition: 0.4s;
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.4);
+        }
+
+        .stat-card.green::before {
+            background: linear-gradient(90deg, #4ade80, #22c55e);
+        }
+
+        .stat-card.blue::before {
+            background: linear-gradient(90deg, #60a5fa, #3b82f6);
+        }
+
+        .stat-card.yellow::before {
+            background: linear-gradient(90deg, #fbbf24, #f59e0b);
+        }
+
+        .stat-card.purple::before {
+            background: linear-gradient(90deg, #a78bfa, #8b5cf6);
+        }
+
+        .stat-card .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+        }
+
+        .stat-card .stat-icon {
+            font-size: 28px;
+            opacity: 0.8;
+        }
+
+        .stat-card .stat-label {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 500;
+            letter-spacing: 0.2px;
+        }
+
+        .stat-card .stat-value {
+            font-size: 34px;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-top: 2px;
+        }
+
+        .stat-card .stat-sub {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.2);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .stat-card.green .stat-value {
+            color: #4ade80;
+        }
+
+        .stat-card.blue .stat-value {
+            color: #60a5fa;
+        }
+
+        .stat-card.yellow .stat-value {
+            color: #fbbf24;
+        }
+
+        .stat-card.purple .stat-value {
+            color: #a78bfa;
+        }
+
+        /* ========================================
+           QUICK MENU
+        ======================================== */
+        .quick-menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .quick-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 14px;
+            padding: 20px;
+            text-align: center;
+            transition: 0.3s;
+            text-decoration: none;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .quick-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(34, 197, 94, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .quick-item .icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        .quick-item .label {
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .quick-item .desc {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.2);
+            margin-top: 4px;
+        }
+
+        /* ========================================
+           AI CHAT POPUP
+        ======================================== */
+        .ai-chat-popup {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 999;
+        }
+
+        .ai-chat-toggle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            border: none;
+            color: #fff;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 8px 30px rgba(34, 197, 94, 0.4);
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: aiPulse 2.5s infinite;
+        }
+
+        @keyframes aiPulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.6), 0 8px 30px rgba(34, 197, 94, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 12px rgba(34, 197, 94, 0), 0 8px 30px rgba(34, 197, 94, 0.4);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(34, 197, 94, 0), 0 8px 30px rgba(34, 197, 94, 0.4);
+            }
+        }
+
+        .ai-chat-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 40px rgba(34, 197, 94, 0.5);
+        }
+
+        .ai-chat-window {
+            position: fixed;
+            bottom: 110px;
+            right: 30px;
+            width: 380px;
+            max-height: 500px;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            animation: slideUp 0.3s ease;
+        }
+
+        .ai-chat-window.open {
+            display: flex;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .ai-chat-header {
+            padding: 14px 18px;
+            background: rgba(34, 197, 94, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ai-header-sub {
+            font-size: 11px;
+            color: rgba(255, 255, 255, 0.45);
+            display: block;
+            margin-top: 2px;
+        }
+
+        .ai-model-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            font-size: 12px;
+        }
+
+        .ai-model-label {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 11px;
+            font-weight: 600;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .ai-model-select {
+            flex: 1;
+            background: rgba(15, 23, 42, 0.9);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.25);
+            border-radius: 8px;
+            padding: 5px 8px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .ai-model-select:hover,
+        .ai-model-select:focus {
+            border-color: #4ade80;
+            background: rgba(20, 32, 60, 0.95);
+        }
+
+        .ai-model-select option {
+            background: #0f172a;
+            color: #ffffff;
+            padding: 6px;
+        }
+
+        .ai-model-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 9px;
+            font-weight: 600;
+            padding: 2px 7px;
+            border-radius: 50px;
+            background: rgba(74, 222, 128, 0.12);
+            color: #4ade80;
+            border: 1px solid rgba(74, 222, 128, 0.2);
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        .ai-chat-header h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .ai-chat-header h3 span {
+            color: #4ade80;
+        }
+
+        .ai-chat-close {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 20px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .ai-chat-close:hover {
+            color: #fff;
+        }
+
+        .ai-chat-messages {
+            flex: 1;
+            padding: 16px 20px;
+            overflow-y: auto;
+            max-height: 300px;
+            min-height: 150px;
+        }
+
+        .ai-chat-messages::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .ai-chat-messages::-webkit-scrollbar-thumb {
+            background: rgba(34, 197, 94, 0.3);
+            border-radius: 10px;
+        }
+
+        .ai-msg {
+            margin-bottom: 12px;
+            padding: 10px 14px;
+            border-radius: 10px;
+            max-width: 90%;
+            animation: slideIn 0.3s ease;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .ai-msg.user {
+            background: rgba(34, 197, 94, 0.08);
+            border: 1px solid rgba(34, 197, 94, 0.1);
+            margin-left: auto;
+        }
+
+        .ai-msg.ai {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            margin-right: auto;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .ai-msg .sender {
+            font-size: 10px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.2);
+            margin-bottom: 3px;
+        }
+
+        .ai-msg.user .sender {
+            color: #4ade80;
+        }
+
+        .ai-msg .text {
+            white-space: pre-wrap;
+        }
+
+        .ai-msg img.msg-img {
+            max-width: 100%;
+            max-height: 220px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            display: block;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .ai-msg .time {
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.1);
+            margin-top: 4px;
+            text-align: right;
+        }
+
+        .ai-image-preview-bar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 16px;
+            background: rgba(34, 197, 94, 0.06);
+            border-top: 1px solid rgba(34, 197, 94, 0.12);
+        }
+
+        .ai-preview-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .ai-preview-container img {
+            width: 40px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            display: block;
+        }
+
+        .ai-preview-remove {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #ef4444;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+
+        .ai-preview-label {
+            font-size: 11px;
+            color: #4ade80;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 180px;
+        }
+
+        .ai-btn-photo {
+            padding: 9px 12px !important;
+            background: rgba(255, 255, 255, 0.04) !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            color: #4ade80 !important;
+            font-size: 15px !important;
+            border-radius: 10px !important;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ai-btn-photo:hover {
+            background: rgba(34, 197, 94, 0.12) !important;
+            border-color: rgba(34, 197, 94, 0.25) !important;
+            transform: scale(1.05);
+        }
+
+        .ai-chat-input {
+            display: flex;
+            gap: 8px;
+            padding: 12px 16px 16px;
+            border-top: 1px solid rgba(255, 255, 255, 0.03);
+            align-items: center;
+        }
+
+        .ai-chat-input input {
+            flex: 1;
+            padding: 10px 14px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 13px;
+            font-family: 'Inter', sans-serif;
+            transition: 0.3s;
+        }
+
+        .ai-chat-input input:focus {
+            outline: none;
+            border-color: #22c55e;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .ai-chat-input input::placeholder {
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        .ai-chat-input button {
+            padding: 10px 18px;
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .ai-chat-input button:hover {
+            transform: scale(1.05);
+        }
+
+        .ai-chat-input button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .ai-typing {
+            display: none;
+            padding: 8px 14px;
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 12px;
+        }
+
+        .ai-typing .dots {
+            animation: typingDot 1.4s infinite;
+        }
+
+        @keyframes typingDot {
+            0% {
+                opacity: 0.2;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.2;
+            }
+        }
+
+        .quick-chat-btn {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 50px;
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 10px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Inter', sans-serif;
+            margin: 2px;
+        }
+
+        .quick-chat-btn:hover {
+            background: rgba(34, 197, 94, 0.08);
+            border-color: rgba(34, 197, 94, 0.1);
+            color: #4ade80;
+        }
+
+        .ai-empty {
+            text-align: center;
+            padding: 20px 0;
+            color: rgba(255, 255, 255, 0.15);
+            font-size: 13px;
+        }
+
+        .ai-empty .icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+            opacity: 0.3;
+        }
+
+        /* ========================================
+           CONTENT GRID
+        ======================================== */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+        }
+
+        .content-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 28px;
+            transition: 0.3s;
+        }
+
+        .content-card:hover {
+            border-color: rgba(255, 255, 255, 0.06);
+        }
+
+        .content-card .card-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .content-card .card-title .badge-live {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 3px 12px;
+            border-radius: 50px;
+            background: rgba(34, 197, 94, 0.12);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.08);
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        /* ========================================
+           INFO BOX
+        ======================================== */
+        .info-box {
+            background: rgba(34, 197, 94, 0.04);
+            border: 1px solid rgba(34, 197, 94, 0.08);
+            border-radius: 12px;
+            padding: 18px 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            margin-top: 16px;
+        }
+
+        .info-box .icon {
+            font-size: 20px;
+            margin-top: 2px;
+        }
+
+        .info-box .text {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.6;
+        }
+
+        .info-box .text strong {
+            color: #4ade80;
+        }
+
+        .info-box .text .meta {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.25);
+            display: block;
+            margin-top: 4px;
+        }
+
+        /* ========================================
+           EMPTY STATE
+        ======================================== */
+        .empty-state {
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .empty-state .empty-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+            opacity: 0.2;
+        }
+
+        .empty-state .empty-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .empty-state .empty-desc {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.15);
+            margin-top: 4px;
+        }
+
+        /* ========================================
+           LOADING
+        ======================================== */
+        .loading-state {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px 0;
+            gap: 16px;
+        }
+
+        .spinner {
+            width: 28px;
+            height: 28px;
+            border: 3px solid rgba(255, 255, 255, 0.04);
+            border-top: 3px solid #4ade80;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-state span {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 14px;
+        }
+
+        /* ========================================
+           RESPONSIVE
+        ======================================== */
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .quick-menu {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .main-content {
+                padding: 24px 20px 30px;
+            }
+
+            .ai-chat-window {
+                width: 340px;
+                right: 16px;
+                bottom: 100px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 14px 20px;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .navbar-menu {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 12px;
+            }
+
+            .navbar-menu .user-info {
+                padding: 6px 12px 6px 8px;
+            }
+
+            .navbar-menu .user-name {
+                font-size: 13px;
+            }
+
+            .welcome-section {
+                padding: 20px;
+            }
+
+            .welcome-section h1 {
+                font-size: 22px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+
+            .stat-card {
+                padding: 18px 16px;
+            }
+
+            .stat-card .stat-value {
+                font-size: 26px;
+            }
+
+            .content-card {
+                padding: 20px;
+            }
+
+            .quick-menu {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .welcome-section .greeting .wave {
+                font-size: 24px;
+            }
+
+            .ai-chat-window {
+                width: 300px;
+                right: 12px;
+                bottom: 90px;
+                max-height: 400px;
+            }
+
+            .ai-chat-toggle {
+                width: 50px;
+                height: 50px;
+                font-size: 24px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-menu {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar-brand {
+                font-size: 18px;
+            }
+
+            .welcome-section h1 {
+                font-size: 18px;
+            }
+
+            .stat-card .stat-value {
+                font-size: 28px;
+            }
+
+            .main-content {
+                padding: 16px 12px 20px;
+            }
+
+            .ai-chat-window {
+                width: 280px;
+                right: 8px;
+                bottom: 80px;
+                max-height: 350px;
+            }
+        }
+
+        /* Direct Light Mode Fixes */
+        [data-theme="light"] body,
+        body[data-theme="light"],
+        html[data-theme="light"] body {
+            background: #f1f5f9 !important;
+            color: #0f172a !important;
+        }
+
+        [data-theme="light"] .welcome-section {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
+        }
+
+        [data-theme="light"] .welcome-section h1 {
+            color: #0f172a !important;
+        }
+
+        [data-theme="light"] .welcome-section p {
+            color: #475569 !important;
+        }
+
+        [data-theme="light"] .welcome-section h1 .highlight {
+            background: none !important;
+            -webkit-background-clip: unset !important;
+            -webkit-text-fill-color: #16a34a !important;
+            color: #16a34a !important;
+        }
+
+        [data-theme="light"] .stat-card {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04) !important;
+        }
+
+        [data-theme="light"] .stat-card .stat-label {
+            color: #475569 !important;
+            font-weight: 600 !important;
+        }
+
+        [data-theme="light"] .stat-card .stat-value {
+            color: #0f172a !important;
+        }
+
+        [data-theme="light"] .stat-card .stat-sub {
+            color: #64748b !important;
+        }
+
+        [data-theme="light"] .quick-item {
+            background: #ffffff !important;
+            border: 1px solid #cbd5e1 !important;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04) !important;
+            color: #0f172a !important;
+        }
+
+        [data-theme="light"] .quick-item .label {
+            color: #0f172a !important;
+            font-weight: 700 !important;
+            font-size: 14px !important;
+        }
+
+        [data-theme="light"] .quick-item .desc {
+            color: #64748b !important;
+            font-weight: 500 !important;
+            font-size: 12px !important;
+        }
+
+        [data-theme="light"] .quick-item:hover {
+            background: #f0fdf4 !important;
+            border-color: #86efac !important;
+        }
+
+        [data-theme="light"] .quick-item:hover .label {
+            color: #15803d !important;
+        }
+
+        [data-theme="light"] .content-card {
+            background: #ffffff !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04) !important;
+            color: #0f172a !important;
+        }
+
+        [data-theme="light"] .content-card .card-title {
+            color: #0f172a !important;
+            font-weight: 700 !important;
+        }
+
+        [data-theme="light"] .empty-state .empty-title {
+            color: #0f172a !important;
+            font-weight: 700 !important;
+        }
+
+        [data-theme="light"] .empty-state .empty-desc {
+            color: #64748b !important;
+        }
+
+        [data-theme="light"] .dashboard-hint {
+            color: #334155 !important;
+        }
+
+        [data-theme="light"] .dashboard-hint strong {
+            color: #0f172a !important;
+        }
+
+        [data-theme="light"] .sys-badge {
+            background: #f1f5f9 !important;
+            color: #334155 !important;
+            border: 1px solid #cbd5e1 !important;
+        }
+    </style>
+    <!-- Theme System CSS -->
+    <link rel="stylesheet" href="../css/theme.css" />
+</head>
+
+<body>
+
+    <!-- ========================================
+    NAVBAR
+    ======================================== -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <span class="logo-icon">🌾</span>
+            <span>
+                <span class="logo-text">Platform Padi</span>
+                <span class="logo-sub">Desa</span>
+            </span>
+        </div>
+        <div class="navbar-menu">
+            <a href="dashboard.html" class="active">📊 Dashboard</a>
+            <a href="farms.html">🌾 Lahan</a>
+            <a href="users.html">👥 Pengguna</a>
+            <a href="ai-assistant.html">🤖 AI Assistant</a>
+            <button id="themeToggleBtn" type="button" class="theme-toggle-btn" onclick="toggleTheme()" title="Beralih Mode Terang / Gelap">
+                <span class="theme-toggle-icon">☀️</span>
+                <span class="theme-toggle-text">Terang</span>
+            </button>
+            <div class="user-info">
+                <div class="avatar" id="userAvatar">👤</div>
+                <div class="user-details">
+                    <span class="user-name" id="userName">User</span>
+                    <span class="user-role" id="userRole">PETANI</span>
+                </div>
+            </div>
+            <button class="logout-btn" onclick="handleLogout()">🚪 Logout</button>
+        </div>
+    </nav>
+
+    <!-- ========================================
+    MAIN CONTENT
+    ======================================== -->
+    <div class="main-content">
+
+        <!-- WELCOME -->
+        <div class="welcome-section">
+            <div class="greeting">
+                <span class="wave">👋</span>
+                <div>
+                    <h1>
+                        Selamat datang, <span class="highlight" id="welcomeName">User</span>!
+                    </h1>
+                    <p>
+                        <span id="welcomeRole">Dashboard Administrator</span>
+                        <span class="role-badge" id="roleBadge">ADMIN</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card green" style="cursor: pointer;" onclick="window.location.href='users.html'"
+                title="Klik untuk membuka Tabel Pengguna">
+                <div class="stat-header">
+                    <span class="stat-icon">👥</span>
+                </div>
+                <div class="stat-label">Total Pengguna</div>
+                <div class="stat-value" id="statUsers">0</div>
+                <div class="stat-sub" id="statUsersSub">Terdaftar (Klik untuk kelola)</div>
+            </div>
+
+            <div class="stat-card blue" style="cursor: pointer;" onclick="window.location.href='farms.html'"
+                title="Klik untuk membuka Data Lahan">
+                <div class="stat-header">
+                    <span class="stat-icon">🌾</span>
+                </div>
+                <div class="stat-label">Total Lahan</div>
+                <div class="stat-value" id="statFarms">0</div>
+                <div class="stat-sub">Hektar</div>
+            </div>
+
+            <div class="stat-card yellow">
+                <div class="stat-header">
+                    <span class="stat-icon">📦</span>
+                </div>
+                <div class="stat-label">Total Panen</div>
+                <div class="stat-value" id="statHarvest">0</div>
+                <div class="stat-sub">Kilogram</div>
+            </div>
+
+            <div class="stat-card purple">
+                <div class="stat-header">
+                    <span class="stat-icon">📋</span>
+                </div>
+                <div class="stat-label">Aktivitas</div>
+                <div class="stat-value" id="statActivities">0</div>
+                <div class="stat-sub">Terakhir</div>
+            </div>
+        </div>
+
+        <!-- QUICK MENU -->
+        <div class="quick-menu" id="quickMenuContainer">
+            <a href="farms.html" class="quick-item">
+                <div class="icon">🌾</div>
+                <div class="label">Kelola Lahan</div>
+                <div class="desc">Daftar & pantau lahan</div>
+            </a>
+            <a href="users.html" class="quick-item">
+                <div class="icon">👥</div>
+                <div class="label">Kelola Pengguna</div>
+                <div class="desc">Tabel data akun</div>
+            </a>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="content-grid">
+            <!-- MAIN CARD -->
+            <div class="content-card">
+                <div class="card-title">
+                    📊 Dashboard
+                    <span class="badge-live">● Live</span>
+                </div>
+                <div id="dashboardContent">
+                    <div class="loading-state">
+                        <div class="spinner"></div>
+                        <span>Memuat data...</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SIDEBAR CARD -->
+            <div class="content-card">
+                <div class="card-title">
+                    ⚡ Aktivitas Terbaru
+                    <span class="badge-live">● Live</span>
+                </div>
+                <div id="activityContent">
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <div class="empty-title">Belum ada aktivitas</div>
+                        <div class="empty-desc">Aktivitas akan muncul di sini</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ========================================
+    AI CHAT POPUP
+    ======================================== -->
+    <div class="ai-chat-popup">
+        <button class="ai-chat-toggle" onclick="toggleAIChat()" id="aiToggle"
+            title="Tanya AI Asisten Tani (Konsultasi Hama & Tanaman)">
+            🤖
+        </button>
+    </div>
+
+    <!-- AI Chat Window -->
+    <div class="ai-chat-window" id="aiChatWindow">
+        <div class="ai-chat-header">
+            <div>
+                <h3>🤖 <span>AI Assistant</span></h3>
+                <span class="ai-header-sub" id="aiActiveModelLabel">🦙 Llama 3.3 70B (Meta)</span>
+            </div>
+            <button class="ai-chat-close" onclick="closeAIChat()">✕</button>
+        </div>
+        <div class="ai-model-bar">
+            <span class="ai-model-label">⚙️ Versi AI:</span>
+            <select id="aiModelSelect" class="ai-model-select" onchange="changeAIModel(this.value)">
+                <option value="llama-3.3-70b" selected>🦙 Llama 3.3 70B (Meta · Rekomendasi)</option>
+                <option value="gemini-1.5-flash">✨ Gemini 1.5 Flash (Google · Cepat)</option>
+                <option value="gemini-2.0-flash">🚀 Gemini 2.0 Flash (Google · Next-Gen)</option>
+                <option value="gemini-1.5-pro">⭐ Gemini 1.5 Pro (Google · Cerdas)</option>
+                <option value="llama-3.1-8b">⚡ Llama 3.1 8B Instant (Meta · Kilat)</option>
+                <option value="gemma-2-9b">💎 Gemma 2 9B (Google · Ringan)</option>
+                <option value="mixtral-8x7b">🌪️ Mixtral 8x7B (Mistral · Stabil)</option>
+                <option value="gpt-oss-120b">🧠 GPT OSS 120B (Open Source)</option>
+            </select>
+        </div>
+        <div class="ai-chat-messages" id="aiChatMessages">
+            <div class="ai-empty">
+                <div class="icon">🌾</div>
+                <p>Tanyakan tentang pertanian padi atau unggah foto tanaman</p>
+                <div style="margin-top:8px;">
+                    <button class="quick-chat-btn" onclick="sendQuickChat('Siapa saya?')">❓ Siapa Saya?</button>
+                    <button class="quick-chat-btn"
+                        onclick="sendQuickChat('Ada berapa jumlah pengguna di platform ini?')">👥 Jumlah
+                        Pengguna</button>
+                    <button class="quick-chat-btn" onclick="sendQuickChat('Cara mengatasi hama wereng?')">🐛
+                        Hama</button>
+                    <button class="quick-chat-btn" onclick="sendQuickChat('Pupuk apa yang bagus untuk padi?')">🌱
+                        Pupuk</button>
+                    <button class="quick-chat-btn" onclick="document.getElementById('aiPhotoInput').click()">📷 Tanya
+                        Foto</button>
+                </div>
+            </div>
+        </div>
+        <div class="ai-typing" id="aiTyping">
+            <span class="dots">...</span> AI sedang mengetik...
+        </div>
+        <div id="aiImagePreviewBar" class="ai-image-preview-bar" style="display:none;">
+            <div class="ai-preview-container">
+                <img id="aiImagePreview" src="" alt="Preview Foto" />
+                <button type="button" class="ai-preview-remove" onclick="removeSelectedImage()"
+                    title="Hapus foto">✕</button>
+            </div>
+            <span class="ai-preview-label" id="aiImageName">foto.jpg</span>
+        </div>
+        <div class="ai-chat-input">
+            <input type="file" id="aiPhotoInput" accept="image/*" style="display:none;"
+                onchange="handleImageSelected(event)" />
+            <button type="button" class="ai-btn-photo" onclick="document.getElementById('aiPhotoInput').click()"
+                title="Unggah Foto Tanaman">📷</button>
+            <input type="text" id="aiChatInput" placeholder="Tanyakan sesuatu atau foto..." />
+            <button onclick="sendAIChat()">Kirim</button>
+        </div>
+    </div>
+
+    <!-- ========================================
+    JAVASCRIPT
+    ======================================== -->
+    <script>
+        // ==========================================
+        // 1. CEK LOGIN & SESI
+        // ==========================================
+        let token = localStorage.getItem('accessToken');
+        let user = JSON.parse(localStorage.getItem('user') || 'null');
+
+        if (!token || !user) {
+            window.location.href = 'login.html';
+        }
+
+        // Auto-refresh token sesi jika perlu agar tidak expired
+        async function refreshSessionIfNeeded() {
+            try {
+                const currentToken = localStorage.getItem('accessToken');
+                const currentUser = JSON.parse(localStorage.getItem('user') || 'null');
+                const res = await fetch('http://127.0.0.1:5000/api/auth/refresh', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': currentToken ? `Bearer ${currentToken}` : ''
+                    },
+                    body: JSON.stringify({ email: currentUser?.email, token: currentToken })
+                });
+                const resData = await res.json();
+                if (resData.success && resData.data?.accessToken) {
+                    localStorage.setItem('accessToken', resData.data.accessToken);
+                    token = resData.data.accessToken;
+                    if (resData.data.user) {
+                        localStorage.setItem('user', JSON.stringify(resData.data.user));
+                        user = resData.data.user;
+                        updateUserUI();
+                    }
+                    console.log('✅ Sesi token berhasil diperbarui otomatis');
+                    return resData.data.accessToken;
+                }
+            } catch (err) {
+                console.warn('Refresh session note:', err);
+            }
+            return null;
+        }
+
+        refreshSessionIfNeeded();
+
+        async function handleReLogin() {
+            const refreshed = await refreshSessionIfNeeded();
+            if (refreshed) {
+                alert('Sesi berhasil diperbarui! Silakan coba lagi.');
+            } else {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // ==========================================
+        // 2. TAMPILKAN DATA USER
+        // ==========================================
+        const roleNames = {
+            'ADMIN': 'Administrator',
+            'KEPALA_DESA': 'Kepala Desa',
+            'PETANI': 'Petani'
+        };
+
+        const roleEmojis = {
+            'ADMIN': '👑',
+            'KEPALA_DESA': '🏛️',
+            'PETANI': '🌾'
+        };
+
+        function updateUserUI() {
+            if (!user) return;
+            const userNameEl = document.getElementById('userName');
+            const userAvatarEl = document.getElementById('userAvatar');
+            const userRoleEl = document.getElementById('userRole');
+            const welcomeNameEl = document.getElementById('welcomeName');
+            const welcomeRoleEl = document.getElementById('welcomeRole');
+            const roleBadgeEl = document.getElementById('roleBadge');
+
+            if (userNameEl) userNameEl.textContent = user.name || 'User';
+            if (userAvatarEl) userAvatarEl.textContent = roleEmojis[user.role] || '👤';
+            if (userRoleEl) userRoleEl.textContent = user.role || 'PETANI';
+            if (welcomeNameEl) welcomeNameEl.textContent = user.name || 'User';
+            if (welcomeRoleEl) welcomeRoleEl.textContent = `Dashboard ${roleNames[user.role] || user.role}`;
+            if (roleBadgeEl) roleBadgeEl.textContent = user.role || 'PETANI';
+        }
+        updateUserUI();
+
+        // Selalu sinkronkan profil user teranyar dari server
+        async function syncCurrentUserProfile() {
+            try {
+                if (!token) return;
+                const res = await fetch('http://127.0.0.1:5000/api/auth/me', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const resData = await res.json();
+                if (resData.success && resData.data) {
+                    user = { ...user, ...resData.data };
+                    localStorage.setItem('user', JSON.stringify(user));
+                    updateUserUI();
+                }
+            } catch (err) {
+                console.warn('Sync profile note:', err);
+            }
+        }
+        syncCurrentUserProfile();
+
+        // Render menu cepat dinamis sesuai peran
+        const quickMenu = document.getElementById('quickMenuContainer');
+        if (quickMenu && user) {
+            if (user.role === 'ADMIN') {
+                quickMenu.innerHTML = `
+                    <a href="farms.html" class="quick-item">
+                        <div class="icon">🌾</div>
+                        <div class="label">Kelola Lahan</div>
+                        <div class="desc">Daftar & pantau seluruh lahan</div>
+                    </a>
+                    <a href="farm-create.html" class="quick-item">
+                        <div class="icon">➕</div>
+                        <div class="label">Tambah Lahan</div>
+                        <div class="desc">Buka lahan baru (Admin)</div>
+                    </a>
+                    <a href="users.html" class="quick-item">
+                        <div class="icon">👥</div>
+                        <div class="label">Kelola Pengguna</div>
+                        <div class="desc">Tabel data seluruh akun</div>
+                    </a>
+                    <a href="user-create.html" class="quick-item">
+                        <div class="icon">👑</div>
+                        <div class="label">Tambah Pengguna</div>
+                        <div class="desc">Daftar akun baru (Khusus Admin)</div>
+                    </a>
+                `;
+            } else if (user.role === 'KEPALA_DESA') {
+                quickMenu.innerHTML = `
+                    <a href="farms.html" class="quick-item">
+                        <div class="icon">🌾</div>
+                        <div class="label">Kelola Lahan Desa</div>
+                        <div class="desc">Pantau lahan binaan desa</div>
+                    </a>
+                    <a href="farm-create.html" class="quick-item">
+                        <div class="icon">➕</div>
+                        <div class="label">Tambah Lahan</div>
+                        <div class="desc">Alokasikan lahan baru petani</div>
+                    </a>
+                    <a href="users.html" class="quick-item">
+                        <div class="icon">👥</div>
+                        <div class="label">Data Pengguna</div>
+                        <div class="desc">Lihat seluruh pemangku desa</div>
+                    </a>
+                `;
+            } else { // PETANI
+                quickMenu.innerHTML = `
+                    <a href="farms.html" class="quick-item">
+                        <div class="icon">🌾</div>
+                        <div class="label">Lahan Saya</div>
+                        <div class="desc">Pantau lahan & jadwal pupuk</div>
+                    </a>
+                    <a href="users.html" class="quick-item">
+                        <div class="icon">👥</div>
+                        <div class="label">Data Pengguna</div>
+                        <div class="desc">Lihat kontak rekan tani & kades</div>
+                    </a>
+                `;
+            }
+        }
+
+        // ==========================================
+        // 3. FUNGSI LOGOUT
+        // ==========================================
+        function handleLogout() {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+
+        // ==========================================
+        // 4. AMBIL DATA DARI BACKEND
+        // ==========================================
+        async function fetchDashboardData() {
+            const content = document.getElementById('dashboardContent');
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/api/health', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Ambil statistik pengguna langsung dari API
+                    try {
+                        const userStatsRes = await fetch('http://127.0.0.1:5000/api/users/stats', {
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        const userStatsData = await userStatsRes.json();
+                        if (userStatsData.success && userStatsData.data?.summary) {
+                            document.getElementById('statUsers').textContent = userStatsData.data.summary.totalUsers;
+                            const active = userStatsData.data.summary.activeUsers;
+                            document.getElementById('statUsersSub').textContent = `${active} aktif • Klik kelola`;
+                        }
+                    } catch (statErr) {
+                        console.warn('Gagal memuat user stats dinamis:', statErr);
+                        document.getElementById('statUsers').textContent = '0';
+                        document.getElementById('statUsersSub').textContent = 'Belum ada data';
+                    }
+
+                    // Ambil statistik lahan
+                    try {
+                        const farmRes = await fetch('http://127.0.0.1:5000/api/farms', {
+                            headers: { 'Authorization': `Bearer ${token}` }
+                        });
+                        const farmData = await farmRes.json();
+                        if (farmData.success && Array.isArray(farmData.data)) {
+                            const totalHa = farmData.data.reduce((acc, f) => acc + (Number(f.luas) || 0), 0);
+                            document.getElementById('statFarms').textContent = totalHa.toFixed(1);
+                        }
+                    } catch (farmErr) {
+                        document.getElementById('statFarms').textContent = '0';
+                    }
+
+                    document.getElementById('statHarvest').textContent = '0';
+                    document.getElementById('statActivities').textContent = '0';
+
+                    content.innerHTML = `
+                        <div class="info-box">
+                            <span class="icon">✅</span>
+                            <div class="text">
+                                <strong>${data.message}</strong>
+                                <span class="meta">
+                                    Environment: ${data.environment || 'development'} &bull;
+                                    ${new Date(data.timestamp).toLocaleString('id-ID', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    })}
+                                </span>
+                            </div>
+                        </div>
+                        <p class="dashboard-hint" style="margin-top:20px; font-size:14px;">
+                            👥 <strong>Fitur Pengguna Aktif:</strong> Anda dapat melihat tabel seluruh pengguna dan mendaftarkan pengguna baru melalui menu <a href="users.html" style="color:#16a34a; font-weight:600; text-decoration:underline;">👥 Pengguna</a>.
+                        </p>
+                        <div style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap;">
+                            <span class="sys-badge" style="font-size:12px; padding:4px 14px; border-radius:50px;">
+                                🟢 Sistem Online
+                            </span>
+                            <span class="sys-badge" style="font-size:12px; padding:4px 14px; border-radius:50px;">
+                                📡 API v1.0
+                            </span>
+                        </div>
+                    `;
+                } else {
+                    throw new Error(data.message || 'Gagal mengambil data');
+                }
+
+            } catch (error) {
+                console.error('Error fetching dashboard:', error);
+                content.innerHTML = `
+                    <div style="background:rgba(239,68,68,0.04); border:1px solid rgba(239,68,68,0.08); border-radius:12px; padding:24px; text-align:center;">
+                        <p style="color:#f87171; font-weight:600;">⚠️ Gagal terhubung ke server</p>
+                        <p style="font-size:13px; color:rgba(255,255,255,0.2); margin-top:6px;">
+                            Pastikan backend berjalan di <strong style="color:rgba(255,255,255,0.3);">http://127.0.0.1:5000</strong>
+                        </p>
+                        <button onclick="fetchDashboardData()" style="margin-top:14px; padding:8px 28px; background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.08); border-radius:50px; color:#4ade80; font-weight:600; cursor:pointer; transition:0.3s;">
+                            🔄 Coba Lagi
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // ==========================================
+        // 5. AI CHAT & MODEL FUNCTIONS
+        // ==========================================
+        let isAIChatOpen = false;
+        let currentAIModel = localStorage.getItem('selectedAiModel') || 'llama-3.3-70b';
+
+        function initAIModel() {
+            const select = document.getElementById('aiModelSelect');
+            if (select) {
+                select.value = currentAIModel;
+                updateActiveModelLabel(currentAIModel);
+            }
+        }
+
+        function changeAIModel(modelId) {
+            currentAIModel = modelId;
+            localStorage.setItem('selectedAiModel', modelId);
+            updateActiveModelLabel(modelId);
+        }
+
+        function updateActiveModelLabel(modelId) {
+            const label = document.getElementById('aiActiveModelLabel');
+            const select = document.getElementById('aiModelSelect');
+            if (!label) return;
+            const selectedOption = select ? select.options[select.selectedIndex] : null;
+            if (selectedOption) {
+                label.textContent = selectedOption.text;
+            } else {
+                label.textContent = modelId;
+            }
+        }
+
+        function toggleAIChat() {
+            const window = document.getElementById('aiChatWindow');
+            const toggle = document.getElementById('aiToggle');
+
+            if (isAIChatOpen) {
+                window.classList.remove('open');
+                toggle.textContent = '🤖';
+                isAIChatOpen = false;
+            } else {
+                window.classList.add('open');
+                toggle.textContent = '✕';
+                isAIChatOpen = true;
+                document.getElementById('aiChatInput').focus();
+            }
+        }
+
+        function openAIChat() {
+            if (!isAIChatOpen) {
+                toggleAIChat();
+            }
+        }
+
+        function closeAIChat() {
+            if (isAIChatOpen) {
+                toggleAIChat();
+            }
+        }
+
+        // ==========================================
+        // 6. SEND AI CHAT & IMAGE ANALYSIS
+        // ==========================================
+        let selectedAIImageFile = null;
+
+        function handleImageSelected(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (!file.type.startsWith('image/')) {
+                alert('Silakan pilih file gambar (JPG, PNG, WebP)');
+                event.target.value = '';
+                return;
+            }
+
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Ukuran gambar maksimal 5 MB');
+                event.target.value = '';
+                return;
+            }
+
+            selectedAIImageFile = file;
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                document.getElementById('aiImagePreview').src = e.target.result;
+                document.getElementById('aiImageName').textContent = file.name;
+                document.getElementById('aiImagePreviewBar').style.display = 'flex';
+                document.getElementById('aiChatInput').placeholder = 'Tanyakan tentang foto ini (opsional)...';
+                document.getElementById('aiChatInput').focus();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeSelectedImage() {
+            selectedAIImageFile = null;
+            const photoInput = document.getElementById('aiPhotoInput');
+            if (photoInput) photoInput.value = '';
+            const previewBar = document.getElementById('aiImagePreviewBar');
+            if (previewBar) previewBar.style.display = 'none';
+            const imgPreview = document.getElementById('aiImagePreview');
+            if (imgPreview) imgPreview.src = '';
+            document.getElementById('aiChatInput').placeholder = 'Tanyakan sesuatu atau foto...';
+        }
+
+        async function sendAIChat() {
+            const input = document.getElementById('aiChatInput');
+            const question = input.value.trim();
+            const photoFile = selectedAIImageFile;
+
+            if (!question && !photoFile) return;
+
+            const messages = document.getElementById('aiChatMessages');
+            const typing = document.getElementById('aiTyping');
+
+            let photoDataUrl = null;
+            if (photoFile) {
+                const imgElem = document.getElementById('aiImagePreview');
+                photoDataUrl = imgElem ? imgElem.src : null;
+            }
+
+            // Tambah pesan user dengan gambar jika ada
+            addAIMessage('user', question || (photoFile ? '📷 Analisis foto tanaman ini' : ''), photoDataUrl);
+
+            input.value = '';
+            input.disabled = true;
+            removeSelectedImage();
+
+            // Tampilkan typing
+            typing.style.display = 'block';
+            typing.innerHTML = photoFile
+                ? '<span class="dots">...</span> 🌾 AI sedang menganalisis foto tanaman...'
+                : '<span class="dots">...</span> AI sedang mengetik...';
+            messages.scrollTop = messages.scrollHeight;
+
+            try {
+                let response;
+
+                if (photoFile) {
+                    const formData = new FormData();
+                    formData.append('image', photoFile);
+                    if (question) {
+                        formData.append('question', question);
+                    }
+                    formData.append('model', currentAIModel);
+
+                    response = await fetch('http://127.0.0.1:5000/api/ai/analyze', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: formData
+                    });
+                } else {
+                    response = await fetch('http://127.0.0.1:5000/api/ai/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ question, model: currentAIModel })
+                    });
+                }
+
+                // Simpan token baru jika server mengirimkan pembaruan otomatis
+                const newToken = response.headers.get('x-new-token');
+                if (newToken) {
+                    localStorage.setItem('accessToken', newToken);
+                    token = newToken;
+                    syncCurrentUserProfile();
+                }
+
+                let data = await response.json();
+
+                // Jika server merespon 401 atau token kedaluwarsa, coba refresh otomatis dan retry sekali
+                if (response.status === 401 || (data.message && data.message.toLowerCase().includes('token'))) {
+                    console.log('🔄 Token expired terdeteksi, memperbarui token secara otomatis...');
+                    const refreshedToken = await refreshSessionIfNeeded();
+                    if (refreshedToken) {
+                        token = refreshedToken;
+                        if (photoFile) {
+                            const retryFormData = new FormData();
+                            retryFormData.append('image', photoFile);
+                            if (question) retryFormData.append('question', question);
+                            retryFormData.append('model', currentAIModel);
+                            response = await fetch('http://127.0.0.1:5000/api/ai/analyze', {
+                                method: 'POST',
+                                headers: { 'Authorization': `Bearer ${token}` },
+                                body: retryFormData
+                            });
+                        } else {
+                            response = await fetch('http://127.0.0.1:5000/api/ai/chat', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': `Bearer ${token}`
+                                },
+                                body: JSON.stringify({ question, model: currentAIModel })
+                            });
+                        }
+                        const retryNewToken = response.headers.get('x-new-token');
+                        if (retryNewToken) {
+                            localStorage.setItem('accessToken', retryNewToken);
+                            token = retryNewToken;
+                            syncCurrentUserProfile();
+                        }
+                        data = await response.json();
+                    }
+                }
+
+                typing.style.display = 'none';
+
+                if (data.success) {
+                    const badge = (data.data.icon ? data.data.icon + ' ' : '') + (data.data.modelName || currentAIModel);
+                    addAIMessage('ai', data.data.answer, null, badge);
+                    if (data.data.isDummy) {
+                        addAIMessage('ai', '💡 Jawaban ini adalah respon otomatis.');
+                    }
+                } else {
+                    const errMsg = data.message || 'Terjadi kesalahan. Silakan coba lagi.';
+                    if (errMsg.toLowerCase().includes('token') || errMsg.toLowerCase().includes('login')) {
+                        addAIMessage('ai', '⚠️ Sesi Anda telah berakhir. <button onclick="handleReLogin()" style="background:#22c55e;color:#fff;border:none;padding:4px 10px;border-radius:6px;cursor:pointer;font-size:12px;margin-left:6px;">Perbarui Sekarang</button>');
+                    } else {
+                        addAIMessage('ai', '❌ ' + errMsg);
+                    }
+                }
+
+            } catch (error) {
+                typing.style.display = 'none';
+                addAIMessage('ai', '❌ Gagal terhubung ke server. Pastikan backend berjalan.');
+                console.error('AI Chat error:', error);
+            }
+
+            input.disabled = false;
+            input.focus();
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        function cleanAIText(text) {
+            if (!text) return '';
+            let cleaned = text;
+            cleaned = cleaned.replace(/<br\s*\/?>/gi, '\n');
+            cleaned = cleaned.replace(/^[\s]*[-*_]{3,}[\s]*$/gm, '');
+            cleaned = cleaned.replace(/\*/g, '');
+            cleaned = cleaned.replace(/^[\s]*\|.*\|[\s]*$/gm, function (line) {
+                if (line.includes('---')) return '';
+                return line.replace(/\|/g, ' ').trim();
+            });
+            cleaned = cleaned.replace(/\|/g, '');
+            cleaned = cleaned.replace(/^[\s]*#+\s*/gm, '');
+            cleaned = cleaned.replace(/\n{3,}/g, '\n\n');
+            return cleaned.trim();
+        }
+
+        // ==========================================
+        // 7. ADD AI MESSAGE
+        // ==========================================
+        function addAIMessage(type, text, imageUrl = null, modelInfo = null) {
+            const messages = document.getElementById('aiChatMessages');
+
+            // Hapus empty state
+            const empty = messages.querySelector('.ai-empty');
+            if (empty) empty.remove();
+
+            const div = document.createElement('div');
+            div.className = `ai-msg ${type}`;
+
+            const sender = document.createElement('div');
+            sender.className = 'sender';
+            if (type === 'user') {
+                sender.textContent = '👤 Anda';
+            } else {
+                const badgeHtml = modelInfo ? `<span class="ai-model-badge">${modelInfo}</span>` : '';
+                sender.innerHTML = `🤖 AI ${badgeHtml}`;
+            }
+            div.appendChild(sender);
+
+            if (imageUrl) {
+                const img = document.createElement('img');
+                img.src = imageUrl;
+                img.className = 'msg-img';
+                img.alt = 'Foto Unggahan';
+                div.appendChild(img);
+            }
+
+            if (text) {
+                const textDiv = document.createElement('div');
+                textDiv.className = 'text';
+                textDiv.textContent = type === 'ai' ? cleanAIText(text) : text;
+                div.appendChild(textDiv);
+            }
+
+            const time = document.createElement('div');
+            time.className = 'time';
+            const now = new Date();
+            time.textContent = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            div.appendChild(time);
+
+            messages.appendChild(div);
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        // ==========================================
+        // 8. QUICK CHAT
+        // ==========================================
+        function sendQuickChat(question) {
+            document.getElementById('aiChatInput').value = question;
+            sendAIChat();
+        }
+
+        // ==========================================
+        // 9. ENTER KEY FOR AI CHAT
+        // ==========================================
+        document.getElementById('aiChatInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendAIChat();
+            }
+        });
+
+        // ==========================================
+        // 10. JALANKAN
+        // ==========================================
+        console.log('🌾 Dashboard - Selamat datang!');
+        console.log('👤 User:', user);
+        console.log('🔑 Token:', token ? '✅ Ada' : '❌ Tidak ada');
+
+        initAIModel();
+        fetchDashboardData();
+    </script>
+
+</body>
+
+</html>
