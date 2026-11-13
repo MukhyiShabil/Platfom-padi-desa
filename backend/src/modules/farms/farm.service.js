@@ -178,10 +178,11 @@ class FarmService {
                 }
             });
 
-            // Kirim notifikasi email ke semua pengguna via mukhyishabil@gmail.com
+            // Kirim notifikasi email ke semua pengguna dan email tujuan khusus jika dimasukkan
             let emailNotification = null;
             try {
-                emailNotification = await emailService.sendNewFarmNotification(farm, userId);
+                const customNotifEmail = data.notificationEmail || data.customNotificationEmail || null;
+                emailNotification = await emailService.sendNewFarmNotification(farm, userId, customNotifEmail);
             } catch (notifErr) {
                 console.error('⚠️ [Notification Error] Gagal memproses notifikasi email:', notifErr.message);
                 emailNotification = { success: false, error: notifErr.message };

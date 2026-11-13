@@ -480,6 +480,17 @@
                     <textarea id="notes" placeholder="Catatan kondisi irigasi atau jenis tanah..."></textarea>
                 </div>
 
+                <!-- Notifikasi Email / Gmail Lain -->
+                <div class="form-group" style="background: rgba(34, 197, 94, 0.05); border: 1px solid rgba(34, 197, 94, 0.2); padding: 16px; border-radius: 12px;">
+                    <label style="color: #4ade80; display: flex; align-items: center; gap: 8px; font-weight: 700; margin-bottom: 6px;">
+                        <span>📧</span> Kirim Notifikasi ke Gmail Lain (Opsional)
+                    </label>
+                    <input type="email" id="notificationEmail" placeholder="Contoh: dinas.pertanian@gmail.com / kelompoktani@gmail.com" style="width: 100%; box-sizing: border-box;" />
+                    <div style="font-size: 12px; color: rgba(255, 255, 255, 0.6); margin-top: 6px; line-height: 1.4;">
+                        💡 Masukkan alamat Gmail jika Anda ingin mengirimkan email pemberitahuan otomatis pendaftaran lahan ini ke email tersebut.
+                    </div>
+                </div>
+
                 <button type="submit" id="submitBtn" class="btn-submit">
                     💾 Simpan Lahan
                 </button>
@@ -691,6 +702,7 @@
                 desa: document.getElementById('desa').value.trim(),
                 location: document.getElementById('location').value.trim(),
                 notes: document.getElementById('notes').value.trim(),
+                notificationEmail: document.getElementById('notificationEmail') ? document.getElementById('notificationEmail').value.trim() : '',
                 ...ownerPayload
             };
 

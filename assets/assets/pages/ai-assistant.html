@@ -663,6 +663,9 @@
             <a href="farms.html">🌾 Lahan</a>
             <a href="users.html">👥 Pengguna</a>
             <a href="ai-assistant.html" class="active">🤖 AI Assistant</a>
+            <button type="button" class="btn-nav-key" onclick="openAIConfigModal()" title="Konfigurasi & Ganti API Key AI">
+                🔑 <span>API Key AI</span>
+            </button>
             <button id="themeToggleBtn" type="button" class="theme-toggle-btn" onclick="toggleTheme()" title="Beralih Mode Terang / Gelap">
                 <span class="theme-toggle-icon">☀️</span>
                 <span class="theme-toggle-text">Terang</span>
@@ -702,6 +705,7 @@
                         <option value="mixtral-8x7b">🌪️ Mixtral 8x7B (Mistral · Stabil)</option>
                         <option value="gpt-oss-120b">🧠 GPT OSS 120B (Open Source)</option>
                     </select>
+                    <button type="button" class="ai-chat-btn-key" onclick="openAIConfigModal()" title="Konfigurasi & Ganti API Key AI" style="padding:8px 12px; font-size:12px; border-radius:8px;">⚙️ Ganti Key</button>
                 </div>
             </div>
 
@@ -1200,12 +1204,293 @@
         // ==========================================
         // 8. LOG & INIT
         // ==========================================
+        // ==========================================
+        // 9. AI CONFIGURATION MODAL
+        // ==========================================
+        let cachedAIConfig = null;
+
+        async function openAIConfigModal() {
+            const modal = document.getElementById('aiConfigModal');
+            if (!modal) return;
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+
+            const alertBox = document.getElementById('aiConfigAlert');
+            if (alertBox) alertBox.style.display = 'none';
+
+            try {
+                const res = await fetch('http://127.0.0.1:5000/api/ai/config', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const resData = await res.json();
+                if (resData.success && resData.data) {
+                    cachedAIConfig = resData.data;
+                    document.getElementById('inputGroqApiKey').value = resData.data.groqApiKey || '';
+                    document.getElementById('inputGeminiApiKey').value = resData.data.geminiApiKey || '';
+
+                    updateAIKeyBadge('groqStatusBadge', resData.data.groqConfigured);
+                    updateAIKeyBadge('geminiStatusBadge', resData.data.geminiConfigured);
+
+                    const modelSelect = document.getElementById('configDefaultModelSelect');
+                    if (modelSelect && localStorage.getItem('selectedAiModel')) {
+                        modelSelect.value = localStorage.getItem('selectedAiModel');
+                    }
+                }
+            } catch (err) {
+                console.warn('Gagal mengambil konfigurasi AI:', err);
+            }
+        }
+
+        function closeAIConfigModal() {
+            const modal = document.getElementById('aiConfigModal');
+            if (modal) modal.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        function handleModalOverlayClick(event) {
+            if (event.target.id === 'aiConfigModal') {
+                closeAIConfigModal();
+            }
+        }
+
+        function togglePasswordVisibility(inputId) {
+            const input = document.getElementById(inputId);
+            if (!input) return;
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        function updateAIKeyBadge(badgeId, isConfigured, textOverride = null) {
+            const badge = document.getElementById(badgeId);
+            if (!badge) return;
+            if (isConfigured) {
+                badge.className = 'status-badge-active';
+                badge.textContent = textOverride || '🟢 Aktif';
+            } else {
+                badge.className = 'status-badge-offline';
+                badge.textContent = textOverride || '⚪ Belum Diisi';
+            }
+        }
+
+        async function testAIConfigKeys() {
+            const btn = document.getElementById('btnTestApiKeys');
+            const alertBox = document.getElementById('aiConfigAlert');
+            const groqKey = document.getElementById('inputGroqApiKey').value.trim();
+            const geminiKey = document.getElementById('inputGeminiApiKey').value.trim();
+
+            btn.disabled = true;
+            btn.innerHTML = '⏳ Menguji Koneksi...';
+            alertBox.style.display = 'block';
+            alertBox.className = 'alert alert-info';
+            alertBox.style.background = 'rgba(59, 130, 246, 0.1)';
+            alertBox.style.border = '1px solid rgba(59, 130, 246, 0.3)';
+            alertBox.style.color = '#93c5fd';
+            alertBox.innerHTML = 'Menguji koneksi ke server Groq & Google Gemini...';
+
+            try {
+                const res = await fetch('http://127.0.0.1:5000/api/ai/test-keys', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ groqApiKey: groqKey, geminiApiKey: geminiKey })
+                });
+
+                const resData = await res.json();
+                if (resData.success && resData.data) {
+                    const groqRes = resData.data.groq;
+                    const geminiRes = resData.data.gemini;
+
+                    updateAIKeyBadge('groqStatusBadge', groqRes.success, groqRes.success ? '🟢 Valid' : '🔴 Belum Valid');
+                    updateAIKeyBadge('geminiStatusBadge', geminiRes.success, geminiRes.success ? '🟢 Valid' : '🔴 Belum Valid');
+
+                    let htmlMsg = '<div style="font-weight:700; margin-bottom:6px; font-size:14px;">Hasil Pengujian Koneksi:</div>';
+                    htmlMsg += `<div style="margin-bottom:6px; display:flex; align-items:center; gap:6px;">🦙 <strong>Groq API:</strong> <span>${groqRes.success ? '✅ ' : '❌ '}${groqRes.message}</span></div>`;
+                    htmlMsg += `<div style="display:flex; align-items:center; gap:6px;">✨ <strong>Gemini API:</strong> <span>${geminiRes.success ? '✅ ' : '❌ '}${geminiRes.message}</span></div>`;
+
+                    alertBox.innerHTML = htmlMsg;
+                    alertBox.style.background = (groqRes.success || geminiRes.success) ? 'rgba(34, 197, 94, 0.12)' : 'rgba(239, 68, 68, 0.12)';
+                    alertBox.style.border = (groqRes.success || geminiRes.success) ? '1px solid rgba(34, 197, 94, 0.35)' : '1px solid rgba(239, 68, 68, 0.35)';
+                    alertBox.style.color = (groqRes.success || geminiRes.success) ? '#86efac' : '#fca5a5';
+                } else {
+                    alertBox.textContent = '❌ ' + (resData.message || 'Gagal menguji API Key');
+                }
+            } catch (err) {
+                alertBox.textContent = '❌ Terjadi kesalahan jaringan saat menguji API Key: ' + err.message;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '⚡ Uji Koneksi API';
+            }
+        }
+
+        async function saveAIConfigKeys() {
+            const btn = document.getElementById('btnSaveApiKeys');
+            const alertBox = document.getElementById('aiConfigAlert');
+            const groqKey = document.getElementById('inputGroqApiKey').value.trim();
+            const geminiKey = document.getElementById('inputGeminiApiKey').value.trim();
+            const selectedModel = document.getElementById('configDefaultModelSelect').value;
+
+            btn.disabled = true;
+            btn.innerHTML = '⏳ Menyimpan...';
+
+            try {
+                const res = await fetch('http://127.0.0.1:5000/api/ai/config', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        groqApiKey: groqKey,
+                        geminiApiKey: geminiKey,
+                        defaultModel: selectedModel
+                    })
+                });
+
+                const resData = await res.json();
+                if (resData.success) {
+                    if (selectedModel) {
+                        changeAIModel(selectedModel);
+                    }
+
+                    alertBox.style.display = 'block';
+                    alertBox.style.background = 'rgba(34, 197, 94, 0.12)';
+                    alertBox.style.border = '1px solid rgba(34, 197, 94, 0.35)';
+                    alertBox.style.color = '#86efac';
+                    alertBox.innerHTML = '🎉 <strong>Berhasil Disimpan!</strong> Kunci API baru telah tersimpan di sistem dan langsung aktif digunakan.';
+
+                    updateAIKeyBadge('groqStatusBadge', !!groqKey);
+                    updateAIKeyBadge('geminiStatusBadge', !!geminiKey);
+
+                    setTimeout(() => {
+                        closeAIConfigModal();
+                    }, 1800);
+                } else {
+                    alertBox.style.display = 'block';
+                    alertBox.style.background = 'rgba(239, 68, 68, 0.1)';
+                    alertBox.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+                    alertBox.style.color = '#fca5a5';
+                    alertBox.innerHTML = '❌ ' + (resData.message || 'Gagal menyimpan konfigurasi');
+                }
+            } catch (err) {
+                alertBox.style.display = 'block';
+                alertBox.style.color = '#fca5a5';
+                alertBox.innerHTML = '❌ Kesalahan server: ' + err.message;
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '💾 Simpan Perubahan';
+            }
+        }
+
         console.log('🤖 AI Assistant - Siap membantu!');
         console.log('👤 User:', user);
         console.log('🔑 Token:', token ? '✅ Ada' : '❌ Tidak ada');
 
         initAIModel();
     </script>
+
+    <!-- MODAL KONFIGURASI API KEY AI -->
+    <div id="aiConfigModal" class="ai-modal-overlay" style="display:none;" onclick="handleModalOverlayClick(event)">
+        <div class="ai-modal-card">
+            <div class="ai-modal-header">
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <span style="font-size:26px;">⚙️</span>
+                    <div>
+                        <h3 style="margin:0; font-size:18px; font-weight:800;">Konfigurasi API Key AI</h3>
+                        <p style="margin:2px 0 0; font-size:12px; color:rgba(255,255,255,0.6);">Ganti & kelola kunci API Groq & Google Gemini langsung di sini</p>
+                    </div>
+                </div>
+                <button type="button" class="ai-modal-close" onclick="closeAIConfigModal()" title="Tutup">✕</button>
+            </div>
+
+            <div class="ai-modal-body">
+                <div id="aiConfigAlert" style="display:none; padding:12px 16px; border-radius:10px; margin-bottom:16px; font-size:13px; line-height:1.5;"></div>
+
+                <!-- 1. GROQ API KEY -->
+                <div class="ai-config-section">
+                    <div class="ai-config-section-header">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span style="font-size:20px;">🦙</span>
+                            <div>
+                                <strong style="font-size:14px;">Groq API Key</strong>
+                                <div style="font-size:11px; color:#4ade80;">Untuk: Llama 3.3 70B, Llama 3.1 8B, Gemma 2, Mixtral, GPT OSS</div>
+                            </div>
+                        </div>
+                        <span id="groqStatusBadge" class="status-badge-offline">Memeriksa...</span>
+                    </div>
+
+                    <div style="position:relative; margin-top:12px;">
+                        <input type="password" id="inputGroqApiKey" placeholder="gsk_..." style="width:100%; box-sizing:border-box; padding:10px 42px 10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.05); color:#fff; font-family:monospace; font-size:13px;" />
+                        <button type="button" onclick="togglePasswordVisibility('inputGroqApiKey')" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; color:rgba(255,255,255,0.6); cursor:pointer; font-size:15px;" title="Lihat / Sembunyikan API Key">👁️</button>
+                    </div>
+
+                    <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                        <span style="font-size:11px; color:rgba(255,255,255,0.5);">Gratis & Cepat (Tanpa Kartu Kredit)</span>
+                        <a href="https://console.groq.com/keys" target="_blank" rel="noopener noreferrer" class="btn-external-api-key" style="background:rgba(249,115,22,0.15); border:1px solid rgba(249,115,22,0.35); color:#fb923c;">
+                            <span>🔗 Buka / Ambil API Key Groq</span>
+                            <span>↗</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 2. GOOGLE GEMINI API KEY -->
+                <div class="ai-config-section">
+                    <div class="ai-config-section-header">
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span style="font-size:20px;">✨</span>
+                            <div>
+                                <strong style="font-size:14px;">Google Gemini API Key</strong>
+                                <div style="font-size:11px; color:#60a5fa;">Untuk: Gemini 1.5 Flash, Gemini 2.0 Flash, Gemini 1.5 Pro, & Vision Foto</div>
+                            </div>
+                        </div>
+                        <span id="geminiStatusBadge" class="status-badge-offline">Memeriksa...</span>
+                    </div>
+
+                    <div style="position:relative; margin-top:12px;">
+                        <input type="password" id="inputGeminiApiKey" placeholder="AQ... / AIzaSy..." style="width:100%; box-sizing:border-box; padding:10px 42px 10px 14px; border-radius:8px; border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.05); color:#fff; font-family:monospace; font-size:13px;" />
+                        <button type="button" onclick="togglePasswordVisibility('inputGeminiApiKey')" style="position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; color:rgba(255,255,255,0.6); cursor:pointer; font-size:15px;" title="Lihat / Sembunyikan API Key">👁️</button>
+                    </div>
+
+                    <div style="margin-top:10px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;">
+                        <span style="font-size:11px; color:rgba(255,255,255,0.5);">Gratis dari Google AI Studio</span>
+                        <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" class="btn-external-api-key" style="background:rgba(59,130,246,0.15); border:1px solid rgba(59,130,246,0.35); color:#93c5fd;">
+                            <span>🔗 Buka / Ambil API Key Gemini</span>
+                            <span>↗</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- 3. PILIHAN MODEL DEFAULT -->
+                <div style="margin-top:8px;">
+                    <label style="display:block; font-size:13px; font-weight:600; color:rgba(255,255,255,0.85); margin-bottom:6px;">Model Bawaan (Default):</label>
+                    <select id="configDefaultModelSelect" style="width:100%; padding:10px 12px; border-radius:8px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); color:#fff; font-family:'Inter',sans-serif; font-size:13px;">
+                        <option value="llama-3.3-70b">🦙 Llama 3.3 70B (Meta · Rekomendasi)</option>
+                        <option value="gemini-1.5-flash">✨ Gemini 1.5 Flash (Google · Cepat)</option>
+                        <option value="gemini-2.0-flash">🚀 Gemini 2.0 Flash (Google · Next-Gen)</option>
+                        <option value="gemini-1.5-pro">⭐ Gemini 1.5 Pro (Google · Cerdas)</option>
+                        <option value="llama-3.1-8b">⚡ Llama 3.1 8B Instant (Meta · Kilat)</option>
+                        <option value="gemma-2-9b">💎 Gemma 2 9B (Google · Ringan)</option>
+                        <option value="mixtral-8x7b">🌪️ Mixtral 8x7B (Mistral · Stabil)</option>
+                        <option value="gpt-oss-120b">🧠 GPT OSS 120B (Open Source)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="ai-modal-footer">
+                <button type="button" id="btnTestApiKeys" onclick="testAIConfigKeys()" class="btn-test-api">
+                    ⚡ Uji Koneksi API
+                </button>
+                <div style="display:flex; gap:10px;">
+                    <button type="button" onclick="closeAIConfigModal()" class="btn-cancel-modal">
+                        Batal
+                    </button>
+                    <button type="button" id="btnSaveApiKeys" onclick="saveAIConfigKeys()" class="btn-save-api">
+                        💾 Simpan Perubahan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </body>
 

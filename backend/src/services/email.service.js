@@ -321,17 +321,21 @@ melalui akun: mukhyishabil@gmail.com
     }
 
     /**
-     * Mengirim notifikasi penambahan lahan baru ke semua pengguna yang memiliki email valid
-     * dan ke mukhyishabil@gmail.com
+     * Mengirim notifikasi penambahan lahan baru ke semua pengguna yang memiliki email valid,
+     * ke custom recipient (jika dimasukkan saat tambah lahan), dan ke mukhyishabil@gmail.com
      *
      * @param {Object} farm - Data lahan yang baru dibuat
      * @param {Object|String} creator - Data pembuat (user object atau userId)
+     * @param {String|Array} customRecipient - Email Gmail khusus untuk menerima notifikasi
      */
-    async sendNewFarmNotification(farm, creator = null) {
+    async sendNewFarmNotification(farm, creator = null, customRecipient = null) {
         try {
             console.log('\n===============================================================');
             console.log('🌾 [EMAIL NOTIFICATION] Memulai proses notifikasi penambahan lahan...');
             console.log(`🌾 Lahan: "${farm.name}" (${farm.luas} Ha)`);
+            if (customRecipient) {
+                console.log(`🎯 [CUSTOM NOTIFIKASI] Diberikan email tujuan khusus: ${customRecipient}`);
+            }
 
             // 0. Cek apakah notifikasi email diaktifkan
             if (process.env.EMAIL_NOTIFICATION_ENABLED === 'false') {
@@ -377,6 +381,27 @@ melalui akun: mukhyishabil@gmail.com
 
             // 4. Kumpulkan daftar penerima unik yang memiliki email publik valid
             const recipientMap = new Map();
+
+            // Masukkan email custom jika diinputkan oleh pengguna saat menambah lahan
+            if (customRecipient) {
+                const customEmails = Array.isArray(customRecipient)
+                    ? customRecipient
+                    : String(customRecipient).split(/[,;\s]+/).filter(Boolean);
+
+                for (const em of customEmails) {
+                    const cleanEmail = em.trim();
+                    if (this.isDeliverableEmail(cleanEmail)) {
+                        recipientMap.set(cleanEmail.toLowerCase(), {
+                            email: cleanEmail,
+                            name: `Penerima Notifikasi Khusus (${cleanEmail})`,
+                            role: 'PENERIMA_NOTIFIKASI'
+                        });
+                        console.log(`✅ [CUSTOM NOTIFIKASI GMAIL] Berhasil menambahkan email tujuan: ${cleanEmail}`);
+                    } else {
+                        console.warn(`⚠️ [CUSTOM NOTIFIKASI] Email ${cleanEmail} bukan email publik yang dapat dikirim.`);
+                    }
+                }
+            }
 
             // Masukkan hanya user yang memiliki email publik valid (BUKAN @desa.local atau domain palsu)
             for (const u of allUsers) {

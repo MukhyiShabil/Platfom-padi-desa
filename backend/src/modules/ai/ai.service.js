@@ -40,6 +40,7 @@ const AI_MODELS = {
         geminiModel: 'gemini-1.5-flash',
         description: 'AI generasi terbaru dari Google, cepat dan responsif',
         badge: 'Google AI',
+
         icon: '✨',
         personaTitle: 'Asisten Agrikultur Kilat & Efisien Google',
         tone: 'Cepat, padat, to-the-point, modern, energik, dan berorientasi efisiensi tinggi tanpa berbelit-belit.',
@@ -70,6 +71,7 @@ const AI_MODELS = {
         geminiModel: 'gemini-2.0-flash',
         description: 'Model generasi berikutnya dari Google berkecepatan tinggi',
         badge: 'Next-Gen',
+
         icon: '🚀',
         personaTitle: 'Spesialis Smart Farming & Inovasi Presisi Masa Depan',
         tone: 'Futuristik, visioner, antusias pada teknologi agrikultur presisi, sensor tanah, prakiraan cuaca otomatis, dan modernisasi sistem.',
@@ -100,6 +102,7 @@ const AI_MODELS = {
         geminiModel: 'gemini-1.5-pro',
         description: 'Penalaran tingkat tinggi dan pemahaman konteks mendalam',
         badge: 'Pro',
+
         icon: '⭐',
         personaTitle: 'Pakar Riset Agronomi & Kebijakan Berkelanjutan Google',
         tone: 'Mendalam, akademis kontekstual, holistik, menelaah hubungan timbal balik tanah-tanaman-iklim dengan bijak.',
@@ -130,6 +133,7 @@ const AI_MODELS = {
         groqModel: 'llama-3.1-8b-instant',
         description: 'Model ultra cepat dan efisien',
         badge: 'Super Cepat',
+
         icon: '⚡',
         personaTitle: 'Sahabat Petani & Rekan Kerja Lapangan',
         tone: 'Hangat, santai, membumi, sangat bersahabat, seperti rekan kerja yang mengobrol di gubuk sawah.',
@@ -808,6 +812,154 @@ TEMA UTAMA:
 
     async getHistory(userId) {
         return { success: true, data: [] };
+    }
+
+    getConfig() {
+        const groq = process.env.GROQ_API_KEY || '';
+        const gemini = process.env.GEMINI_API_KEY || '';
+
+        return {
+            groqApiKey: groq,
+            geminiApiKey: gemini,
+            groqConfigured: !!(groq.trim() && !groq.includes('xxxx')),
+            geminiConfigured: !!(gemini.trim() && !gemini.includes('xxxx')),
+            defaultModel: DEFAULT_MODEL_ID,
+            models: this.getAvailableModels()
+        };
+    }
+
+    getEnvFilePath() {
+        const fs = require('fs');
+        const path = require('path');
+        const candidates = [
+            path.resolve(__dirname, '../../../../backend/.env'),
+            path.resolve(__dirname, '../../../.env'),
+            path.resolve(process.cwd(), 'backend/.env'),
+            path.resolve(process.cwd(), '.env')
+        ];
+        for (const p of candidates) {
+            if (fs.existsSync(p)) return p;
+        }
+        return path.resolve(process.cwd(), 'backend/.env');
+    }
+
+    saveKeysToEnvFile(groqKey, geminiKey) {
+        const fs = require('fs');
+        const envPath = this.getEnvFilePath();
+        let content = '';
+        if (fs.existsSync(envPath)) {
+            content = fs.readFileSync(envPath, 'utf8');
+        }
+
+        if (groqKey !== undefined) {
+            const cleanGroq = typeof groqKey === 'string' ? groqKey.trim() : '';
+            if (/^GROQ_API_KEY=.*$/m.test(content)) {
+                content = content.replace(/^GROQ_API_KEY=.*$/m, `GROQ_API_KEY="${cleanGroq}"`);
+            } else {
+                content += `\nGROQ_API_KEY="${cleanGroq}"`;
+            }
+            process.env.GROQ_API_KEY = cleanGroq;
+        }
+
+        if (geminiKey !== undefined) {
+            const cleanGemini = typeof geminiKey === 'string' ? geminiKey.trim() : '';
+            if (/^GEMINI_API_KEY=.*$/m.test(content)) {
+                content = content.replace(/^GEMINI_API_KEY=.*$/m, `GEMINI_API_KEY="${cleanGemini}"`);
+            } else {
+                content += `\nGEMINI_API_KEY="${cleanGemini}"`;
+            }
+            process.env.GEMINI_API_KEY = cleanGemini;
+        }
+
+        fs.writeFileSync(envPath, content, 'utf8');
+        console.log(`✅ [AI Config] File .env diperbarui di ${envPath}`);
+        return true;
+    }
+
+    async updateConfig({ groqApiKey, geminiApiKey, defaultModel }) {
+        if (groqApiKey !== undefined || geminiApiKey !== undefined) {
+            this.saveKeysToEnvFile(groqApiKey, geminiApiKey);
+        }
+
+        return {
+            success: true,
+            message: 'Konfigurasi API Key AI berhasil disimpan dan langsung aktif!',
+            data: this.getConfig()
+        };
+    }
+
+    async testKeys(groqKey = null, geminiKey = null) {
+        const testGroq = (groqKey !== null && groqKey !== undefined)
+            ? groqKey.trim()
+            : (process.env.GROQ_API_KEY || '').trim();
+
+        const testGemini = (geminiKey !== null && geminiKey !== undefined)
+            ? geminiKey.trim()
+            : (process.env.GEMINI_API_KEY || '').trim();
+
+        const results = {
+            groq: { success: false, message: '' },
+            gemini: { success: false, message: '' }
+        };
+
+        // Test Groq
+        if (!testGroq || testGroq.includes('xxxx')) {
+            results.groq = { success: false, message: 'GROQ_API_KEY belum diisi.' };
+        } else {
+            try {
+                const resp = await axios.post(
+                    'https://api.groq.com/openai/v1/chat/completions',
+                    {
+                        model: 'llama-3.1-8b-instant',
+                        messages: [{ role: 'user', content: 'ping' }],
+                        max_tokens: 5
+                    },
+                    {
+                        headers: {
+                            'Authorization': `Bearer ${testGroq}`,
+                            'Content-Type': 'application/json'
+                        },
+                        timeout: 10000
+                    }
+                );
+                if (resp.data?.choices?.[0]?.message?.content) {
+                    results.groq = { success: true, message: 'Koneksi Groq API Berhasil! Model Meta Llama, Gemma, Mixtral siap digunakan.' };
+                } else {
+                    results.groq = { success: false, message: 'Respon Groq API tidak valid.' };
+                }
+            } catch (err) {
+                results.groq = { success: false, message: err.response?.data?.error?.message || err.message };
+            }
+        }
+
+        // Test Gemini
+        if (!testGemini || testGemini.includes('xxxx')) {
+            results.gemini = { success: false, message: 'GEMINI_API_KEY belum diisi.' };
+        } else {
+            try {
+                const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${testGemini}`;
+                const resp = await axios.post(
+                    url,
+                    {
+                        contents: [{ role: 'user', parts: [{ text: 'ping' }] }],
+                        generationConfig: { maxOutputTokens: 5 }
+                    },
+                    {
+                        headers: { 'Content-Type': 'application/json' },
+                        timeout: 10000
+                    }
+                );
+                if (resp.data?.candidates?.[0]?.content?.parts?.[0]?.text) {
+                    results.gemini = { success: true, message: 'Koneksi Google Gemini API Berhasil! Model Gemini & AI Vision siap digunakan.' };
+                } else {
+                    results.gemini = { success: false, message: 'Respon Gemini API tidak valid.' };
+                }
+            } catch (err) {
+                results.gemini = { success: false, message: err.response?.data?.error?.message || err.message };
+            }
+        }
+
+        return results;
     }
 }
 

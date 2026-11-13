@@ -28,7 +28,10 @@ router.use(verifyToken);
 router.post('/chat', aiController.chat);
 router.post('/analyze', upload.single('image'), aiController.analyzeImage);
 router.get('/history', aiController.getHistory);
+router.get('/config', aiController.getConfig);
+router.post('/config', aiController.updateConfig);
+router.post('/test-keys', aiController.testKeys);
 
-console.log('✅ AI routes loaded: /models, /chat, /analyze, /history');
+console.log('✅ AI routes loaded: /models, /chat, /analyze, /history, /config, /test-keys');
 
 module.exports = router;

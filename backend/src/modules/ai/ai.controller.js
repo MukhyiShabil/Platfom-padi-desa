@@ -76,6 +76,53 @@ class AIController {
     async getHistory(req, res) {
         res.json({ success: true, data: [] });
     }
+
+    async getConfig(req, res) {
+        try {
+            const config = aiService.getConfig();
+            res.json({
+                success: true,
+                data: config
+            });
+        } catch (error) {
+            console.error('AI Controller getConfig error:', error);
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
+        }
+    }
+
+    async updateConfig(req, res) {
+        try {
+            const { groqApiKey, geminiApiKey, defaultModel } = req.body;
+            const result = await aiService.updateConfig({ groqApiKey, geminiApiKey, defaultModel });
+            res.json(result);
+        } catch (error) {
+            console.error('AI Controller updateConfig error:', error);
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
+        }
+    }
+
+    async testKeys(req, res) {
+        try {
+            const { groqApiKey, geminiApiKey } = req.body || {};
+            const result = await aiService.testKeys(groqApiKey, geminiApiKey);
+            res.json({
+                success: true,
+                data: result
+            });
+        } catch (error) {
+            console.error('AI Controller testKeys error:', error);
+            res.status(500).json({
+                success: false,
+                message: error.message
+            });
+        }
+    }
 }
 
 module.exports = new AIController();
