@@ -379,10 +379,11 @@ melalui akun: mukhyishabil@gmail.com
                 select: { id: true, name: true, email: true, role: true }
             });
 
-            // 4. Kumpulkan daftar penerima unik yang memiliki email publik valid
-            const recipientMap = new Map();
+            // 4. Tentukan daftar penerima email
+            const targetEmails = [];
 
-            // Masukkan email custom jika diinputkan oleh pengguna saat menambah lahan
+            // Jika pengguna memasukkan email Gmail tujuan khusus saat menambah lahan,
+            // jadikan email tersebut sebagai SATU-SATUNYA penerima utama langsung (tanpa kirim ke mukhyishabil)
             if (customRecipient) {
                 const customEmails = Array.isArray(customRecipient)
                     ? customRecipient
@@ -390,51 +391,30 @@ melalui akun: mukhyishabil@gmail.com
 
                 for (const em of customEmails) {
                     const cleanEmail = em.trim();
-                    if (this.isDeliverableEmail(cleanEmail)) {
-                        recipientMap.set(cleanEmail.toLowerCase(), {
-                            email: cleanEmail,
-                            name: `Penerima Notifikasi Khusus (${cleanEmail})`,
-                            role: 'PENERIMA_NOTIFIKASI'
-                        });
-                        console.log(`✅ [CUSTOM NOTIFIKASI GMAIL] Berhasil menambahkan email tujuan: ${cleanEmail}`);
+                    if (this.isDeliverableEmail(cleanEmail) && !targetEmails.includes(cleanEmail)) {
+                        targetEmails.push(cleanEmail);
+                        console.log(`✅ [NOTIFIKASI GMAIL] Target langsung: ${cleanEmail}`);
                     } else {
-                        console.warn(`⚠️ [CUSTOM NOTIFIKASI] Email ${cleanEmail} bukan email publik yang dapat dikirim.`);
+                        console.warn(`⚠️ [NOTIFIKASI GMAIL] Email ${cleanEmail} bukan format email publik valid.`);
                     }
                 }
             }
 
-            // Masukkan hanya user yang memiliki email publik valid (BUKAN @desa.local atau domain palsu)
-            for (const u of allUsers) {
-                if (u.email && this.isDeliverableEmail(u.email)) {
-                    recipientMap.set(u.email.toLowerCase().trim(), {
-                        email: u.email.trim(),
-                        name: u.name,
-                        role: u.role
-                    });
-                } else if (u.email) {
-                    console.log(`⏩ [SKIP EMAIL DUMMY] Mengabaikan email demo/lokal: ${u.email} (${u.name}) agar tidak bounce di Gmail.`);
+            // HANYA jika tidak ada email tujuan khusus yang diisi, gunakan email pengelola sebagai cadangan
+            if (targetEmails.length === 0) {
+                for (const u of allUsers) {
+                    if (u.email && this.isDeliverableEmail(u.email) && !targetEmails.includes(u.email.trim())) {
+                        targetEmails.push(u.email.trim());
+                    }
+                }
+                if (targetEmails.length === 0 && this.isDeliverableEmail(this.defaultSender)) {
+                    targetEmails.push(this.defaultSender);
                 }
             }
 
-            // Pastikan email pengelola (mukhyishabil@gmail.com) terdaftar jika valid
-            const primaryEmail = this.defaultSender;
-            if (this.isDeliverableEmail(primaryEmail) && !recipientMap.has(primaryEmail.toLowerCase())) {
-                recipientMap.set(primaryEmail.toLowerCase(), {
-                    email: primaryEmail,
-                    name: 'Mukhyi Shabil (Admin / Pengelola)',
-                    role: 'ADMIN_OPERATOR'
-                });
-            }
+            console.log(`📬 Total penerima: ${targetEmails.length} email -> [${targetEmails.join(', ')}]`);
 
-            const recipients = Array.from(recipientMap.values());
-            const recipientEmails = recipients.map(r => r.email);
-
-            console.log(`📬 Total penerima valid: ${recipients.length} alamat email:`);
-            recipients.forEach((r, idx) => {
-                console.log(`   ${idx + 1}. ${r.name} <${r.email}> [${r.role}]`);
-            });
-
-            if (recipientEmails.length === 0) {
+            if (targetEmails.length === 0) {
                 console.log('ℹ️ Tidak ada penerima email publik yang valid. Pengiriman dibatalkan.');
                 return {
                     success: true,
@@ -448,73 +428,48 @@ melalui akun: mukhyishabil@gmail.com
             const subject = `🌾 [Platform Padi Desa] Lahan Baru Ditambahkan: ${farm.name} (${farm.luas} Ha)`;
 
             if (!transporter) {
-                // Mode Simulasi / Menunggu App Password
-                console.log('---------------------------------------------------------------');
                 console.log('ℹ️ [MODE SIMULASI / MENUNGGU EMAIL_PASS]');
-                console.log(`📧 Pengirim  : ${this.defaultSender}`);
-                console.log(`📬 Subjek    : ${subject}`);
-                console.log('===============================================================\n');
-
                 return {
                     success: true,
                     simulated: true,
                     sender: this.defaultSender,
-                    count: recipients.length,
-                    recipients: recipientEmails,
-                    message: `Notifikasi lahan disimulasikan ke ${recipients.length} pengguna`
+                    count: targetEmails.length,
+                    recipients: targetEmails,
+                    message: `Notifikasi lahan disimulasikan ke ${targetEmails.join(', ')}`
                 };
             }
 
             // 6. Mode Pengiriman Nyata melalui Gmail SMTP
-            console.log(`🚀 Mengirim email via Gmail SMTP (${this.defaultSender})...`);
+            console.log(`🚀 Mengirim email langsung ke: ${targetEmails.join(', ')}...`);
 
             // Generate HTML & Text
             const htmlContent = this.generateNewFarmEmailHtml({
                 farm,
                 farmer: farmerData,
                 creator: creatorData,
-                recipientName: 'Pengguna Platform Padi Desa'
+                recipientName: targetEmails.join(', ')
             });
 
             const textContent = this.generateNewFarmEmailText({
                 farm,
                 farmer: farmerData,
                 creator: creatorData,
-                recipientName: 'Pengguna Platform Padi Desa'
+                recipientName: targetEmails.join(', ')
             });
 
-            // Ambil semua email tujuan selain email pengirim sistem (mukhyishabil@gmail.com)
-            const targetRecipients = recipientEmails.filter(
-                e => e.toLowerCase() !== this.defaultSender.toLowerCase()
-            );
-
-            let toField;
-            let ccField = null;
-
-            if (targetRecipients.length > 0) {
-                // Email tujuan yang baru diinputkan langsung dimasukkan ke kolom 'to'
-                // sehingga di inbox Gmail penerima jelas tertera "Kepada: [email_baru]"
-                toField = targetRecipients.join(', ');
-                ccField = this.defaultSender;
-            } else {
-                toField = this.defaultSender;
-            }
+            const toAddress = targetEmails.join(', ');
 
             const mailOptions = {
                 from: this.fromHeader,
-                to: toField,
+                to: toAddress,
                 subject: subject,
                 text: textContent,
                 html: htmlContent
             };
 
-            if (ccField) {
-                mailOptions.cc = ccField;
-            }
-
             const info = await transporter.sendMail(mailOptions);
 
-            console.log(`✅ [BERHASIL] Email notifikasi terkirim ke: ${toField} (CC: ${ccField || '-'})! MessageId: ${info.messageId}`);
+            console.log(`✅ [BERHASIL] Email notifikasi terkirim langsung ke: ${toAddress}! MessageId: ${info.messageId}`);
             console.log('===============================================================\n');
 
             return {
@@ -522,9 +477,9 @@ melalui akun: mukhyishabil@gmail.com
                 simulated: false,
                 messageId: info.messageId,
                 sender: this.defaultSender,
-                count: recipients.length,
-                recipients: recipientEmails,
-                message: `Email notifikasi lahan berhasil dikirim ke ${recipients.length} pengguna melalui ${this.defaultSender}`
+                count: targetEmails.length,
+                recipients: targetEmails,
+                message: `Email notifikasi lahan berhasil dikirim langsung ke ${toAddress}`
             };
 
         } catch (error) {
@@ -707,16 +662,9 @@ Email ini dikirim otomatis oleh Platform Padi Desa melalui ${this.defaultSender}
 
             const recipientMap = new Map();
 
-            // 1. Email pengguna yang baru didaftarkan (jika publik dan deliverable)
-            if (newUser.email && this.isDeliverableEmail(newUser.email)) {
-                recipientMap.set(newUser.email.toLowerCase().trim(), {
-                    email: newUser.email.trim(),
-                    name: newUser.name,
-                    role: newUser.role
-                });
-            }
+            const targetEmails = [];
 
-            // 2. Email Gmail custom jika ada
+            // 1. Email Gmail custom jika ada (dikirim langsung khusus ke email ini)
             if (customRecipient) {
                 const customEmails = Array.isArray(customRecipient)
                     ? customRecipient
@@ -724,31 +672,26 @@ Email ini dikirim otomatis oleh Platform Padi Desa melalui ${this.defaultSender}
 
                 for (const em of customEmails) {
                     const cleanEmail = em.trim();
-                    if (this.isDeliverableEmail(cleanEmail)) {
-                        recipientMap.set(cleanEmail.toLowerCase(), {
-                            email: cleanEmail,
-                            name: `Penerima Notifikasi (${cleanEmail})`,
-                            role: 'PENERIMA_NOTIFIKASI'
-                        });
-                        console.log(`✅ [CUSTOM NOTIFIKASI GMAIL] Menambahkan tujuan: ${cleanEmail}`);
+                    if (this.isDeliverableEmail(cleanEmail) && !targetEmails.includes(cleanEmail)) {
+                        targetEmails.push(cleanEmail);
+                        console.log(`✅ [USER NOTIFIKASI GMAIL] Target langsung: ${cleanEmail}`);
                     }
                 }
             }
 
-            // 3. Email admin operator
-            const primaryEmail = this.defaultSender;
-            if (this.isDeliverableEmail(primaryEmail) && !recipientMap.has(primaryEmail.toLowerCase())) {
-                recipientMap.set(primaryEmail.toLowerCase(), {
-                    email: primaryEmail,
-                    name: 'Mukhyi Shabil (Admin / Pengelola)',
-                    role: 'ADMIN_OPERATOR'
-                });
+            // 2. Email akun pengguna baru jika bukan dummy
+            if (newUser.email && this.isDeliverableEmail(newUser.email) && !targetEmails.includes(newUser.email.trim())) {
+                targetEmails.push(newUser.email.trim());
             }
 
-            const recipients = Array.from(recipientMap.values());
-            const recipientEmails = recipients.map(r => r.email);
+            // 3. HANYA jika tidak ada email tujuan sama sekali, baru gunakan pengelola
+            if (targetEmails.length === 0) {
+                if (this.isDeliverableEmail(this.defaultSender)) {
+                    targetEmails.push(this.defaultSender);
+                }
+            }
 
-            if (recipientEmails.length === 0) {
+            if (targetEmails.length === 0) {
                 return { success: true, count: 0, message: 'Tidak ada email publik yang valid' };
             }
 
@@ -756,8 +699,8 @@ Email ini dikirim otomatis oleh Platform Padi Desa melalui ${this.defaultSender}
             const subject = `🎉 [Platform Padi Desa] Akun Baru Berhasil Didaftarkan: ${newUser.name} (${newUser.role})`;
 
             if (!transporter) {
-                console.log(`ℹ️ [MODE SIMULASI] Email akun baru disiapkan ke ${recipientEmails.join(', ')}`);
-                return { success: true, simulated: true, count: recipients.length, recipients: recipientEmails };
+                console.log(`ℹ️ [MODE SIMULASI] Email akun baru disiapkan ke ${targetEmails.join(', ')}`);
+                return { success: true, simulated: true, count: targetEmails.length, recipients: targetEmails };
             }
 
             const htmlContent = this.generateNewUserEmailHtml({
@@ -771,34 +714,18 @@ Email ini dikirim otomatis oleh Platform Padi Desa melalui ${this.defaultSender}
                 recipientName: newUser.name
             });
 
-            const targetRecipients = recipientEmails.filter(
-                e => e.toLowerCase() !== this.defaultSender.toLowerCase()
-            );
-
-            let toField;
-            let ccField = null;
-
-            if (targetRecipients.length > 0) {
-                toField = targetRecipients.join(', ');
-                ccField = this.defaultSender;
-            } else {
-                toField = this.defaultSender;
-            }
+            const toAddress = targetEmails.join(', ');
 
             const mailOptions = {
                 from: this.fromHeader,
-                to: toField,
+                to: toAddress,
                 subject: subject,
                 text: textContent,
                 html: htmlContent
             };
 
-            if (ccField) {
-                mailOptions.cc = ccField;
-            }
-
             const info = await transporter.sendMail(mailOptions);
-            console.log(`✅ [USER NOTIFICATION SUCCESS] Email terkirim ke: ${toField} (CC: ${ccField || '-'})! MessageId: ${info.messageId}`);
+            console.log(`✅ [USER NOTIFICATION SUCCESS] Email terkirim langsung ke: ${toAddress}! MessageId: ${info.messageId}`);
             console.log('===============================================================\n');
 
             return {
@@ -806,9 +733,9 @@ Email ini dikirim otomatis oleh Platform Padi Desa melalui ${this.defaultSender}
                 simulated: false,
                 messageId: info.messageId,
                 sender: this.defaultSender,
-                count: recipients.length,
-                recipients: recipientEmails,
-                message: `Notifikasi pendaftaran akun berhasil dikirim ke ${recipients.length} alamat email`
+                count: targetEmails.length,
+                recipients: targetEmails,
+                message: `Notifikasi pendaftaran akun berhasil dikirim langsung ke ${toAddress}`
             };
 
         } catch (error) {
