@@ -1,4 +1,6 @@
 const nodemailer = require('nodemailer');
+const fs = require('fs');
+const path = require('path');
 const prisma = require('../config/database');
 
 /**
@@ -8,7 +10,17 @@ const prisma = require('../config/database');
 class EmailService {
     constructor() {
         this.defaultSender = process.env.EMAIL_USER || 'mukhyishabil@gmail.com';
-        this.fromHeader = process.env.EMAIL_FROM || `"Platform Padi Desa" <${this.defaultSender}>`;
+        this.fromHeader = process.env.EMAIL_FROM || `Platform Padi Desa <${this.defaultSender}>`;
+    }
+
+    logDelivery(data) {
+        try {
+            const logFile = path.join(__dirname, '../../../email-delivery.log');
+            const entry = `[${new Date().toISOString()}] ${JSON.stringify(data)}\n`;
+            fs.appendFileSync(logFile, entry);
+        } catch (e) {
+            console.warn('Gagal menulis email delivery log:', e.message);
+        }
     }
 
     /**
@@ -210,7 +222,7 @@ class EmailService {
 
                             <!-- Button Action -->
                             <div style="text-align: center; margin: 30px 0 10px 0;">
-                                <a href="http://localhost:5500/pages/farms.html" style="display: inline-block; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 700; padding: 13px 32px; border-radius: 50px; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.35); letter-spacing: 0.3px;">
+                                <a href="https://pertanian-desa.id" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: #ffffff; text-decoration: none; font-size: 14px; font-weight: 700; padding: 13px 32px; border-radius: 50px; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.35); letter-spacing: 0.3px;">
                                     Lihat Data Lahan di Platform &rarr;
                                 </a>
                             </div>
@@ -271,8 +283,7 @@ RINCIAN LAHAN PERTANIAN:
 - Catatan        : ${farmNotes}
 - Waktu Registrasi: ${timeString}
 
-Lahan ini kini aktif dan dapat dipantau melalui aplikasi Platform Padi Desa:
-http://localhost:5500/pages/farms.html
+Lahan ini kini aktif dan dapat dipantau melalui aplikasi Platform Padi Desa.
 
 =====================================================
 Email ini dikirimkan secara otomatis oleh Platform Padi Desa
@@ -462,6 +473,7 @@ melalui akun: mukhyishabil@gmail.com
             const mailOptions = {
                 from: this.fromHeader,
                 to: toAddress,
+                replyTo: this.defaultSender,
                 subject: subject,
                 text: textContent,
                 html: htmlContent
@@ -471,6 +483,16 @@ melalui akun: mukhyishabil@gmail.com
 
             console.log(`✅ [BERHASIL] Email notifikasi terkirim langsung ke: ${toAddress}! MessageId: ${info.messageId}`);
             console.log('===============================================================\n');
+
+            this.logDelivery({
+                action: 'NEW_FARM_NOTIFICATION',
+                farmName: farm.name,
+                customRecipient,
+                targetEmails,
+                messageId: info.messageId,
+                response: info.response,
+                success: true
+            });
 
             return {
                 success: true,
@@ -485,6 +507,15 @@ melalui akun: mukhyishabil@gmail.com
         } catch (error) {
             console.error('❌ [EMAIL NOTIFICATION ERROR]:', error.message);
             console.log('===============================================================\n');
+
+            this.logDelivery({
+                action: 'NEW_FARM_NOTIFICATION',
+                farmName: farm.name,
+                customRecipient,
+                error: error.message,
+                success: false
+            });
+
             return {
                 success: false,
                 error: error.message,
@@ -594,7 +625,7 @@ melalui akun: mukhyishabil@gmail.com
                             </table>
                             <!-- Action Button -->
                             <div style="text-align: center; margin: 30px 0 10px 0;">
-                                <a href="http://localhost:5500/pages/login.html" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);">
+                                <a href="https://pertanian-desa.id" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);">
                                     🚀 Masuk ke Platform Padi Desa
                                 </a>
                             </div>
@@ -640,8 +671,7 @@ RINCIAN AKUN:
 - Wilayah / Desa: ${userDesa}
 - Waktu Daftar  : ${timeString}
 
-Silakan login ke platform:
-http://localhost:5500/pages/login.html
+Silakan login ke Platform Padi Desa untuk mengelola lahan.
 =====================================================
 Email ini dikirim otomatis oleh Platform Padi Desa melalui ${this.defaultSender}
         `.trim();
@@ -719,6 +749,7 @@ Email ini dikirim otomatis oleh Platform Padi Desa melalui ${this.defaultSender}
             const mailOptions = {
                 from: this.fromHeader,
                 to: toAddress,
+                replyTo: this.defaultSender,
                 subject: subject,
                 text: textContent,
                 html: htmlContent
@@ -727,6 +758,17 @@ Email ini dikirim otomatis oleh Platform Padi Desa melalui ${this.defaultSender}
             const info = await transporter.sendMail(mailOptions);
             console.log(`✅ [USER NOTIFICATION SUCCESS] Email terkirim langsung ke: ${toAddress}! MessageId: ${info.messageId}`);
             console.log('===============================================================\n');
+
+            this.logDelivery({
+                action: 'NEW_USER_NOTIFICATION',
+                userName: newUser.name,
+                userEmail: newUser.email,
+                customRecipient,
+                targetEmails,
+                messageId: info.messageId,
+                response: info.response,
+                success: true
+            });
 
             return {
                 success: true,
@@ -740,6 +782,15 @@ Email ini dikirim otomatis oleh Platform Padi Desa melalui ${this.defaultSender}
 
         } catch (error) {
             console.error('❌ [USER NOTIFICATION ERROR]:', error.message);
+
+            this.logDelivery({
+                action: 'NEW_USER_NOTIFICATION',
+                userName: newUser?.name,
+                customRecipient,
+                error: error.message,
+                success: false
+            });
+
             return {
                 success: false,
                 error: error.message,
