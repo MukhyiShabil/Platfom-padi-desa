@@ -31,9 +31,10 @@
             align-items: center;
             justify-content: center;
             background: linear-gradient(135deg, #0f172a 0%, #1a472a 50%, #0f172a 100%);
-            padding: 20px;
+            padding: 30px 16px;
             position: relative;
-            overflow: hidden;
+            overflow-x: hidden;
+            overflow-y: auto;
         }
 
         /* Background Animation */
@@ -116,16 +117,50 @@
            CARD LOGIN
         ======================================== */
         .auth-card {
-            background: rgba(15, 23, 42, 0.85);
+            background: rgba(15, 23, 42, 0.92);
             border: 1px solid rgba(255, 255, 255, 0.08);
             border-radius: 24px;
-            padding: 2.5rem 2.2rem;
-            max-width: 480px;
+            padding: 2rem 2rem;
+            max-width: 500px;
+            max-height: 94vh;
+            overflow-y: auto;
             width: 100%;
             position: relative;
             z-index: 1;
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
             animation: slideUp 0.8s ease;
+            margin: auto;
+        }
+
+        .auth-card::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .auth-card::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+        }
+
+        .auth-card::-webkit-scrollbar-thumb {
+            background: rgba(34, 197, 94, 0.4);
+            border-radius: 8px;
+        }
+
+        .auth-card::-webkit-scrollbar-thumb:hover {
+            background: rgba(34, 197, 94, 0.7);
+        }
+
+        .form-row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        @media (max-width: 480px) {
+            .form-row-2 {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
         }
 
         /* ========================================
@@ -257,11 +292,11 @@
         ======================================== */
         .logo {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1.1rem;
         }
 
         .logo .icon {
-            font-size: 4.5rem;
+            font-size: 3.5rem;
             display: block;
             animation: pulse 3s ease-in-out infinite;
         }
@@ -279,10 +314,10 @@
         }
 
         .logo h2 {
-            font-size: 1.75rem;
+            font-size: 1.55rem;
             font-weight: 800;
             color: #fff;
-            margin-top: 0.5rem;
+            margin-top: 0.35rem;
             letter-spacing: -0.5px;
         }
 
@@ -295,7 +330,7 @@
 
         .logo p {
             color: rgba(255, 255, 255, 0.5);
-            font-size: 0.875rem;
+            font-size: 0.85rem;
             font-weight: 300;
             margin-top: 4px;
         }
@@ -304,26 +339,26 @@
            FORM
         ======================================== */
         .form-group {
-            margin-bottom: 1.25rem;
+            margin-bottom: 0.85rem;
         }
 
         .form-group label {
             display: block;
-            font-size: 0.8rem;
+            font-size: 0.76rem;
             font-weight: 600;
             color: rgba(255, 255, 255, 0.7);
-            margin-bottom: 0.4rem;
+            margin-bottom: 0.35rem;
             letter-spacing: 0.5px;
             text-transform: uppercase;
         }
 
         .form-control {
             width: 100%;
-            padding: 14px 20px;
+            padding: 11px 16px;
             background: rgba(255, 255, 255, 0.06);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 12px;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             color: #fff;
             transition: all 0.3s ease;
             font-family: 'Poppins', sans-serif;
@@ -684,28 +719,32 @@
                     <input type="email" id="regEmail" class="form-control" placeholder="budi@example.com" required />
                 </div>
 
-                <div class="form-group">
-                    <label>🏷️ Peran Sistem</label>
-                    <select id="regRole" class="form-control select-role">
-                        <option value="PETANI" selected>🌾 Petani (Kelola Lahan & Tanam)</option>
-                        <option value="KEPALA_DESA">🏛️ Kepala Desa (Monitoring & Rekap Wilayah)</option>
-                        <option value="ADMIN">👑 Administrator (Akses Penuh Sistem)</option>
-                    </select>
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label>🏷️ Peran Sistem</label>
+                        <select id="regRole" class="form-control select-role">
+                            <option value="PETANI" selected>🌾 Petani</option>
+                            <option value="KEPALA_DESA">🏛️ Kepala Desa</option>
+                            <option value="ADMIN">👑 Administrator</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>📍 Nama Desa</label>
+                        <input type="text" id="regDesa" class="form-control" placeholder="Contoh: Desa Sukamaju" />
+                    </div>
                 </div>
 
-                <div class="form-group">
-                    <label>📍 Nama Desa / Domisili</label>
-                    <input type="text" id="regDesa" class="form-control" placeholder="Contoh: Desa Sukamaju" />
-                </div>
+                <div class="form-row-2">
+                    <div class="form-group">
+                        <label>🔒 Password</label>
+                        <input type="password" id="regPassword" class="form-control" placeholder="Min. 6 digit" required minlength="6" />
+                    </div>
 
-                <div class="form-group">
-                    <label>🔒 Password</label>
-                    <input type="password" id="regPassword" class="form-control" placeholder="Minimal 6 karakter" required minlength="6" />
-                </div>
-
-                <div class="form-group">
-                    <label>🔒 Konfirmasi Password</label>
-                    <input type="password" id="regConfirmPassword" class="form-control" placeholder="Ulangi password" required minlength="6" />
+                    <div class="form-group">
+                        <label>🔒 Konfirmasi Password</label>
+                        <input type="password" id="regConfirmPassword" class="form-control" placeholder="Ulangi password" required minlength="6" />
+                    </div>
                 </div>
 
                 <!-- Input Gmail Notifikasi Tambahan -->
@@ -721,8 +760,8 @@
 
                 <div id="regAlertMessage" class="alert" style="display: none;"></div>
 
-                <button type="submit" id="regSubmitBtn" class="btn-login">
-                    🌾 Buat Akun Baru
+                <button type="submit" id="regSubmitBtn" class="btn-login" style="margin-top: 6px; padding: 15px; font-size: 1rem; font-weight: 700; background: linear-gradient(135deg, #22c55e, #16a34a); box-shadow: 0 4px 20px rgba(34, 197, 94, 0.45); cursor: pointer;">
+                    🌾 Daftar & Buat Akun Baru
                 </button>
             </form>
 
@@ -1012,6 +1051,10 @@
         // ==========================================
         window.onload = function () {
             checkBackend();
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('register') === 'true' || window.location.hash === '#register') {
+                switchAuthTab('register');
+            }
             console.log('🌾 Platform Padi Desa - Login & Registrasi Page');
         };
     </script>

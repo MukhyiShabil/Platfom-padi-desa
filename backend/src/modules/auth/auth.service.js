@@ -42,21 +42,26 @@ class AuthService {
     }
 
     async register(userData) {
-        const { email, password, name, role, desa, notificationEmail } = userData;
+        const userEmail = (userData?.email || '').toLowerCase().trim();
+        const userPassword = userData?.password;
+        const userName = (userData?.name || '').trim();
+        const userRole = (userData?.role || 'PETANI').toUpperCase();
+        const userDesa = userData?.desa ? userData.desa.trim() : '-';
+        const notifEmail = userData?.notificationEmail ? userData.notificationEmail.trim() : null;
 
         const existing = await prisma.user.findUnique({
-            where: { email: email.toLowerCase().trim() }
+            where: { email: userEmail }
         });
 
         if (existing) throw new Error('Email sudah terdaftar');
 
         const user = await prisma.user.create({
             data: {
-                email: email.toLowerCase().trim(),
-                password,
-                name: name.trim(),
-                role: (role || 'PETANI').toUpperCase(),
-                desa: desa ? desa.trim() : '-'
+                email: userEmail,
+                password: userPassword,
+                name: userName,
+                role: userRole,
+                desa: userDesa
             }
         });
 
@@ -66,7 +71,7 @@ class AuthService {
             notificationResult = await emailService.sendNewUserRegistrationNotification(
                 user,
                 'Registrasi Mandiri Pengguna',
-                notificationEmail || null
+                notifEmail
             );
         } catch (mailErr) {
             console.warn('⚠️ Gagal mengirim notifikasi email akun baru:', mailErr.message);
