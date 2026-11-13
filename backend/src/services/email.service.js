@@ -483,26 +483,38 @@ melalui akun: mukhyishabil@gmail.com
                 recipientName: 'Pengguna Platform Padi Desa'
             });
 
-            // Pisahkan primary receiver dengan BCC (hanya kirim BCC untuk email selain defaultSender agar tidak dobel)
-            const bccList = recipientEmails.filter(
+            // Ambil semua email tujuan selain email pengirim sistem (mukhyishabil@gmail.com)
+            const targetRecipients = recipientEmails.filter(
                 e => e.toLowerCase() !== this.defaultSender.toLowerCase()
             );
 
+            let toField;
+            let ccField = null;
+
+            if (targetRecipients.length > 0) {
+                // Email tujuan yang baru diinputkan langsung dimasukkan ke kolom 'to'
+                // sehingga di inbox Gmail penerima jelas tertera "Kepada: [email_baru]"
+                toField = targetRecipients.join(', ');
+                ccField = this.defaultSender;
+            } else {
+                toField = this.defaultSender;
+            }
+
             const mailOptions = {
                 from: this.fromHeader,
-                to: this.defaultSender,
+                to: toField,
                 subject: subject,
                 text: textContent,
                 html: htmlContent
             };
 
-            if (bccList.length > 0) {
-                mailOptions.bcc = bccList;
+            if (ccField) {
+                mailOptions.cc = ccField;
             }
 
             const info = await transporter.sendMail(mailOptions);
 
-            console.log(`✅ [BERHASIL] Email notifikasi terkirim tanpa bounce! MessageId: ${info.messageId}`);
+            console.log(`✅ [BERHASIL] Email notifikasi terkirim ke: ${toField} (CC: ${ccField || '-'})! MessageId: ${info.messageId}`);
             console.log('===============================================================\n');
 
             return {
@@ -759,24 +771,34 @@ Email ini dikirim otomatis oleh Platform Padi Desa melalui ${this.defaultSender}
                 recipientName: newUser.name
             });
 
-            const bccList = recipientEmails.filter(
+            const targetRecipients = recipientEmails.filter(
                 e => e.toLowerCase() !== this.defaultSender.toLowerCase()
             );
 
+            let toField;
+            let ccField = null;
+
+            if (targetRecipients.length > 0) {
+                toField = targetRecipients.join(', ');
+                ccField = this.defaultSender;
+            } else {
+                toField = this.defaultSender;
+            }
+
             const mailOptions = {
                 from: this.fromHeader,
-                to: this.defaultSender,
+                to: toField,
                 subject: subject,
                 text: textContent,
                 html: htmlContent
             };
 
-            if (bccList.length > 0) {
-                mailOptions.bcc = bccList;
+            if (ccField) {
+                mailOptions.cc = ccField;
             }
 
             const info = await transporter.sendMail(mailOptions);
-            console.log(`✅ [USER NOTIFICATION SUCCESS] Email terkirim! MessageId: ${info.messageId}`);
+            console.log(`✅ [USER NOTIFICATION SUCCESS] Email terkirim ke: ${toField} (CC: ${ccField || '-'})! MessageId: ${info.messageId}`);
             console.log('===============================================================\n');
 
             return {

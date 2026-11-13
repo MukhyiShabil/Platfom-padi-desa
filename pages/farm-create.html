@@ -724,11 +724,11 @@
                 if (result.success) {
                     const ownerNameDisplay = result.data?.user?.name ? ` untuk <strong>${result.data.user.name}</strong>` : '';
                     let notifMsg = '';
-                    if (result.notification && result.notification.count) {
-                        const count = result.notification.count;
+                    if (result.notification && result.notification.recipients && result.notification.recipients.length > 0) {
+                        const targetList = result.notification.recipients.join(', ');
                         const isSim = result.notification.simulated ? ' [Simulasi Sistem]' : '';
                         notifMsg = `<div style="margin-top: 8px; font-size: 13px; font-weight: normal; color: #86efac; line-height: 1.5;">
-                            📧 <strong>Notifikasi Email:</strong> Telah dikirim ke <strong>${count} pengguna</strong> melalui <strong>mukhyishabil@gmail.com</strong>${isSim}.
+                            📧 <strong>Notifikasi Terkirim ke:</strong> <span style="text-decoration: underline; font-weight: 600;">${targetList}</span> (Pengirim: ${result.notification.sender || 'mukhyishabil@gmail.com'})${isSim}.
                         </div>`;
                     }
                     successDiv.innerHTML = `✅ <strong>Lahan berhasil ditambahkan${ownerNameDisplay}!</strong>${notifMsg}`;
