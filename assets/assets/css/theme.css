@@ -176,7 +176,8 @@ body[data-theme="light"],
 
 [data-theme="light"] .welcome-section h1 .highlight {
     background: none !important;
-    -webkit-background-clip: unset !important;
+    background-clip: border-box !important;
+    -webkit-background-clip: border-box !important;
     -webkit-text-fill-color: #16a34a !important;
     color: #16a34a !important;
 }

@@ -578,6 +578,18 @@
                     <div class="form-help">Dapat dikosongkan untuk pengguna tingkat pusat/administrator</div>
                 </div>
 
+                <div class="form-section-title" style="margin-top: 10px;">📧 Notifikasi Gmail Pendaftaran</div>
+
+                <div class="form-group" style="background: rgba(34, 197, 94, 0.04); border: 1px solid rgba(34, 197, 94, 0.2); padding: 16px; border-radius: 12px;">
+                    <label style="color: #4ade80; display: flex; align-items: center; gap: 8px; font-weight: 700; margin-bottom: 6px;">
+                        <span>📧</span> Kirim Notifikasi ke Gmail Tambahan (Opsional)
+                    </label>
+                    <input type="email" class="form-control" id="notificationEmail" placeholder="Contoh: pimpinan.desa@gmail.com / dinas@gmail.com" />
+                    <div class="form-help" style="color: rgba(255, 255, 255, 0.5); margin-top: 6px;">
+                        💡 Email pemberitahuan pendaftaran akun baru akan otomatis dikirimkan ke email akun tersebut dan ke alamat Gmail tambahan ini.
+                    </div>
+                </div>
+
                 <div class="form-section-title" style="margin-top: 10px;">⚙️ Status Pengguna</div>
 
                 <div class="form-group">
@@ -668,6 +680,7 @@
             const confirmPassword = document.getElementById('confirmPassword').value;
             const role = document.getElementById('selectedRole').value;
             const desa = document.getElementById('desa').value.trim();
+            const notificationEmail = document.getElementById('notificationEmail')?.value?.trim() || '';
             const isActive = document.getElementById('isActive').checked;
 
             // Validasi Password Match
@@ -697,6 +710,7 @@
                         password,
                         role,
                         desa,
+                        notificationEmail,
                         isActive
                     })
                 });

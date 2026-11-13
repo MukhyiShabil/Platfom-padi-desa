@@ -1,4 +1,5 @@
 const prisma = require('../../config/database');
+const emailService = require('../../services/email.service');
 
 class UserService {
     // ==========================================
@@ -275,8 +276,24 @@ class UserService {
                 }
             });
 
+            // Kirim notifikasi email akun baru via Gmail
+            let emailNotification = null;
+            try {
+                const customNotif = data.notificationEmail || null;
+                emailNotification = await emailService.sendNewUserRegistrationNotification(
+                    newUser,
+                    'Administrator Sistem',
+                    customNotif
+                );
+            } catch (mailErr) {
+                console.warn('⚠️ Gagal mengirim notifikasi email akun baru di user.service:', mailErr.message);
+            }
+
             const { password: _, ...userSafe } = newUser;
-            return userSafe;
+            return {
+                ...userSafe,
+                notification: emailNotification
+            };
         } catch (error) {
             throw new Error(`Gagal menambahkan pengguna: ${error.message}`);
         }

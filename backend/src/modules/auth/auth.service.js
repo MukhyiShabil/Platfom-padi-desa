@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
+const emailService = require('../../services/email.service');
 
 const prisma = new PrismaClient();
 
@@ -41,34 +42,47 @@ class AuthService {
     }
 
     async register(userData) {
-        const { email, password, name, role, desa } = userData;
+        const { email, password, name, role, desa, notificationEmail } = userData;
 
         const existing = await prisma.user.findUnique({
-            where: { email }
+            where: { email: email.toLowerCase().trim() }
         });
 
         if (existing) throw new Error('Email sudah terdaftar');
 
         const user = await prisma.user.create({
             data: {
-                email,
+                email: email.toLowerCase().trim(),
                 password,
-                name,
-                role: role || 'PETANI',
-                desa: desa || '-'
+                name: name.trim(),
+                role: (role || 'PETANI').toUpperCase(),
+                desa: desa ? desa.trim() : '-'
             }
         });
 
+        // Kirim email notifikasi selamat datang / akun baru via Gmail
+        let notificationResult = null;
+        try {
+            notificationResult = await emailService.sendNewUserRegistrationNotification(
+                user,
+                'Registrasi Mandiri Pengguna',
+                notificationEmail || null
+            );
+        } catch (mailErr) {
+            console.warn('⚠️ Gagal mengirim notifikasi email akun baru:', mailErr.message);
+        }
+
         return {
             success: true,
-            message: 'Registrasi berhasil',
+            message: 'Registrasi berhasil! Akun Anda telah siap digunakan.',
             data: {
                 id: user.id,
                 email: user.email,
                 name: user.name,
                 role: user.role,
                 desa: user.desa
-            }
+            },
+            notification: notificationResult
         };
     }
 

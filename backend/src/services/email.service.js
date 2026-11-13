@@ -525,6 +525,279 @@ melalui akun: mukhyishabil@gmail.com
             };
         }
     }
+
+    /**
+     * Generate Template HTML Email Notifikasi Pendaftaran Akun Baru
+     */
+    generateNewUserEmailHtml({ user, creator, recipientName }) {
+        const userName = user.name || 'Pengguna Baru';
+        const userEmail = user.email || '-';
+        const roleNames = {
+            'ADMIN': 'Administrator Platform 👑',
+            'KEPALA_DESA': 'Kepala Desa 🏛️',
+            'PETANI': 'Petani Binaan 🌾'
+        };
+        const userRole = roleNames[user.role] || user.role || 'Petani 🌾';
+        const userDesa = user.desa || 'Desa Sukamakmur';
+        const creatorName = typeof creator === 'string'
+            ? creator
+            : (creator?.name ? `${creator.name} (${creator.role || 'Admin'})` : 'Registrasi Mandiri');
+        const timeString = this.formatDateIndo(user.createdAt || new Date());
+        const greetingName = recipientName ? recipientName : userName;
+
+        return `
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pemberitahuan Pendaftaran Akun Baru</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #0b1120; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: #f1f5f9; -webkit-font-smoothing: antialiased;">
+    <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background-color: #0b1120; padding: 30px 10px;">
+        <tr>
+            <td align="center">
+                <table role="presentation" width="100%" style="max-width: 600px; background: #111827; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 16px; overflow: hidden; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);">
+                    <!-- Header -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #065f46 0%, #047857 50%, #059669 100%); padding: 32px 30px; text-align: center;">
+                            <div style="font-size: 42px; line-height: 1; margin-bottom: 8px;">🌾</div>
+                            <h1 style="margin: 0; font-size: 24px; font-weight: 800; color: #ffffff; letter-spacing: 0.5px;">
+                                PLATFORM PADI DESA
+                            </h1>
+                            <p style="margin: 6px 0 0 0; font-size: 13px; color: rgba(255, 255, 255, 0.85); font-weight: 400;">
+                                Sistem Informasi & Manajemen Pertanian Padi Berkelanjutan
+                            </p>
+                        </td>
+                    </tr>
+                    <!-- Body -->
+                    <tr>
+                        <td style="padding: 32px 30px;">
+                            <div style="display: inline-block; background: rgba(34, 197, 94, 0.12); border: 1px solid rgba(34, 197, 94, 0.3); border-radius: 50px; padding: 6px 16px; margin-bottom: 20px;">
+                                <span style="color: #4ade80; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px;">
+                                    🎉 Akun Baru Terdaftar
+                                </span>
+                            </div>
+                            <h2 style="margin: 0 0 12px 0; font-size: 20px; font-weight: 700; color: #ffffff;">
+                                Selamat Datang di Platform Padi Desa!
+                            </h2>
+                            <p style="margin: 0 0 20px 0; font-size: 14px; line-height: 1.6; color: #94a3b8;">
+                                Halo <strong style="color: #f1f5f9;">${greetingName}</strong>,<br>
+                                Akun pengguna baru telah berhasil didaftarkan dan diaktifkan di Platform Padi Desa. Berikut adalah rincian informasi akun yang terdaftar:
+                            </p>
+                            <!-- Highlight Card -->
+                            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="background: #1e293b; border-left: 4px solid #22c55e; border-radius: 8px; margin: 24px 0;">
+                                <tr>
+                                    <td style="padding: 18px 20px;">
+                                        <div style="font-size: 16px; font-weight: 700; color: #ffffff; margin-bottom: 4px;">
+                                            👤 ${userName}
+                                        </div>
+                                        <div style="font-size: 13px; color: #94a3b8;">
+                                            Peran: <strong style="color: #4ade80;">${userRole}</strong> • Desa: <strong style="color: #f1f5f9;">${userDesa}</strong>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                            <!-- Details Table -->
+                            <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-collapse: collapse; margin-bottom: 24px; font-size: 13px;">
+                                <tr>
+                                    <td style="padding: 10px 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #64748b; width: 38%;">👤 Nama Lengkap</td>
+                                    <td style="padding: 10px 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #f1f5f9; font-weight: 600;">${userName}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #64748b;">📧 Email Login</td>
+                                    <td style="padding: 10px 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #4ade80; font-weight: 600;">${userEmail}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #64748b;">🏷️ Peran Sistem</td>
+                                    <td style="padding: 10px 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #f1f5f9; font-weight: 600;">${userRole}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #64748b;">📍 Desa / Wilayah</td>
+                                    <td style="padding: 10px 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #f1f5f9;">${userDesa}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #64748b;">✍️ Didaftarkan Oleh</td>
+                                    <td style="padding: 10px 12px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); color: #f1f5f9;">${creatorName}</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 10px 12px; color: #64748b;">🕒 Waktu Pendaftaran</td>
+                                    <td style="padding: 10px 12px; color: #94a3b8;">${timeString}</td>
+                                </tr>
+                            </table>
+                            <!-- Action Button -->
+                            <div style="text-align: center; margin: 30px 0 10px 0;">
+                                <a href="http://localhost:5500/pages/login.html" target="_blank" style="display: inline-block; background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%); color: #ffffff; text-decoration: none; padding: 14px 32px; border-radius: 50px; font-size: 14px; font-weight: 700; box-shadow: 0 4px 15px rgba(34, 197, 94, 0.4);">
+                                    🚀 Masuk ke Platform Padi Desa
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background: #0d1322; padding: 20px 30px; text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.05); font-size: 12px; color: #64748b;">
+                            Email otomatis dikirimkan oleh Platform Padi Desa melalui ${this.defaultSender}.
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+        `.trim();
+    }
+
+    /**
+     * Generate Template Plain Text Notifikasi Akun Baru
+     */
+    generateNewUserEmailText({ user, creator, recipientName }) {
+        const userName = user.name || 'Pengguna Baru';
+        const userEmail = user.email || '-';
+        const userRole = user.role || 'PETANI';
+        const userDesa = user.desa || 'Desa Sukamakmur';
+        const timeString = this.formatDateIndo(user.createdAt || new Date());
+        const greetingName = recipientName ? recipientName : userName;
+
+        return `
+🌾 PLATFORM PADI DESA - PENDAFTARAN AKUN BARU 🌾
+=====================================================
+Halo ${greetingName},
+
+Akun baru telah berhasil didaftarkan di Platform Padi Desa.
+
+RINCIAN AKUN:
+- Nama Lengkap  : ${userName}
+- Email Login   : ${userEmail}
+- Peran (Role)  : ${userRole}
+- Wilayah / Desa: ${userDesa}
+- Waktu Daftar  : ${timeString}
+
+Silakan login ke platform:
+http://localhost:5500/pages/login.html
+=====================================================
+Email ini dikirim otomatis oleh Platform Padi Desa melalui ${this.defaultSender}
+        `.trim();
+    }
+
+    /**
+     * Mengirim notifikasi pendaftaran akun baru ke pengguna, email custom, dan admin
+     */
+    async sendNewUserRegistrationNotification(newUser, creator = null, customRecipient = null) {
+        try {
+            console.log('\n===============================================================');
+            console.log('👤 [USER EMAIL NOTIFICATION] Memulai notifikasi akun baru...');
+            console.log(`👤 Pengguna: "${newUser.name}" <${newUser.email}> (${newUser.role})`);
+
+            if (process.env.EMAIL_NOTIFICATION_ENABLED === 'false') {
+                return { success: true, disabled: true, message: 'Notifikasi email dinonaktifkan di .env' };
+            }
+
+            const recipientMap = new Map();
+
+            // 1. Email pengguna yang baru didaftarkan (jika publik dan deliverable)
+            if (newUser.email && this.isDeliverableEmail(newUser.email)) {
+                recipientMap.set(newUser.email.toLowerCase().trim(), {
+                    email: newUser.email.trim(),
+                    name: newUser.name,
+                    role: newUser.role
+                });
+            }
+
+            // 2. Email Gmail custom jika ada
+            if (customRecipient) {
+                const customEmails = Array.isArray(customRecipient)
+                    ? customRecipient
+                    : String(customRecipient).split(/[,;\s]+/).filter(Boolean);
+
+                for (const em of customEmails) {
+                    const cleanEmail = em.trim();
+                    if (this.isDeliverableEmail(cleanEmail)) {
+                        recipientMap.set(cleanEmail.toLowerCase(), {
+                            email: cleanEmail,
+                            name: `Penerima Notifikasi (${cleanEmail})`,
+                            role: 'PENERIMA_NOTIFIKASI'
+                        });
+                        console.log(`✅ [CUSTOM NOTIFIKASI GMAIL] Menambahkan tujuan: ${cleanEmail}`);
+                    }
+                }
+            }
+
+            // 3. Email admin operator
+            const primaryEmail = this.defaultSender;
+            if (this.isDeliverableEmail(primaryEmail) && !recipientMap.has(primaryEmail.toLowerCase())) {
+                recipientMap.set(primaryEmail.toLowerCase(), {
+                    email: primaryEmail,
+                    name: 'Mukhyi Shabil (Admin / Pengelola)',
+                    role: 'ADMIN_OPERATOR'
+                });
+            }
+
+            const recipients = Array.from(recipientMap.values());
+            const recipientEmails = recipients.map(r => r.email);
+
+            if (recipientEmails.length === 0) {
+                return { success: true, count: 0, message: 'Tidak ada email publik yang valid' };
+            }
+
+            const transporter = this.getTransporter();
+            const subject = `🎉 [Platform Padi Desa] Akun Baru Berhasil Didaftarkan: ${newUser.name} (${newUser.role})`;
+
+            if (!transporter) {
+                console.log(`ℹ️ [MODE SIMULASI] Email akun baru disiapkan ke ${recipientEmails.join(', ')}`);
+                return { success: true, simulated: true, count: recipients.length, recipients: recipientEmails };
+            }
+
+            const htmlContent = this.generateNewUserEmailHtml({
+                user: newUser,
+                creator,
+                recipientName: newUser.name
+            });
+            const textContent = this.generateNewUserEmailText({
+                user: newUser,
+                creator,
+                recipientName: newUser.name
+            });
+
+            const bccList = recipientEmails.filter(
+                e => e.toLowerCase() !== this.defaultSender.toLowerCase()
+            );
+
+            const mailOptions = {
+                from: this.fromHeader,
+                to: this.defaultSender,
+                subject: subject,
+                text: textContent,
+                html: htmlContent
+            };
+
+            if (bccList.length > 0) {
+                mailOptions.bcc = bccList;
+            }
+
+            const info = await transporter.sendMail(mailOptions);
+            console.log(`✅ [USER NOTIFICATION SUCCESS] Email terkirim! MessageId: ${info.messageId}`);
+            console.log('===============================================================\n');
+
+            return {
+                success: true,
+                simulated: false,
+                messageId: info.messageId,
+                sender: this.defaultSender,
+                count: recipients.length,
+                recipients: recipientEmails,
+                message: `Notifikasi pendaftaran akun berhasil dikirim ke ${recipients.length} alamat email`
+            };
+
+        } catch (error) {
+            console.error('❌ [USER NOTIFICATION ERROR]:', error.message);
+            return {
+                success: false,
+                error: error.message,
+                message: `Gagal mengirim email notifikasi akun: ${error.message}`
+            };
+        }
+    }
 }
 
 module.exports = new EmailService();

@@ -23,10 +23,39 @@ class AuthController {
     }
 
     async register(req, res) {
-        res.status(201).json({
-            success: false,
-            message: 'Registrasi belum tersedia'
-        });
+        try {
+            const { email, password, name, role, desa, notificationEmail } = req.body;
+
+            if (!email || !password || !name) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Nama, email, dan password wajib diisi'
+                });
+            }
+
+            if (password.length < 6) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Password minimal 6 karakter'
+                });
+            }
+
+            const result = await authService.register({
+                email,
+                password,
+                name,
+                role,
+                desa,
+                notificationEmail
+            });
+
+            res.status(201).json(result);
+        } catch (error) {
+            res.status(400).json({
+                success: false,
+                message: error.message || 'Gagal melakukan pendaftaran akun'
+            });
+        }
     }
 
     async refreshToken(req, res) {
