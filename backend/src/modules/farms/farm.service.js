@@ -214,7 +214,7 @@ class FarmService {
                 throw new Error('Petani tidak memiliki akses untuk mengubah data lahan. Hanya Admin dan Kepala Desa yang berwenang.');
             }
 
-            const { name, luas, location, desa, notes } = data;
+            const { name, luas, location, desa, notes, userId: newUserId } = data;
 
             const farm = await prisma.farm.update({
                 where: { id },
@@ -223,7 +223,8 @@ class FarmService {
                     luas: luas ? parseFloat(luas) : existingFarm.luas,
                     location: location !== undefined ? location : existingFarm.location,
                     desa: desa !== undefined ? desa : existingFarm.desa,
-                    notes: notes !== undefined ? notes : existingFarm.notes
+                    notes: notes !== undefined ? notes : existingFarm.notes,
+                    userId: newUserId || existingFarm.userId
                 },
                 include: {
                     user: {

@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detail Lahan - Platform Padi Desa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+
+    <!-- Theme System (Light & Dark Mode) -->
+    <link rel="stylesheet" href="../css/theme.css" />
+    <script src="../js/theme.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0f1e;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(10, 15, 30, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-brand {
+            font-size: 22px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .navbar-brand .logo-icon {
+            font-size: 28px;
+        }
+
+        .navbar-brand .logo-text {
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .navbar-brand .logo-sub {
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 400;
+        }
+
+        .navbar-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .navbar-menu a {
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.3s;
+            padding: 6px 14px;
+            border-radius: 8px;
+        }
+
+        .navbar-menu a:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .navbar-menu a.active {
+            color: #4ade80;
+            background: rgba(34, 197, 94, 0.08);
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.08);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.1);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.15);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 24px 80px;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            transition: 0.3s;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .btn-back:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(-3px);
+        }
+
+        /* Header Hero */
+        .detail-hero {
+            background: linear-gradient(135deg, rgba(34, 197, 94, 0.08) 0%, rgba(15, 23, 42, 0.6) 100%);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-left h1 {
+            font-size: 28px;
+            font-weight: 800;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .hero-badges {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .badge-hero {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .badge-luas {
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .badge-desa {
+            background: rgba(59, 130, 246, 0.15);
+            color: #93c5fd;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .hero-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: 0.3s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-action-edit {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #fff;
+            box-shadow: 0 4px 15px rgba(34, 197, 94, 0.3);
+        }
+
+        .btn-action-edit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(34, 197, 94, 0.45);
+        }
+
+        .btn-action-delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+
+        .btn-action-delete:hover {
+            background: rgba(239, 68, 68, 0.25);
+            color: #fff;
+        }
+
+        /* Grid Cards */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 18px;
+            padding: 24px;
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #86efac;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .info-table td {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 13px;
+        }
+
+        .info-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .info-table td.label {
+            color: rgba(255, 255, 255, 0.4);
+            width: 40%;
+        }
+
+        .info-table td.value {
+            color: #fff;
+            font-weight: 600;
+        }
+
+        /* Notes Card */
+        .notes-box {
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 3px solid #22c55e;
+            padding: 16px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.85);
+            font-style: italic;
+        }
+
+        /* Crops Section */
+        .crops-section {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 18px;
+            padding: 24px;
+        }
+
+        .crops-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .crop-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.2s;
+        }
+
+        .crop-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(34, 197, 94, 0.3);
+        }
+
+        .crop-name {
+            font-weight: 700;
+            font-size: 15px;
+            color: #fff;
+        }
+
+        .crop-meta {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 4px;
+        }
+
+        .crop-status {
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .status-active {
+            background: rgba(34, 197, 94, 0.15);
+            color: #4ade80;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .status-harvested {
+            background: rgba(251, 191, 36, 0.15);
+            color: #fbbf24;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        /* Modal Hapus */
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-backdrop.open {
+            display: flex;
+        }
+
+        .modal-box {
+            background: #0f172a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            max-width: 440px;
+            width: 100%;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .modal-box h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .modal-box p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 13px;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        @media (max-width: 640px) {
+            .navbar {
+                padding: 14px 20px;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .main-content {
+                padding: 20px 16px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .detail-hero {
+                flex-direction: column;
+            }
+
+            .hero-actions {
+                width: 100%;
+                justify-content: flex-start;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="dashboard.html" class="navbar-brand">
+            <span class="logo-icon">🌾</span>
+            <span>
+                <span class="logo-text">Platform Padi</span>
+                <span class="logo-sub">Desa</span>
+            </span>
+        </a>
+        <div class="navbar-menu">
+            <a href="dashboard.html">📊 Dashboard</a>
+            <a href="farms.html" class="active">🌾 Lahan</a>
+            <a href="users.html">👥 Pengguna</a>
+            <a href="ai-assistant.html">🤖 AI Assistant</a>
+            <button id="themeToggleBtn" type="button" class="theme-toggle-btn" onclick="toggleTheme()" title="Beralih Mode Terang / Gelap">
+                <span class="theme-toggle-icon">☀️</span>
+                <span class="theme-toggle-text">Terang</span>
+            </button>
+            <button class="logout-btn" onclick="handleLogout()">🚪 Logout</button>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+
+        <a href="farms.html" class="btn-back">
+            ← Kembali ke Daftar Lahan
+        </a>
+
+        <!-- Loading Skeleton -->
+        <div id="loadingState" style="text-align:center; padding:80px 20px; color:rgba(255,255,255,0.4);">
+            <div style="font-size:36px; margin-bottom:12px;">⏳</div>
+            Memuat detail lahan pertanian...
+        </div>
+
+        <div id="detailContainer" style="display: none;">
+
+            <!-- HERO HEADER -->
+            <div class="detail-hero">
+                <div class="hero-left">
+                    <h1 id="heroFarmName">🌾 Lahan Pertanian</h1>
+                    <div class="hero-badges">
+                        <span class="badge-hero badge-luas" id="badgeLuas">📐 0 Ha</span>
+                        <span class="badge-hero badge-desa" id="badgeDesa">📍 Desa</span>
+                        <span class="badge-hero" style="background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.8); border:1px solid rgba(255,255,255,0.1);" id="badgeLocation">🗺️ Lokasi</span>
+                    </div>
+                </div>
+
+                <div class="hero-actions" id="heroActions">
+                    <!-- Tombol Edit & Hapus akan disisipkan via JS sesuai role -->
+                </div>
+            </div>
+
+            <!-- INFO GRID -->
+            <div class="info-grid">
+
+                <!-- KARTU 1: Informasi Lahan -->
+                <div class="info-card">
+                    <div class="card-title">📐 Informasi Lahan</div>
+                    <table class="info-table">
+                        <tr>
+                            <td class="label">Nama Lahan</td>
+                            <td class="value" id="valName">-</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Luas Area</td>
+                            <td class="value" id="valLuas" style="color:#4ade80;">-</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Desa / Wilayah</td>
+                            <td class="value" id="valDesa">-</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Lokasi / Petak</td>
+                            <td class="value" id="valLocation">-</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Waktu Didaftarkan</td>
+                            <td class="value" id="valCreatedAt">-</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- KARTU 2: Petani Pemilik -->
+                <div class="info-card">
+                    <div class="card-title">👨‍🌾 Petani Penanggung Jawab</div>
+                    <div style="display:flex; align-items:center; gap:14px; margin-bottom:16px;">
+                        <div style="width:48px; height:48px; border-radius:50%; background:rgba(34,197,94,0.15); border:1px solid rgba(34,197,94,0.3); display:flex; align-items:center; justify-content:center; font-size:24px;">
+                            🌾
+                        </div>
+                        <div>
+                            <div style="font-weight:700; font-size:16px; color:#fff;" id="ownerName">Nama Petani</div>
+                            <div style="font-size:12px; color:rgba(255,255,255,0.4);" id="ownerEmail">email@example.com</div>
+                        </div>
+                    </div>
+                    <table class="info-table">
+                        <tr>
+                            <td class="label">Desa Petani</td>
+                            <td class="value" id="ownerDesa">-</td>
+                        </tr>
+                        <tr>
+                            <td class="label">Status Akun</td>
+                            <td class="value" style="color:#86efac;">✅ Terverifikasi Aktif</td>
+                        </tr>
+                    </table>
+                </div>
+
+            </div>
+
+            <!-- KARTU 3: Catatan Lahan -->
+            <div class="info-card" style="margin-bottom:24px;">
+                <div class="card-title">📝 Catatan & Kondisi Lahan</div>
+                <div class="notes-box" id="valNotes">
+                    Tidak ada catatan tambahan untuk lahan ini.
+                </div>
+            </div>
+
+            <!-- KARTU 4: Komoditas Tanaman -->
+            <div class="crops-section">
+                <div class="crops-header">
+                    <div class="card-title" style="margin-bottom:0;">🌱 Komoditas Padi & Tanaman</div>
+                    <span id="cropCountBadge" style="font-size:12px; color:rgba(255,255,255,0.4);">0 Tanaman Terdaftar</span>
+                </div>
+
+                <div id="cropsList">
+                    <!-- Crops list akan dirender via JS -->
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- MODAL KONFIRMASI HAPUS -->
+    <div id="deleteModal" class="modal-backdrop">
+        <div class="modal-box">
+            <div style="width:56px; height:56px; border-radius:50%; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); display:flex; align-items:center; justify-content:center; font-size:26px; margin:0 auto 16px;">
+                🗑️
+            </div>
+            <h3>Hapus Lahan Pertanian?</h3>
+            <p>
+                Apakah Anda yakin ingin menghapus lahan <strong id="deleteTargetName" style="color:#fca5a5;">ini</strong>? Data yang dihapus tidak dapat dipulihkan kembali.
+            </p>
+            <div class="modal-actions">
+                <button type="button" class="btn-action" style="background:rgba(255,255,255,0.06); color:#fff;" onclick="closeDeleteModal()">
+                    Batal
+                </button>
+                <button type="button" id="btnConfirmDelete" class="btn-action btn-action-delete" onclick="executeDelete()">
+                    Ya, Hapus Lahan
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        const API_URL = 'http://127.0.0.1:5000/api';
+        const token = localStorage.getItem('accessToken');
+        const user = JSON.parse(localStorage.getItem('user') || 'null');
+
+        if (!token || !user) {
+            window.location.href = 'login.html';
+        }
+
+        const canManageFarms = user && (user.role === 'ADMIN' || user.role === 'KEPALA_DESA');
+        const urlParams = new URLSearchParams(window.location.search);
+        const farmId = urlParams.get('id');
+
+        let currentFarm = null;
+
+        // Helper: Format tanggal Indonesia
+        function formatTanggal(isoString) {
+            if (!isoString) return '-';
+            try {
+                return new Date(isoString).toLocaleDateString('id-ID', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                });
+            } catch (e) {
+                return isoString;
+            }
+        }
+
+        async function loadFarmDetail() {
+            if (!farmId) {
+                document.getElementById('loadingState').innerHTML = `
+                    <div style="color:#f87171; font-weight:700; margin-bottom:8px;">❌ ID Lahan Tidak Ditemukan</div>
+                    <p style="font-size:13px; color:rgba(255,255,255,0.4); margin-bottom:16px;">Tautan yang Anda tuju tidak menyertakan parameter ID lahan.</p>
+                    <a href="farms.html" class="btn-back">← Kembali ke Daftar Lahan</a>
+                `;
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/farms/${farmId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await res.json();
+
+                if (!res.ok || !data.success) {
+                    throw new Error(data.message || 'Lahan tidak ditemukan.');
+                }
+
+                currentFarm = data.data;
+                renderFarmDetail(currentFarm);
+
+            } catch (err) {
+                document.getElementById('loadingState').innerHTML = `
+                    <div style="color:#f87171; font-weight:700; margin-bottom:8px;">❌ Gagal Memuat Detail Lahan</div>
+                    <p style="font-size:13px; color:rgba(255,255,255,0.4); margin-bottom:16px;">${err.message}</p>
+                    <a href="farms.html" class="btn-back">← Kembali ke Daftar Lahan</a>
+                `;
+            }
+        }
+
+        function renderFarmDetail(farm) {
+            document.title = `${farm.name} - Detail Lahan`;
+
+            // Hero
+            document.getElementById('heroFarmName').textContent = `🌾 ${farm.name}`;
+            document.getElementById('badgeLuas').textContent = `📐 ${farm.luas} Hektar (Ha)`;
+            document.getElementById('badgeDesa').textContent = `📍 ${farm.desa || 'Desa Belum Diatur'}`;
+            document.getElementById('badgeLocation').textContent = `🗺️ ${farm.location || 'Wilayah Pertanian'}`;
+
+            // Tombol Aksi di Hero (Edit & Hapus hanya jika admin/kades)
+            const heroActions = document.getElementById('heroActions');
+            if (canManageFarms) {
+                heroActions.innerHTML = `
+                    <a href="farm-edit.html?id=${farm.id}" class="btn-action btn-action-edit">
+                        ✏️ Edit Lahan
+                    </a>
+                    <button type="button" class="btn-action btn-action-delete" onclick="openDeleteModal()">
+                        🗑️ Hapus
+                    </button>
+                `;
+            } else {
+                heroActions.innerHTML = `
+                    <span style="font-size:12px; color:rgba(255,255,255,0.4); padding:8px 14px; background:rgba(255,255,255,0.04); border-radius:10px;">
+                        🔒 Akses Petani (Hanya Baca)
+                    </span>
+                `;
+            }
+
+            // Kartu Informasi Lahan
+            document.getElementById('valName').textContent = farm.name || '-';
+            document.getElementById('valLuas').textContent = `${farm.luas} Hektar (Ha)`;
+            document.getElementById('valDesa').textContent = farm.desa || '-';
+            document.getElementById('valLocation').textContent = farm.location || '-';
+            document.getElementById('valCreatedAt').textContent = formatTanggal(farm.createdAt);
+
+            // Kartu Petani Pemilik
+            if (farm.user) {
+                document.getElementById('ownerName').textContent = farm.user.name || 'Petani Belum Diatur';
+                document.getElementById('ownerEmail').textContent = farm.user.email || '-';
+                document.getElementById('ownerDesa').textContent = farm.user.desa || farm.desa || '-';
+            } else {
+                document.getElementById('ownerName').textContent = 'Belum Dihubungkan';
+                document.getElementById('ownerEmail').textContent = '-';
+                document.getElementById('ownerDesa').textContent = '-';
+            }
+
+            // Catatan
+            const notesEl = document.getElementById('valNotes');
+            if (farm.notes && farm.notes.trim()) {
+                notesEl.textContent = `"${farm.notes.trim()}"`;
+            } else {
+                notesEl.textContent = 'Tidak ada catatan tambahan untuk kondisi lahan ini.';
+            }
+
+            // Daftar Tanaman (Crops)
+            const cropsList = document.getElementById('cropsList');
+            const cropsCountBadge = document.getElementById('cropCountBadge');
+            const crops = farm.crops || [];
+
+            cropsCountBadge.textContent = `${crops.length} Tanaman Terdaftar`;
+
+            if (crops.length > 0) {
+                cropsList.innerHTML = crops.map(c => `
+                    <div class="crop-item">
+                        <div>
+                            <div class="crop-name">🌱 ${c.variety || 'Varietas Padi'}</div>
+                            <div class="crop-meta">
+                                Ditambahkan: ${formatTanggal(c.createdAt)} • Aktivitas: ${c.activities?.length || 0} kegiatan
+                            </div>
+                        </div>
+                        <div>
+                            <span class="crop-status ${c.status === 'ACTIVE' ? 'status-active' : 'status-harvested'}">
+                                ${c.status === 'ACTIVE' ? '🟢 Sedang Ditanam' : '🌾 Selesai Panen'}
+                            </span>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                cropsList.innerHTML = `
+                    <div style="text-align:center; padding:30px 20px; color:rgba(255,255,255,0.4); font-size:13px;">
+                        <div style="font-size:28px; margin-bottom:8px;">🌱</div>
+                        Belum ada komoditas tanaman yang dicatat pada lahan ini.
+                    </div>
+                `;
+            }
+
+            // Tampilkan container
+            document.getElementById('loadingState').style.display = 'none';
+            document.getElementById('detailContainer').style.display = 'block';
+        }
+
+        // ==========================================
+        // MODAL HAPUS LAHAN
+        // ==========================================
+        function openDeleteModal() {
+            if (!currentFarm) return;
+            document.getElementById('deleteTargetName').textContent = `"${currentFarm.name}"`;
+            document.getElementById('deleteModal').classList.add('open');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('open');
+        }
+
+        async function executeDelete() {
+            const btn = document.getElementById('btnConfirmDelete');
+            btn.disabled = true;
+            btn.textContent = 'Menghapus...';
+
+            try {
+                const res = await fetch(`${API_URL}/farms/${farmId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    alert(`✅ Lahan "${currentFarm.name}" berhasil dihapus.`);
+                    window.location.href = 'farms.html';
+                } else {
+                    throw new Error(data.message || 'Gagal menghapus lahan.');
+                }
+            } catch (err) {
+                alert(`❌ ${err.message}`);
+                btn.disabled = false;
+                btn.textContent = 'Ya, Hapus Lahan';
+            }
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+
+        window.addEventListener('DOMContentLoaded', loadFarmDetail);
+    </script>
+</body>
+
+</html>

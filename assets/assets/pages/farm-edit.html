@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Lahan - Platform Padi Desa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+
+    <!-- Theme System (Light & Dark Mode) -->
+    <link rel="stylesheet" href="../css/theme.css" />
+    <script src="../js/theme.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0f1e;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(10, 15, 30, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-brand {
+            font-size: 22px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .navbar-brand .logo-icon {
+            font-size: 28px;
+        }
+
+        .navbar-brand .logo-text {
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .navbar-brand .logo-sub {
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 400;
+        }
+
+        .navbar-menu {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .navbar-menu a {
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.3s;
+            padding: 6px 14px;
+            border-radius: 8px;
+        }
+
+        .navbar-menu a:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .navbar-menu a.active {
+            color: #4ade80;
+            background: rgba(34, 197, 94, 0.08);
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.08);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.1);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.15);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 40px 20px 80px;
+        }
+
+        .page-header {
+            margin-bottom: 28px;
+        }
+
+        .page-header h1 {
+            font-size: 28px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .page-header h1 .gradient {
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-header .subtitle {
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            transition: 0.3s;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .btn-back:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateX(-3px);
+        }
+
+        /* Form Card */
+        .form-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 20px;
+            padding: 32px;
+            position: relative;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 8px;
+        }
+
+        .form-group label .required {
+            color: #ef4444;
+        }
+
+        .form-control,
+        select,
+        textarea {
+            width: 100%;
+            padding: 13px 18px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            transition: 0.3s;
+            outline: none;
+        }
+
+        .form-control:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #22c55e;
+            box-shadow: 0 0 20px rgba(34, 197, 94, 0.15);
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        select option {
+            background: #0f172a;
+            color: #fff;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .form-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #fff;
+            border: none;
+            padding: 13px 32px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 20px rgba(34, 197, 94, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(34, 197, 94, 0.45);
+        }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.7);
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .btn-cancel:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #fff;
+        }
+
+        /* Alert / Messages */
+        .alert {
+            padding: 14px 18px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            font-size: 13px;
+            display: none;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+            color: #fca5a5;
+        }
+
+        .alert-success {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.25);
+            color: #86efac;
+        }
+
+        .loading-skeleton {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 15px;
+        }
+
+        @media (max-width: 640px) {
+            .navbar {
+                padding: 14px 20px;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .main-content {
+                padding: 20px 16px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="dashboard.html" class="navbar-brand">
+            <span class="logo-icon">🌾</span>
+            <span>
+                <span class="logo-text">Platform Padi</span>
+                <span class="logo-sub">Desa</span>
+            </span>
+        </a>
+        <div class="navbar-menu">
+            <a href="dashboard.html">📊 Dashboard</a>
+            <a href="farms.html" class="active">🌾 Lahan</a>
+            <a href="users.html">👥 Pengguna</a>
+            <a href="ai-assistant.html">🤖 AI Assistant</a>
+            <button id="themeToggleBtn" type="button" class="theme-toggle-btn" onclick="toggleTheme()" title="Beralih Mode Terang / Gelap">
+                <span class="theme-toggle-icon">☀️</span>
+                <span class="theme-toggle-text">Terang</span>
+            </button>
+            <button class="logout-btn" onclick="handleLogout()">🚪 Logout</button>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+
+        <a href="farms.html" class="btn-back">
+            ← Kembali ke Daftar Lahan
+        </a>
+
+        <div class="page-header">
+            <h1>✏️ Edit <span class="gradient">Lahan Pertanian</span></h1>
+            <p class="subtitle">Perbarui data lahan, luas area, dan penanggung jawab petani pemilik</p>
+        </div>
+
+        <div id="alertBox" class="alert"></div>
+
+        <div class="form-card">
+            <div id="loadingState" class="loading-skeleton">
+                <div style="font-size:32px; margin-bottom:10px;">⏳</div>
+                Memuat data lahan...
+            </div>
+
+            <form id="editFarmForm" style="display: none;" onsubmit="submitEditFarm(event)">
+
+                <div class="form-group">
+                    <label>Nama Lahan <span class="required">*</span></label>
+                    <input type="text" class="form-control" id="name" required placeholder="Contoh: Lahan Blok C Sukamakmur" />
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Luas Lahan (Hektar) <span class="required">*</span></label>
+                        <input type="number" step="0.01" min="0.01" class="form-control" id="luas" required placeholder="2.5" />
+                    </div>
+
+                    <div class="form-group">
+                        <label>Desa / Wilayah</label>
+                        <input type="text" class="form-control" id="desa" placeholder="Contoh: Desa Sukamakmur" />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Petani Pemilik Lahan <span class="required">*</span></label>
+                    <select id="userId" class="form-control" required>
+                        <option value="">Memuat daftar petani...</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Lokasi / Petak</label>
+                    <input type="text" class="form-control" id="location" placeholder="Jl. Pertanian Blok C No. 12" />
+                </div>
+
+                <div class="form-group">
+                    <label>Catatan Kondisi Lahan</label>
+                    <textarea id="notes" class="form-control" placeholder="Catatan kondisi irigasi, jenis tanah, atau aksesibilitas..."></textarea>
+                </div>
+
+                <div class="form-actions">
+                    <a href="farms.html" class="btn-cancel">Batal</a>
+                    <button type="submit" id="submitBtn" class="btn-submit">
+                        💾 Simpan Perubahan
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        const API_URL = 'http://127.0.0.1:5000/api';
+        const token = localStorage.getItem('accessToken');
+        const user = JSON.parse(localStorage.getItem('user') || 'null');
+
+        if (!token || !user) {
+            window.location.href = 'login.html';
+        }
+
+        // Validasi Role: Hanya ADMIN dan KEPALA_DESA yang boleh mengedit lahan
+        const canManageFarms = user && (user.role === 'ADMIN' || user.role === 'KEPALA_DESA');
+        if (!canManageFarms) {
+            document.addEventListener('DOMContentLoaded', () => {
+                showAlert('⚠️ Akses Terbatas: Hanya Administrator dan Kepala Desa yang berwenang mengedit lahan.', 'alert-error');
+                const formCard = document.querySelector('.form-card');
+                if (formCard) {
+                    formCard.innerHTML = `
+                        <div style="text-align:center; padding:40px 20px;">
+                            <div style="font-size:40px; margin-bottom:12px;">🔒</div>
+                            <h3 style="color:#f87171; font-weight:700; margin-bottom:8px;">Akses Dibatasi</h3>
+                            <p style="color:rgba(255,255,255,0.4); font-size:13px; margin-bottom:20px;">
+                                Akun Anda (${user.role}) hanya memiliki hak akses lihat (read-only).
+                            </p>
+                            <a href="farms.html" class="btn-back">← Kembali ke Daftar Lahan</a>
+                        </div>
+                    `;
+                }
+            });
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const farmId = urlParams.get('id');
+
+        if (!farmId) {
+            showAlert('❌ Parameter ID lahan tidak ditemukan.', 'alert-error');
+            document.getElementById('loadingState').textContent = 'ID lahan tidak valid.';
+        }
+
+        // ==========================================
+        // 1. MUAT DATA LAHAN & DAFTAR PETANI
+        // ==========================================
+        async function loadFarmAndUsers() {
+            if (!farmId || !canManageFarms) return;
+
+            try {
+                // Ambil data petani dan data lahan secara paralel
+                const [usersRes, farmRes] = await Promise.all([
+                    fetch(`${API_URL}/users`, { headers: { 'Authorization': `Bearer ${token}` } }),
+                    fetch(`${API_URL}/farms/${farmId}`, { headers: { 'Authorization': `Bearer ${token}` } })
+                ]);
+
+                const usersData = await usersRes.json();
+                const farmData = await farmRes.json();
+
+                if (!farmRes.ok || !farmData.success) {
+                    throw new Error(farmData.message || 'Lahan tidak ditemukan.');
+                }
+
+                const farm = farmData.data;
+
+                // Isi Dropdown Petani
+                const selectUser = document.getElementById('userId');
+                selectUser.innerHTML = '';
+
+                if (usersData.success && Array.isArray(usersData.data)) {
+                    const farmers = usersData.data.filter(u => u.role === 'PETANI');
+                    if (farmers.length > 0) {
+                        const optGroup = document.createElement('optgroup');
+                        optGroup.label = '🌾 Petani Binaan';
+                        farmers.forEach(f => {
+                            const opt = document.createElement('option');
+                            opt.value = f.id;
+                            const desaInfo = f.desa ? ` - ${f.desa}` : '';
+                            opt.textContent = `${f.name} (${f.email})${desaInfo}`;
+                            optGroup.appendChild(opt);
+                        });
+                        selectUser.appendChild(optGroup);
+                    }
+
+                    // Tambahkan opsi pemilik saat ini jika belum ada (misal admin/kades yang mengelola)
+                    if (farm.user && !selectUser.querySelector(`option[value="${farm.user.id}"]`)) {
+                        const opt = document.createElement('option');
+                        opt.value = farm.user.id;
+                        opt.textContent = `${farm.user.name} (${farm.user.email})`;
+                        selectUser.appendChild(opt);
+                    }
+                }
+
+                // Pilih pemilik saat ini
+                if (farm.userId) {
+                    selectUser.value = farm.userId;
+                }
+
+                // Isi Form
+                document.getElementById('name').value = farm.name || '';
+                document.getElementById('luas').value = farm.luas || '';
+                document.getElementById('desa').value = farm.desa || '';
+                document.getElementById('location').value = farm.location || '';
+                document.getElementById('notes').value = farm.notes || '';
+
+                // Tampilkan form
+                document.getElementById('loadingState').style.display = 'none';
+                document.getElementById('editFarmForm').style.display = 'block';
+
+            } catch (err) {
+                showAlert(err.message, 'alert-error');
+                document.getElementById('loadingState').innerHTML = `
+                    <div style="color:#f87171; font-weight:600; margin-bottom:10px;">❌ Gagal memuat data lahan</div>
+                    <div style="font-size:12px; color:rgba(255,255,255,0.4);">${err.message}</div>
+                    <a href="farms.html" class="btn-back" style="margin-top:16px;">← Kembali ke Tabel</a>
+                `;
+            }
+        }
+
+        // ==========================================
+        // 2. SUBMIT FORM EDIT
+        // ==========================================
+        async function submitEditFarm(e) {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('submitBtn');
+            const alertBox = document.getElementById('alertBox');
+
+            const name = document.getElementById('name').value.trim();
+            const luas = parseFloat(document.getElementById('luas').value);
+            const desa = document.getElementById('desa').value.trim();
+            const location = document.getElementById('location').value.trim();
+            const notes = document.getElementById('notes').value.trim();
+            const userId = document.getElementById('userId').value;
+
+            if (!name || isNaN(luas) || luas <= 0) {
+                showAlert('Nama lahan dan luas lahan harus diisi dengan benar.', 'alert-error');
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Menyimpan...';
+
+            try {
+                const res = await fetch(`${API_URL}/farms/${farmId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        name,
+                        luas,
+                        desa,
+                        location,
+                        notes,
+                        userId
+                    })
+                });
+
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    showAlert(`✅ Data lahan "${name}" berhasil diperbarui! Mengalihkan...`, 'alert-success');
+                    setTimeout(() => {
+                        window.location.href = `farm-detail.html?id=${farmId}`;
+                    }, 1200);
+                } else {
+                    throw new Error(data.message || 'Gagal memperbarui data lahan.');
+                }
+            } catch (err) {
+                showAlert(err.message, 'alert-error');
+                submitBtn.disabled = false;
+                submitBtn.textContent = '💾 Simpan Perubahan';
+            }
+        }
+
+        function showAlert(msg, type) {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.className = `alert ${type}`;
+            alertBox.innerHTML = `
+                <span>${type === 'alert-success' ? '✅' : '⚠️'}</span>
+                <div>${msg}</div>
+            `;
+            alertBox.style.display = 'flex';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+
+        // Muat data saat halaman dibuka
+        window.addEventListener('DOMContentLoaded', loadFarmAndUsers);
+    </script>
+</body>
+
+</html>
