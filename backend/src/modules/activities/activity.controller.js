@@ -54,3 +54,4 @@ exports.deleteActivity = async (req, res, next) => {
         next(error);
     }
 };
+

@@ -10,3 +10,4 @@ router.post('/', activityController.createActivity);
 router.delete('/:id', activityController.deleteActivity);
 
 module.exports = router;
+

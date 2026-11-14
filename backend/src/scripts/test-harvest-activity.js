@@ -84,3 +84,4 @@ async function test() {
 test()
     .catch(console.error)
     .finally(() => prisma.$disconnect());
+
