@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aktivitas Pertanian - Platform Padi Desa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+
+    <!-- Theme System (Light & Dark Mode) -->
+    <link rel="stylesheet" href="../css/theme.css" />
+    <script src="../js/theme.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0f1e;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(10, 15, 30, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-brand {
+            font-size: 22px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .navbar-brand .logo-icon {
+            font-size: 28px;
+        }
+
+        .navbar-brand .logo-text {
+            background: linear-gradient(135deg, #a855f7, #6366f1);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .navbar-brand .logo-sub {
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 400;
+        }
+
+        .navbar-menu {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .navbar-menu a {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.25s;
+            padding: 6px 14px;
+            border-radius: 8px;
+        }
+
+        .navbar-menu a:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .navbar-menu a.active {
+            color: #c084fc;
+            background: rgba(168, 85, 247, 0.12);
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.08);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.15);
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.18);
+            transform: scale(1.03);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 32px 40px 60px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .page-title h1 {
+            font-size: 28px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-title p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, #a855f7, #7c3aed);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(168, 85, 247, 0.45);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 18px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(168, 85, 247, 0.3);
+        }
+
+        .stat-card .stat-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .stat-card .stat-label {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .stat-card .stat-val {
+            font-size: 32px;
+            font-weight: 800;
+            margin-top: 4px;
+            color: #e9d5ff;
+        }
+
+        .stat-card .stat-sub {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 4px;
+        }
+
+        /* Filter Bar */
+        .filter-bar {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 16px 20px;
+            display: flex;
+            gap: 14px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 240px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 10px 16px 10px 40px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .search-box input:focus {
+            border-color: #a855f7;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .filter-select {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 10px 16px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .filter-select option {
+            background: #0f172a;
+            color: #fff;
+        }
+
+        /* Table Card */
+        .table-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 18px;
+            overflow: hidden;
+        }
+
+        .activity-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .activity-table th {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 16px 20px;
+            font-size: 12px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .activity-table td {
+            padding: 18px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 14px;
+            vertical-align: middle;
+        }
+
+        .activity-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .activity-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Activity Badges */
+        .type-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .type-pemupukan {
+            background: rgba(234, 179, 8, 0.15);
+            color: #fde047;
+            border: 1px solid rgba(234, 179, 8, 0.3);
+        }
+
+        .type-irigasi {
+            background: rgba(59, 130, 246, 0.15);
+            color: #93c5fd;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .type-hama {
+            background: rgba(239, 68, 68, 0.15);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .type-penanaman {
+            background: rgba(34, 197, 94, 0.15);
+            color: #86efac;
+            border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        .type-perawatan {
+            background: rgba(168, 85, 247, 0.15);
+            color: #d8b4fe;
+            border: 1px solid rgba(168, 85, 247, 0.3);
+        }
+
+        .type-panen {
+            background: rgba(249, 115, 22, 0.15);
+            color: #fdba74;
+            border: 1px solid rgba(249, 115, 22, 0.3);
+        }
+
+        .type-lainnya {
+            background: rgba(255, 255, 255, 0.08);
+            color: rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-delete:hover {
+            background: rgba(239, 68, 68, 0.25);
+            color: #fff;
+        }
+
+        /* Modal */
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-backdrop.open {
+            display: flex;
+        }
+
+        .modal-card {
+            background: #0f172a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            max-width: 520px;
+            width: 100%;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-subtitle {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 13px;
+            margin-bottom: 22px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 11px 14px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: #a855f7;
+            background: rgba(255, 255, 255, 0.07);
+        }
+
+        textarea.form-control {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.06);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #a855f7, #7c3aed);
+            color: #fff;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Empty State */
+        .empty-box {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .empty-box .icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 14px 20px;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .main-content {
+                padding: 20px 16px;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .btn-add {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="dashboard.html" class="navbar-brand">
+            <span class="logo-icon">🌾</span>
+            <span>
+                <span class="logo-text">Platform Padi</span>
+                <span class="logo-sub">Desa</span>
+            </span>
+        </a>
+        <div class="navbar-menu">
+            <a href="dashboard.html">📊 Dashboard</a>
+            <a href="farms.html">🌾 Lahan</a>
+            <a href="harvests.html">📦 Panen</a>
+            <a href="activities.html" class="active">📋 Aktivitas</a>
+            <a href="users.html">👥 Pengguna</a>
+            <a href="ai-assistant.html">🤖 AI Assistant</a>
+            <button id="themeToggleBtn" type="button" class="theme-toggle-btn" onclick="toggleTheme()" title="Beralih Mode Terang / Gelap">
+                <span class="theme-toggle-icon">☀️</span>
+                <span class="theme-toggle-text">Terang</span>
+            </button>
+            <button class="logout-btn" onclick="handleLogout()">🚪 Logout</button>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+
+        <!-- HEADER -->
+        <div class="page-header">
+            <div class="page-title">
+                <h1>📋 Log & Riwayat Aktivitas Sawah</h1>
+                <p>Catat pemupukan, irigasi pengairan, pemeliharaan padi, dan pembasmian hama</p>
+            </div>
+            <button class="btn-add" onclick="openActivityModal()">
+                <span>➕</span> Catat Aktivitas Baru
+            </button>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📋</div>
+                <div class="stat-label">Total Aktivitas</div>
+                <div class="stat-val" id="statTotalActivities">0</div>
+                <div class="stat-sub">Seluruh riwayat tercatat</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">🧪</div>
+                <div class="stat-label">Pemupukan Padi</div>
+                <div class="stat-val" id="statFertilizing" style="color:#fde047;">0</div>
+                <div class="stat-sub">Aplikasi pupuk NPK & Urea</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">💧</div>
+                <div class="stat-label">Irigasi & Pengairan</div>
+                <div class="stat-val" id="statWatering" style="color:#93c5fd;">0</div>
+                <div class="stat-sub">Pengaliran air sawah</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">🐛</div>
+                <div class="stat-label">Pengendalian Hama</div>
+                <div class="stat-val" id="statPestControl" style="color:#fca5a5;">0</div>
+                <div class="stat-sub">Wereng, gulma & proteksi</div>
+            </div>
+        </div>
+
+        <!-- FILTER BAR -->
+        <div class="filter-bar">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" placeholder="Cari aktivitas, lahan, atau keterangan..." oninput="handleSearch()" />
+            </div>
+
+            <select id="farmFilter" class="filter-select" onchange="applyFilters()">
+                <option value="">Semua Lahan Pertanian</option>
+            </select>
+
+            <select id="typeFilter" class="filter-select" onchange="applyFilters()">
+                <option value="">Semua Jenis Aktivitas</option>
+                <option value="PEMUPUKAN">🧪 Pemupukan</option>
+                <option value="IRIGASI">💧 Irigasi / Pengairan</option>
+                <option value="PENGENDALIAN_HAMA">🐛 Pengendalian Hama</option>
+                <option value="PENANAMAN">🌱 Penanaman</option>
+                <option value="PERAWATAN">✂️ Perawatan / Penyiangan</option>
+                <option value="PANEN">🌾 Panen</option>
+                <option value="LAINNYA">📌 Lainnya</option>
+            </select>
+        </div>
+
+        <!-- TABLE CARD -->
+        <div class="table-card">
+            <table class="activity-table">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Tanggal</th>
+                        <th>Lahan Pertanian</th>
+                        <th>Jenis Kegiatan</th>
+                        <th>Keterangan / Tindakan</th>
+                        <th>Petani Pelaksana</th>
+                        <th style="text-align: right;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="activityTableBody">
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-box">
+                                <div class="icon">⏳</div>
+                                <p>Memuat riwayat aktivitas pertanian...</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- MODAL CATAT AKTIVITAS -->
+    <div id="activityModal" class="modal-backdrop">
+        <div class="modal-card">
+            <div class="modal-title">
+                <span>📋</span> Catat Aktivitas Pertanian
+            </div>
+            <div class="modal-subtitle">
+                Laporkan kegiatan lapangan seperti pemupukan, irigasi, atau penanggulangan hama
+            </div>
+
+            <form id="activityForm" onsubmit="submitActivity(event)">
+                <div class="form-group">
+                    <label class="form-label" for="modalFarmSelect">Pilih Lahan Pertanian *</label>
+                    <select id="modalFarmSelect" class="form-control" required>
+                        <option value="">-- Pilih Lahan Pertanian --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="modalTypeSelect">Jenis Aktivitas Pertanian *</label>
+                    <select id="modalTypeSelect" class="form-control" required>
+                        <option value="PEMUPUKAN">🧪 Pemupukan (Urea, NPK, Kompos Organik)</option>
+                        <option value="IRIGASI">💧 Irigasi / Pengairan Petak Sawah</option>
+                        <option value="PENGENDALIAN_HAMA">🐛 Pengendalian Hama / Wereng / Fungisida</option>
+                        <option value="PENANAMAN">🌱 Penanaman Bibit / Persemaian Padi</option>
+                        <option value="PERAWATAN">✂️ Perawatan Lahan / Pembersihan Gulma (Matun)</option>
+                        <option value="PANEN">🌾 Kegiatan Panen</option>
+                        <option value="LAINNYA">📌 Lainnya</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="modalDateInput">Tanggal Pelaksanaan *</label>
+                    <input type="date" id="modalDateInput" class="form-control" required />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="modalDescInput">Keterangan / Catatan Tindakan (Opsional)</label>
+                    <textarea id="modalDescInput" class="form-control" placeholder="Contoh: Diberikan pupuk Urea 50kg dan Phonska 25kg di petak barat. Kondisi tanaman segar."></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeActivityModal()">Batal</button>
+                    <button type="submit" id="btnSubmitActivity" class="btn-submit">💾 Simpan Aktivitas</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        const API_URL = 'http://127.0.0.1:5000/api';
+        const token = localStorage.getItem('accessToken');
+        const user = JSON.parse(localStorage.getItem('user') || 'null');
+
+        if (!token || !user) {
+            window.location.href = 'login.html';
+        }
+
+        let allActivities = [];
+        let allFarms = [];
+
+        function formatTanggal(isoString) {
+            if (!isoString) return '-';
+            try {
+                return new Date(isoString).toLocaleDateString('id-ID', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                });
+            } catch (e) {
+                return isoString;
+            }
+        }
+
+        function getActivityBadge(type) {
+            switch (type) {
+                case 'PEMUPUKAN':
+                    return '<span class="type-badge type-pemupukan">🧪 Pemupukan</span>';
+                case 'IRIGASI':
+                    return '<span class="type-badge type-irigasi">💧 Irigasi</span>';
+                case 'PENGENDALIAN_HAMA':
+                    return '<span class="type-badge type-hama">🐛 Pengendalian Hama</span>';
+                case 'PENANAMAN':
+                    return '<span class="type-badge type-penanaman">🌱 Penanaman</span>';
+                case 'PERAWATAN':
+                    return '<span class="type-badge type-perawatan">✂️ Perawatan</span>';
+                case 'PANEN':
+                    return '<span class="type-badge type-panen">🌾 Panen</span>';
+                default:
+                    return `<span class="type-badge type-lainnya">📌 ${type || 'Lainnya'}</span>`;
+            }
+        }
+
+        async function initPage() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('modalDateInput').value = today;
+
+            await loadFarms();
+            await loadActivities();
+        }
+
+        async function loadFarms() {
+            try {
+                const res = await fetch(`${API_URL}/farms`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.success && Array.isArray(data.data)) {
+                    allFarms = data.data;
+
+                    const farmFilter = document.getElementById('farmFilter');
+                    const modalFarmSelect = document.getElementById('modalFarmSelect');
+
+                    farmFilter.innerHTML = '<option value="">Semua Lahan Pertanian</option>';
+                    modalFarmSelect.innerHTML = '<option value="">-- Pilih Lahan Pertanian --</option>';
+
+                    allFarms.forEach(f => {
+                        const opt = `<option value="${f.id}">${f.name} (${f.desa || 'Desa Sukamakmur'} • ${f.luas} Ha)</option>`;
+                        farmFilter.innerHTML += opt;
+                        modalFarmSelect.innerHTML += opt;
+                    });
+                }
+            } catch (err) {
+                console.error('Gagal memuat daftar lahan:', err);
+            }
+        }
+
+        async function loadActivities() {
+            try {
+                const res = await fetch(`${API_URL}/activities`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+
+                if (data.success && Array.isArray(data.data)) {
+                    allActivities = data.data;
+                    updateStats();
+                    renderTable(allActivities);
+                } else {
+                    renderTable([]);
+                }
+            } catch (err) {
+                console.error('Gagal memuat aktivitas:', err);
+                document.getElementById('activityTableBody').innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-box">
+                                <div class="icon">⚠️</div>
+                                <p style="color:#f87171;">Gagal memuat data aktivitas dari server backend.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function updateStats() {
+            const count = allActivities.length;
+            const pemupukan = allActivities.filter(a => a.type === 'PEMUPUKAN').length;
+            const irigasi = allActivities.filter(a => a.type === 'IRIGASI').length;
+            const hama = allActivities.filter(a => a.type === 'PENGENDALIAN_HAMA').length;
+
+            document.getElementById('statTotalActivities').textContent = count;
+            document.getElementById('statFertilizing').textContent = pemupukan;
+            document.getElementById('statWatering').textContent = irigasi;
+            document.getElementById('statPestControl').textContent = hama;
+        }
+
+        function renderTable(activities) {
+            const tbody = document.getElementById('activityTableBody');
+
+            if (!activities || activities.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-box">
+                                <div class="icon">📋</div>
+                                <h3 style="color:#fff; margin-bottom:6px;">Belum Ada Riwayat Aktivitas</h3>
+                                <p>Klik tombol "+ Catat Aktivitas Baru" di atas untuk menambahkan catatan kegiatan pertanian.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = activities.map((act, index) => {
+                const farmName = act.crop?.farm?.name || 'Lahan Tidak Dikenal';
+                const farmDesa = act.crop?.farm?.desa || '-';
+                const ownerName = act.crop?.farm?.user?.name || 'Petani';
+                const desc = act.description || 'Tidak ada catatan tambahan.';
+
+                return `
+                    <tr>
+                        <td style="color:rgba(255,255,255,0.4); font-weight:600;">#${index + 1}</td>
+                        <td style="font-weight:600;">📅 ${formatTanggal(act.date)}</td>
+                        <td>
+                            <strong style="color:#fff;">🌾 ${farmName}</strong>
+                            <div style="font-size:12px; color:rgba(255,255,255,0.4); margin-top:2px;">📍 ${farmDesa}</div>
+                        </td>
+                        <td>
+                            ${getActivityBadge(act.type)}
+                        </td>
+                        <td>
+                            <div style="color:rgba(255,255,255,0.85); font-size:13px; max-width:320px; line-height:1.4;">
+                                ${desc}
+                            </div>
+                        </td>
+                        <td>
+                            <div style="font-weight:600;">👨‍🌾 ${ownerName}</div>
+                        </td>
+                        <td style="text-align: right;">
+                            <button class="btn-delete" onclick="deleteActivity('${act.id}', '${farmName}', '${act.type}')" title="Hapus aktivitas">
+                                🗑️ Hapus
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function handleSearch() {
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const farmId = document.getElementById('farmFilter').value;
+            const type = document.getElementById('typeFilter').value;
+
+            const filtered = allActivities.filter(a => {
+                const farm = a.crop?.farm;
+                const farmName = (farm?.name || '').toLowerCase();
+                const owner = (farm?.user?.name || '').toLowerCase();
+                const desc = (a.description || '').toLowerCase();
+                const actType = (a.type || '').toUpperCase();
+
+                const matchQuery = !query || farmName.includes(query) || owner.includes(query) || desc.includes(query);
+                const matchFarm = !farmId || (farm && farm.id === farmId);
+                const matchType = !type || (actType === type);
+
+                return matchQuery && matchFarm && matchType;
+            });
+
+            renderTable(filtered);
+        }
+
+        function openActivityModal() {
+            document.getElementById('activityForm').reset();
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('modalDateInput').value = today;
+            document.getElementById('activityModal').classList.add('open');
+        }
+
+        function closeActivityModal() {
+            document.getElementById('activityModal').classList.remove('open');
+        }
+
+        async function submitActivity(event) {
+            event.preventDefault();
+            const btn = document.getElementById('btnSubmitActivity');
+            btn.disabled = true;
+            btn.textContent = 'Menyimpan...';
+
+            const farmId = document.getElementById('modalFarmSelect').value;
+            const type = document.getElementById('modalTypeSelect').value;
+            const date = document.getElementById('modalDateInput').value;
+            const description = document.getElementById('modalDescInput').value.trim();
+
+            try {
+                const res = await fetch(`${API_URL}/activities`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        farmId,
+                        type,
+                        date,
+                        description
+                    })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok || !data.success) {
+                    throw new Error(data.message || 'Gagal menyimpan catatan aktivitas');
+                }
+
+                alert('🎉 Aktivitas pertanian berhasil dicatat!');
+                closeActivityModal();
+                await loadActivities();
+            } catch (err) {
+                alert(`❌ ${err.message}`);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '💾 Simpan Aktivitas';
+            }
+        }
+
+        async function deleteActivity(id, farmName, type) {
+            if (!confirm(`Hapus catatan aktivitas ${type} pada lahan "${farmName}"?`)) {
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/activities/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await res.json();
+
+                if (!res.ok || !data.success) {
+                    throw new Error(data.message || 'Gagal menghapus data aktivitas');
+                }
+
+                alert('✅ Catatan aktivitas berhasil dihapus.');
+                await loadActivities();
+            } catch (err) {
+                alert(`❌ ${err.message}`);
+            }
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+
+        window.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+
+</html>

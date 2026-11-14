@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kelola Panen - Platform Padi Desa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet" />
+
+    <!-- Theme System (Light & Dark Mode) -->
+    <link rel="stylesheet" href="../css/theme.css" />
+    <script src="../js/theme.js"></script>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0f1e;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(10, 15, 30, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 16px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .navbar-brand {
+            font-size: 22px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #fff;
+        }
+
+        .navbar-brand .logo-icon {
+            font-size: 28px;
+        }
+
+        .navbar-brand .logo-text {
+            background: linear-gradient(135deg, #4ade80, #22c55e);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .navbar-brand .logo-sub {
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 400;
+        }
+
+        .navbar-menu {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .navbar-menu a {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.25s;
+            padding: 6px 14px;
+            border-radius: 8px;
+        }
+
+        .navbar-menu a:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .navbar-menu a.active {
+            color: #4ade80;
+            background: rgba(34, 197, 94, 0.12);
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background: rgba(239, 68, 68, 0.08);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.15);
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.18);
+            transform: scale(1.03);
+        }
+
+        /* Main Content */
+        .main-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 32px 40px 60px;
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .page-title h1 {
+            font-size: 28px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .page-title p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 14px;
+            margin-top: 4px;
+        }
+
+        .btn-add {
+            background: linear-gradient(135deg, #eab308, #ca8a04);
+            color: #0f172a;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(234, 179, 8, 0.3);
+        }
+
+        .btn-add:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(234, 179, 8, 0.45);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 18px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(234, 179, 8, 0.3);
+        }
+
+        .stat-card .stat-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .stat-card .stat-label {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .stat-card .stat-val {
+            font-size: 32px;
+            font-weight: 800;
+            margin-top: 4px;
+            color: #fef08a;
+        }
+
+        .stat-card .stat-sub {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.4);
+            margin-top: 4px;
+        }
+
+        /* Filter Bar */
+        .filter-bar {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 16px 20px;
+            display: flex;
+            gap: 14px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 240px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 10px 16px 10px 40px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .search-box input:focus {
+            border-color: #eab308;
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .filter-select {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            padding: 10px 16px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .filter-select option {
+            background: #0f172a;
+            color: #fff;
+        }
+
+        /* Table Card */
+        .table-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 18px;
+            overflow: hidden;
+        }
+
+        .harvest-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        .harvest-table th {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 16px 20px;
+            font-size: 12px;
+            font-weight: 700;
+            color: rgba(255, 255, 255, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .harvest-table td {
+            padding: 18px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 14px;
+            vertical-align: middle;
+        }
+
+        .harvest-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .harvest-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge-kg {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: rgba(234, 179, 8, 0.12);
+            color: #facc15;
+            border: 1px solid rgba(234, 179, 8, 0.25);
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 13px;
+        }
+
+        .badge-variety {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(34, 197, 94, 0.1);
+            color: #4ade80;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .btn-delete {
+            background: rgba(239, 68, 68, 0.1);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-delete:hover {
+            background: rgba(239, 68, 68, 0.25);
+            color: #fff;
+        }
+
+        /* Modal */
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-backdrop.open {
+            display: flex;
+        }
+
+        .modal-card {
+            background: #0f172a;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            max-width: 500px;
+            width: 100%;
+            padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-subtitle {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 13px;
+            margin-bottom: 22px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 11px 14px;
+            color: #fff;
+            font-size: 14px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: #eab308;
+            background: rgba(255, 255, 255, 0.07);
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .btn-cancel {
+            background: rgba(255, 255, 255, 0.06);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #eab308, #ca8a04);
+            color: #0f172a;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(234, 179, 8, 0.3);
+        }
+
+        .btn-submit:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Empty State */
+        .empty-box {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .empty-box .icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 14px 20px;
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .main-content {
+                padding: 20px 16px;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .btn-add {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+        <a href="dashboard.html" class="navbar-brand">
+            <span class="logo-icon">🌾</span>
+            <span>
+                <span class="logo-text">Platform Padi</span>
+                <span class="logo-sub">Desa</span>
+            </span>
+        </a>
+        <div class="navbar-menu">
+            <a href="dashboard.html">📊 Dashboard</a>
+            <a href="farms.html">🌾 Lahan</a>
+            <a href="harvests.html" class="active">📦 Panen</a>
+            <a href="activities.html">📋 Aktivitas</a>
+            <a href="users.html">👥 Pengguna</a>
+            <a href="ai-assistant.html">🤖 AI Assistant</a>
+            <button id="themeToggleBtn" type="button" class="theme-toggle-btn" onclick="toggleTheme()" title="Beralih Mode Terang / Gelap">
+                <span class="theme-toggle-icon">☀️</span>
+                <span class="theme-toggle-text">Terang</span>
+            </button>
+            <button class="logout-btn" onclick="handleLogout()">🚪 Logout</button>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-content">
+
+        <!-- HEADER -->
+        <div class="page-header">
+            <div class="page-title">
+                <h1>📦 Catat & Kelola Hasil Panen</h1>
+                <p>Pantau produksi gabah padi, produktivitas lahan, dan riwayat panen desa</p>
+            </div>
+            <button class="btn-add" onclick="openHarvestModal()">
+                <span>➕</span> Catat Hasil Panen
+            </button>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📦</div>
+                <div class="stat-label">Total Produksi Panen</div>
+                <div class="stat-val" id="statTotalKg">0 Kg</div>
+                <div class="stat-sub" id="statTotalTon">≈ 0.00 Ton</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">🌾</div>
+                <div class="stat-label">Frekuensi Panen</div>
+                <div class="stat-val" id="statTotalRecords">0 Kali</div>
+                <div class="stat-sub">Riwayat panen tercatat</div>
+            </div>
+
+            <div class="stat-card">
+                <div class="stat-icon">⚖️</div>
+                <div class="stat-label">Rata-rata per Panen</div>
+                <div class="stat-val" id="statAvgHarvest">0 Kg</div>
+                <div class="stat-sub">Hasil panen rata-rata</div>
+            </div>
+        </div>
+
+        <!-- FILTER BAR -->
+        <div class="filter-bar">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" placeholder="Cari nama lahan, varietas padi, atau nama petani..." oninput="handleSearch()" />
+            </div>
+
+            <select id="farmFilter" class="filter-select" onchange="applyFilters()">
+                <option value="">Semua Lahan</option>
+            </select>
+        </div>
+
+        <!-- TABLE CARD -->
+        <div class="table-card">
+            <table class="harvest-table">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Tanggal Panen</th>
+                        <th>Lahan Pertanian</th>
+                        <th>Varietas Padi</th>
+                        <th>Petani Pemilik</th>
+                        <th>Hasil Panen</th>
+                        <th style="text-align: right;">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="harvestTableBody">
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-box">
+                                <div class="icon">⏳</div>
+                                <p>Memuat data hasil panen...</p>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <!-- MODAL CATAT PANEN -->
+    <div id="harvestModal" class="modal-backdrop">
+        <div class="modal-card">
+            <div class="modal-title">
+                <span>📦</span> Catat Hasil Panen Baru
+            </div>
+            <div class="modal-subtitle">
+                Masukkan rincian hasil panen gabah/padi untuk lahan pertanian
+            </div>
+
+            <form id="harvestForm" onsubmit="submitHarvest(event)">
+                <div class="form-group">
+                    <label class="form-label" for="modalFarmSelect">Pilih Lahan Pertanian *</label>
+                    <select id="modalFarmSelect" class="form-control" required>
+                        <option value="">-- Pilih Lahan Pertanian --</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="modalVarietyInput">Varietas Padi *</label>
+                    <input type="text" id="modalVarietyInput" class="form-control" placeholder="Contoh: Padi Ciherang, Inpari 32, IR 64" value="Padi Ciherang" required />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="modalKgInput">Jumlah Hasil Panen (Kilogram / Kg) *</label>
+                    <input type="number" step="any" min="1" id="modalKgInput" class="form-control" placeholder="Contoh: 2500" required />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="modalDateInput">Tanggal Panen *</label>
+                    <input type="date" id="modalDateInput" class="form-control" required />
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn-cancel" onclick="closeHarvestModal()">Batal</button>
+                    <button type="submit" id="btnSubmitHarvest" class="btn-submit">💾 Simpan Catatan Panen</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        const API_URL = 'http://127.0.0.1:5000/api';
+        const token = localStorage.getItem('accessToken');
+        const user = JSON.parse(localStorage.getItem('user') || 'null');
+
+        if (!token || !user) {
+            window.location.href = 'login.html';
+        }
+
+        let allHarvests = [];
+        let allFarms = [];
+
+        function formatTanggal(isoString) {
+            if (!isoString) return '-';
+            try {
+                return new Date(isoString).toLocaleDateString('id-ID', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                });
+            } catch (e) {
+                return isoString;
+            }
+        }
+
+        function formatNumber(num) {
+            return new Intl.NumberFormat('id-ID').format(num || 0);
+        }
+
+        async function initPage() {
+            // Set default date picker to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('modalDateInput').value = today;
+
+            await loadFarms();
+            await loadHarvests();
+        }
+
+        async function loadFarms() {
+            try {
+                const res = await fetch(`${API_URL}/farms`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.success && Array.isArray(data.data)) {
+                    allFarms = data.data;
+
+                    const farmFilter = document.getElementById('farmFilter');
+                    const modalFarmSelect = document.getElementById('modalFarmSelect');
+
+                    farmFilter.innerHTML = '<option value="">Semua Lahan Pertanian</option>';
+                    modalFarmSelect.innerHTML = '<option value="">-- Pilih Lahan Pertanian --</option>';
+
+                    allFarms.forEach(f => {
+                        const opt = `<option value="${f.id}">${f.name} (${f.desa || 'Desa Sukamakmur'} • ${f.luas} Ha)</option>`;
+                        farmFilter.innerHTML += opt;
+                        modalFarmSelect.innerHTML += opt;
+                    });
+                }
+            } catch (err) {
+                console.error('Gagal memuat lahan:', err);
+            }
+        }
+
+        async function loadHarvests() {
+            try {
+                const res = await fetch(`${API_URL}/harvests`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+
+                if (data.success && Array.isArray(data.data)) {
+                    allHarvests = data.data;
+                    updateStats();
+                    renderTable(allHarvests);
+                } else {
+                    renderTable([]);
+                }
+            } catch (err) {
+                console.error('Gagal memuat hasil panen:', err);
+                document.getElementById('harvestTableBody').innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-box">
+                                <div class="icon">⚠️</div>
+                                <p style="color:#f87171;">Gagal memuat data panen dari server backend.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        function updateStats() {
+            const totalKg = allHarvests.reduce((sum, h) => sum + (Number(h.totalKg) || 0), 0);
+            const totalTon = (totalKg / 1000).toFixed(2);
+            const count = allHarvests.length;
+            const avg = count > 0 ? Math.round(totalKg / count) : 0;
+
+            document.getElementById('statTotalKg').textContent = `${formatNumber(totalKg)} Kg`;
+            document.getElementById('statTotalTon').textContent = `≈ ${totalTon} Ton Gabah`;
+            document.getElementById('statTotalRecords').textContent = `${count} Kali`;
+            document.getElementById('statAvgHarvest').textContent = `${formatNumber(avg)} Kg`;
+        }
+
+        function renderTable(harvests) {
+            const tbody = document.getElementById('harvestTableBody');
+
+            if (!harvests || harvests.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-box">
+                                <div class="icon">📦</div>
+                                <h3 style="color:#fff; margin-bottom:6px;">Belum Ada Catatan Panen</h3>
+                                <p>Klik tombol "+ Catat Hasil Panen" di atas untuk menambahkan hasil panen pertama Anda.</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = harvests.map((h, index) => {
+                const farmName = h.crop?.farm?.name || 'Lahan Tidak Dikenal';
+                const farmDesa = h.crop?.farm?.desa || '-';
+                const variety = h.crop?.variety || 'Padi Varietas Unggul';
+                const ownerName = h.crop?.farm?.user?.name || 'Petani';
+                const kg = h.totalKg || 0;
+                const ton = (kg / 1000).toFixed(2);
+
+                return `
+                    <tr>
+                        <td style="color:rgba(255,255,255,0.4); font-weight:600;">#${index + 1}</td>
+                        <td style="font-weight:600;">📅 ${formatTanggal(h.date)}</td>
+                        <td>
+                            <strong style="color:#fff;">🌾 ${farmName}</strong>
+                            <div style="font-size:12px; color:rgba(255,255,255,0.4); margin-top:2px;">📍 ${farmDesa}</div>
+                        </td>
+                        <td>
+                            <span class="badge-variety">🌱 ${variety}</span>
+                        </td>
+                        <td>
+                            <div style="font-weight:600;">👨‍🌾 ${ownerName}</div>
+                        </td>
+                        <td>
+                            <span class="badge-kg">
+                                ⚖️ ${formatNumber(kg)} Kg (${ton} Ton)
+                            </span>
+                        </td>
+                        <td style="text-align: right;">
+                            <button class="btn-delete" onclick="deleteHarvest('${h.id}', '${farmName}', ${kg})" title="Hapus catatan panen">
+                                🗑️ Hapus
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function handleSearch() {
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const farmId = document.getElementById('farmFilter').value;
+
+            const filtered = allHarvests.filter(h => {
+                const farm = h.crop?.farm;
+                const farmName = (farm?.name || '').toLowerCase();
+                const variety = (h.crop?.variety || '').toLowerCase();
+                const owner = (farm?.user?.name || '').toLowerCase();
+                const desa = (farm?.desa || '').toLowerCase();
+
+                const matchQuery = !query || farmName.includes(query) || variety.includes(query) || owner.includes(query) || desa.includes(query);
+                const matchFarm = !farmId || (farm && farm.id === farmId);
+
+                return matchQuery && matchFarm;
+            });
+
+            renderTable(filtered);
+        }
+
+        function openHarvestModal() {
+            document.getElementById('harvestForm').reset();
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('modalDateInput').value = today;
+            document.getElementById('modalVarietyInput').value = 'Padi Ciherang';
+            document.getElementById('harvestModal').classList.add('open');
+        }
+
+        function closeHarvestModal() {
+            document.getElementById('harvestModal').classList.remove('open');
+        }
+
+        async function submitHarvest(event) {
+            event.preventDefault();
+            const btn = document.getElementById('btnSubmitHarvest');
+            btn.disabled = true;
+            btn.textContent = 'Menyimpan...';
+
+            const farmId = document.getElementById('modalFarmSelect').value;
+            const variety = document.getElementById('modalVarietyInput').value.trim();
+            const totalKg = parseFloat(document.getElementById('modalKgInput').value);
+            const date = document.getElementById('modalDateInput').value;
+
+            try {
+                const res = await fetch(`${API_URL}/harvests`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        farmId,
+                        variety,
+                        totalKg,
+                        date
+                    })
+                });
+
+                const data = await res.json();
+
+                if (!res.ok || !data.success) {
+                    throw new Error(data.message || 'Gagal menyimpan catatan hasil panen');
+                }
+
+                alert(`🎉 Hasil panen sebesar ${formatNumber(totalKg)} Kg berhasil dicatat!`);
+                closeHarvestModal();
+                await loadHarvests();
+            } catch (err) {
+                alert(`❌ ${err.message}`);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '💾 Simpan Catatan Panen';
+            }
+        }
+
+        async function deleteHarvest(id, farmName, kg) {
+            if (!confirm(`Hapus catatan panen sebesar ${formatNumber(kg)} Kg dari "${farmName}"?`)) {
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_URL}/harvests/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                const data = await res.json();
+
+                if (!res.ok || !data.success) {
+                    throw new Error(data.message || 'Gagal menghapus data panen');
+                }
+
+                alert('✅ Data hasil panen berhasil dihapus.');
+                await loadHarvests();
+            } catch (err) {
+                alert(`❌ ${err.message}`);
+            }
+        }
+
+        function handleLogout() {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+
+        window.addEventListener('DOMContentLoaded', initPage);
+    </script>
+</body>
+
+</html>

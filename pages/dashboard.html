@@ -1273,6 +1273,8 @@
         <div class="navbar-menu">
             <a href="dashboard.html" class="active">📊 Dashboard</a>
             <a href="farms.html">🌾 Lahan</a>
+            <a href="harvests.html">📦 Panen</a>
+            <a href="activities.html">📋 Aktivitas</a>
             <a href="users.html">👥 Pengguna</a>
             <a href="ai-assistant.html">🤖 AI Assistant</a>
             <button type="button" class="btn-nav-key" onclick="openAIConfigModal()" title="Konfigurasi & Ganti API Key AI">
@@ -1336,22 +1338,24 @@
                 <div class="stat-sub">Hektar</div>
             </div>
 
-            <div class="stat-card yellow">
+            <div class="stat-card yellow" style="cursor: pointer;" onclick="window.location.href='harvests.html'"
+                title="Klik untuk membuka Kelola Hasil Panen">
                 <div class="stat-header">
                     <span class="stat-icon">📦</span>
                 </div>
                 <div class="stat-label">Total Panen</div>
                 <div class="stat-value" id="statHarvest">0</div>
-                <div class="stat-sub">Kilogram</div>
+                <div class="stat-sub" id="statHarvestSub">Kilogram • Klik kelola</div>
             </div>
 
-            <div class="stat-card purple">
+            <div class="stat-card purple" style="cursor: pointer;" onclick="window.location.href='activities.html'"
+                title="Klik untuk membuka Riwayat Aktivitas">
                 <div class="stat-header">
                     <span class="stat-icon">📋</span>
                 </div>
                 <div class="stat-label">Aktivitas</div>
                 <div class="stat-value" id="statActivities">0</div>
-                <div class="stat-sub">Terakhir</div>
+                <div class="stat-sub" id="statActivitiesSub">Terakhir • Klik kelola</div>
             </div>
         </div>
 
@@ -1708,6 +1712,16 @@
                         <div class="label">Tambah Lahan</div>
                         <div class="desc">Buka lahan baru (Admin)</div>
                     </a>
+                    <a href="harvests.html" class="quick-item">
+                        <div class="icon">📦</div>
+                        <div class="label">Kelola Panen</div>
+                        <div class="desc">Catat produksi & hasil panen</div>
+                    </a>
+                    <a href="activities.html" class="quick-item">
+                        <div class="icon">📋</div>
+                        <div class="label">Catat Aktivitas</div>
+                        <div class="desc">Log pupuk, irigasi & hama</div>
+                    </a>
                     <a href="users.html" class="quick-item">
                         <div class="icon">👥</div>
                         <div class="label">Kelola Pengguna</div>
@@ -1736,6 +1750,16 @@
                         <div class="label">Tambah Lahan</div>
                         <div class="desc">Alokasikan lahan baru petani</div>
                     </a>
+                    <a href="harvests.html" class="quick-item">
+                        <div class="icon">📦</div>
+                        <div class="label">Data Panen Desa</div>
+                        <div class="desc">Pantau produksi panen petani</div>
+                    </a>
+                    <a href="activities.html" class="quick-item">
+                        <div class="icon">📋</div>
+                        <div class="label">Aktivitas Petani</div>
+                        <div class="desc">Pantau kegiatan bertani</div>
+                    </a>
                     <a href="users.html" class="quick-item">
                         <div class="icon">👥</div>
                         <div class="label">Data Pengguna</div>
@@ -1747,7 +1771,17 @@
                     <a href="farms.html" class="quick-item">
                         <div class="icon">🌾</div>
                         <div class="label">Lahan Saya</div>
-                        <div class="desc">Pantau lahan & jadwal pupuk</div>
+                        <div class="desc">Pantau lahan & lokasi tanam</div>
+                    </a>
+                    <a href="harvests.html" class="quick-item">
+                        <div class="icon">📦</div>
+                        <div class="label">Hasil Panen Saya</div>
+                        <div class="desc">Catat hasil gabah & panen</div>
+                    </a>
+                    <a href="activities.html" class="quick-item">
+                        <div class="icon">📋</div>
+                        <div class="label">Catat Aktivitas</div>
+                        <div class="desc">Log pupuk, irigasi & rawat padi</div>
                     </a>
                     <a href="users.html" class="quick-item">
                         <div class="icon">👥</div>
@@ -1772,93 +1806,168 @@
         // ==========================================
         async function fetchDashboardData() {
             const content = document.getElementById('dashboardContent');
+            const activityContainer = document.getElementById('activityContent');
 
             try {
-                const response = await fetch('http://127.0.0.1:5000/api/health', {
+                // 1. Ambil data statistik terintegrasi (Dashboard Stats)
+                const statsRes = await fetch('http://127.0.0.1:5000/api/dashboard/stats', {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
                     }
                 });
 
-                const data = await response.json();
+                if (statsRes.ok) {
+                    const statsData = await statsRes.json();
+                    if (statsData.success && statsData.data) {
+                        const s = statsData.data.summary || {};
 
-                if (data.success) {
-                    // Ambil statistik pengguna langsung dari API
-                    try {
-                        const userStatsRes = await fetch('http://127.0.0.1:5000/api/users/stats', {
-                            headers: { 'Authorization': `Bearer ${token}` }
-                        });
-                        const userStatsData = await userStatsRes.json();
-                        if (userStatsData.success && userStatsData.data?.summary) {
-                            document.getElementById('statUsers').textContent = userStatsData.data.summary.totalUsers;
-                            const active = userStatsData.data.summary.activeUsers;
-                            document.getElementById('statUsersSub').textContent = `${active} aktif • Klik kelola`;
+                        // Update Total Pengguna
+                        document.getElementById('statUsers').textContent = s.totalUsers || 0;
+                        document.getElementById('statUsersSub').textContent = `${s.activeUsers || 0} aktif • Klik kelola`;
+
+                        // Update Total Lahan
+                        document.getElementById('statFarms').textContent = s.totalLuas ? s.totalLuas.toFixed(1) : '0';
+
+                        // Update Total Panen
+                        const harvestKg = s.totalHarvestKg || 0;
+                        const harvestTon = (harvestKg / 1000).toFixed(1);
+                        document.getElementById('statHarvest').textContent = new Intl.NumberFormat('id-ID').format(harvestKg);
+                        document.getElementById('statHarvestSub').textContent = `${harvestTon} Ton • Klik kelola`;
+
+                        // Update Aktivitas
+                        const totalAct = s.totalActivities || 0;
+                        document.getElementById('statActivities').textContent = totalAct;
+                        document.getElementById('statActivitiesSub').textContent = `${totalAct} dicatat • Klik kelola`;
+
+                        // Render Aktivitas Terbaru di Sidebar Card
+                        const recentActs = statsData.data.recentActivities || [];
+                        if (activityContainer) {
+                            if (recentActs.length > 0) {
+                                activityContainer.innerHTML = recentActs.map(act => {
+                                    let badgeType = act.type;
+                                    let icon = '📋';
+                                    let color = '#c084fc';
+                                    if (act.type === 'PEMUPUKAN') { icon = '🧪'; color = '#fde047'; badgeType = 'Pemupukan'; }
+                                    else if (act.type === 'IRIGASI') { icon = '💧'; color = '#93c5fd'; badgeType = 'Irigasi'; }
+                                    else if (act.type === 'PENGENDALIAN_HAMA') { icon = '🐛'; color = '#fca5a5'; badgeType = 'Hama & Wereng'; }
+                                    else if (act.type === 'PENANAMAN') { icon = '🌱'; color = '#86efac'; badgeType = 'Penanaman'; }
+                                    else if (act.type === 'PANEN') { icon = '🌾'; color = '#facc15'; badgeType = 'Panen'; }
+
+                                    const farmName = act.crop?.farm?.name || 'Lahan Sawah';
+                                    const desc = act.description || 'Kegiatan lapangan selesai dicatat.';
+                                    const dateStr = new Date(act.date).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
+
+                                    return `
+                                        <div style="display:flex; align-items:flex-start; gap:12px; padding:12px; margin-bottom:10px; background:rgba(255,255,255,0.03); border-radius:12px; border:1px solid rgba(255,255,255,0.05); transition:0.2s;">
+                                            <div style="font-size:22px; line-height:1;">${icon}</div>
+                                            <div style="flex:1; min-width:0;">
+                                                <div style="display:flex; justify-content:space-between; align-items:center;">
+                                                    <span style="font-weight:700; font-size:12px; color:${color}; text-transform:uppercase; letter-spacing:0.3px;">${badgeType}</span>
+                                                    <span style="font-size:11px; color:rgba(255,255,255,0.4);">📅 ${dateStr}</span>
+                                                </div>
+                                                <div style="font-size:13px; color:#fff; font-weight:600; margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">🌾 ${farmName}</div>
+                                                <div style="font-size:12px; color:rgba(255,255,255,0.65); margin-top:3px; line-height:1.3;">${desc}</div>
+                                            </div>
+                                        </div>
+                                    `;
+                                }).join('') + `
+                                    <div style="text-align:center; margin-top:14px;">
+                                        <a href="activities.html" style="font-size:13px; color:#a855f7; font-weight:600; text-decoration:none; display:inline-flex; align-items:center; gap:6px;">
+                                            Lihat Seluruh Aktivitas (${totalAct}) →
+                                        </a>
+                                    </div>
+                                `;
+                            } else {
+                                activityContainer.innerHTML = `
+                                    <div class="empty-state">
+                                        <div class="empty-icon">📭</div>
+                                        <div class="empty-title">Belum ada aktivitas</div>
+                                        <div class="empty-desc">Klik <a href="activities.html" style="color:#a855f7; text-decoration:underline;">Catat Aktivitas</a> untuk menambahkan kegiatan tani</div>
+                                    </div>
+                                `;
+                            }
                         }
-                    } catch (statErr) {
-                        console.warn('Gagal memuat user stats dinamis:', statErr);
-                        document.getElementById('statUsers').textContent = '0';
-                        document.getElementById('statUsersSub').textContent = 'Belum ada data';
+
+                        // Render Konten Utama Dashboard
+                        content.innerHTML = `
+                            <div class="info-box">
+                                <span class="icon">✅</span>
+                                <div class="text">
+                                    <strong>🌾 Sistem Informasi Pertanian Padi Desa Terpadu Online</strong>
+                                    <span class="meta">
+                                        Sinkronisasi Database Real-time &bull; Terakhir diperbarui ${new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} WIB
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:16px; margin-top:20px;">
+                                <div style="background:rgba(234, 179, 8, 0.05); border:1px solid rgba(234, 179, 8, 0.18); border-radius:16px; padding:20px;">
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                                        <div style="font-weight:700; font-size:15px; color:#fef08a; display:flex; align-items:center; gap:8px;">
+                                            📦 Hasil Panen Terkini
+                                        </div>
+                                        <span style="font-size:11px; padding:3px 10px; background:rgba(234,179,8,0.15); color:#facc15; border-radius:50px; font-weight:700;">
+                                            ${s.totalHarvestRecords || 0} Catatan
+                                        </span>
+                                    </div>
+                                    <p style="font-size:13px; color:rgba(255,255,255,0.7); margin-bottom:14px; line-height:1.4;">
+                                        Total produksi gabah yang telah terkumpul di sistem mencapai <strong style="color:#fde047;">${new Intl.NumberFormat('id-ID').format(harvestKg)} Kg</strong> (≈ ${harvestTon} Ton).
+                                    </p>
+                                    <a href="harvests.html" style="display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700; color:#0f172a; background:linear-gradient(135deg, #eab308, #ca8a04); padding:8px 16px; border-radius:8px; text-decoration:none; transition:0.2s;">
+                                        <span>➕</span> Catat & Kelola Panen →
+                                    </a>
+                                </div>
+
+                                <div style="background:rgba(168, 85, 247, 0.05); border:1px solid rgba(168, 85, 247, 0.18); border-radius:16px; padding:20px;">
+                                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                                        <div style="font-weight:700; font-size:15px; color:#e9d5ff; display:flex; align-items:center; gap:8px;">
+                                            📋 Log Aktivitas Lapangan
+                                        </div>
+                                        <span style="font-size:11px; padding:3px 10px; background:rgba(168,85,247,0.15); color:#c084fc; border-radius:50px; font-weight:700;">
+                                            ${totalAct} Kegiatan
+                                        </span>
+                                    </div>
+                                    <p style="font-size:13px; color:rgba(255,255,255,0.7); margin-bottom:14px; line-height:1.4;">
+                                        Monitoring kegiatan pemupukan padi, irigasi pengairan, pemeliharaan gulma, dan penanganan hama terkini.
+                                    </p>
+                                    <a href="activities.html" style="display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700; color:#fff; background:linear-gradient(135deg, #a855f7, #7c3aed); padding:8px 16px; border-radius:8px; text-decoration:none; transition:0.2s;">
+                                        <span>➕</span> Catat Aktivitas Sawah →
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+                        return;
                     }
+                }
 
-                    // Ambil statistik lahan
-                    try {
-                        const farmRes = await fetch('http://127.0.0.1:5000/api/farms', {
-                            headers: { 'Authorization': `Bearer ${token}` }
-                        });
-                        const farmData = await farmRes.json();
-                        if (farmData.success && Array.isArray(farmData.data)) {
-                            const totalHa = farmData.data.reduce((acc, f) => acc + (Number(f.luas) || 0), 0);
-                            document.getElementById('statFarms').textContent = totalHa.toFixed(1);
-                        }
-                    } catch (farmErr) {
-                        document.getElementById('statFarms').textContent = '0';
-                    }
-
-                    document.getElementById('statHarvest').textContent = '0';
-                    document.getElementById('statActivities').textContent = '0';
-
+                // Fallback jika /api/dashboard/stats gagal
+                const healthRes = await fetch('http://127.0.0.1:5000/api/health', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const healthData = await healthRes.json();
+                if (healthData.success) {
                     content.innerHTML = `
                         <div class="info-box">
                             <span class="icon">✅</span>
                             <div class="text">
-                                <strong>${data.message}</strong>
-                                <span class="meta">
-                                    Environment: ${data.environment || 'development'} &bull;
-                                    ${new Date(data.timestamp).toLocaleString('id-ID', {
-                        day: '2-digit',
-                        month: 'short',
-                        year: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    })}
-                                </span>
+                                <strong>${healthData.message}</strong>
                             </div>
                         </div>
-                        <p class="dashboard-hint" style="margin-top:20px; font-size:14px;">
-                            👥 <strong>Fitur Pengguna Aktif:</strong> Anda dapat melihat tabel seluruh pengguna dan mendaftarkan pengguna baru melalui menu <a href="users.html" style="color:#16a34a; font-weight:600; text-decoration:underline;">👥 Pengguna</a>.
-                        </p>
-                        <div style="margin-top:16px; display:flex; gap:8px; flex-wrap:wrap;">
-                            <span class="sys-badge" style="font-size:12px; padding:4px 14px; border-radius:50px;">
-                                🟢 Sistem Online
-                            </span>
-                            <span class="sys-badge" style="font-size:12px; padding:4px 14px; border-radius:50px;">
-                                📡 API v1.0
-                            </span>
-                        </div>
                     `;
-                } else {
-                    throw new Error(data.message || 'Gagal mengambil data');
                 }
-
             } catch (error) {
-                console.error('Error fetching dashboard:', error);
+                console.error('Error fetching dashboard stats:', error);
                 content.innerHTML = `
                     <div style="background:rgba(239,68,68,0.04); border:1px solid rgba(239,68,68,0.08); border-radius:12px; padding:24px; text-align:center;">
-                        <p style="color:#f87171; font-weight:600;">⚠️ Gagal terhubung ke server</p>
-                        <p style="font-size:13px; color:rgba(255,255,255,0.2); margin-top:6px;">
-                            Pastikan backend berjalan di <strong style="color:rgba(255,255,255,0.3);">http://127.0.0.1:5000</strong>
+                        <p style="color:#f87171; font-weight:600;">⚠️ Gagal terhubung ke server backend</p>
+                        <p style="font-size:13px; color:rgba(255,255,255,0.4); margin-top:6px;">
+                            Pastikan backend berjalan di <strong>http://127.0.0.1:5000</strong>
                         </p>
+                    </div>
+                `;
+            }
+        }
                         <button onclick="fetchDashboardData()" style="margin-top:14px; padding:8px 28px; background:rgba(34,197,94,0.08); border:1px solid rgba(34,197,94,0.08); border-radius:50px; color:#4ade80; font-weight:600; cursor:pointer; transition:0.3s;">
                             🔄 Coba Lagi
                         </button>

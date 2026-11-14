@@ -40,6 +40,10 @@ const authRoutes = require('./modules/auth/auth.routes');
 const farmRoutes = require('./modules/farms/farm.routes');
 const aiRoutes = require('./modules/ai/ai.routes');
 const userRoutes = require('./modules/users/user.routes');
+const dashboardRoutes = require('./modules/dashboard/dashboard.routes');
+const cropRoutes = require('./modules/crops/crop.routes');
+const harvestRoutes = require('./modules/harvests/harvest.routes');
+const activityRoutes = require('./modules/activities/activity.routes');
 
 // ============================================
 // HEALTH CHECK
@@ -58,8 +62,12 @@ app.get('/api/health', (req, res) => {
 // REGISTER ROUTES
 // ============================================
 app.use('/api/auth', authRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/farms', farmRoutes);
-app.use('/api/ai', aiRoutes);  // ← INI YANG PENTING
+app.use('/api/crops', cropRoutes);
+app.use('/api/harvests', harvestRoutes);
+app.use('/api/activities', activityRoutes);
+app.use('/api/ai', aiRoutes);
 app.use('/api/users', userRoutes);
 
 // ============================================
@@ -83,19 +91,26 @@ app.use((err, req, res, next) => {
 // ============================================
 // START SERVER
 // ============================================
-app.listen(PORT, () => {
-  console.log('========================================');
-  console.log('🌾 PLATFORM PADI DESA - BACKEND');
-  console.log('========================================');
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📝 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log('========================================');
-  console.log('📋 Available routes:');
-  console.log(`  - Health: http://localhost:${PORT}/api/health`);
-  console.log(`  - Auth:   http://localhost:${PORT}/api/auth`);
-  console.log(`  - Farms:  http://localhost:${PORT}/api/farms`);
-  console.log(`  - AI:     http://localhost:${PORT}/api/ai  ← AI CHAT`);
-  console.log('========================================');
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log('========================================');
+    console.log('🌾 PLATFORM PADI DESA - BACKEND');
+    console.log('========================================');
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
+    console.log(`📝 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log('========================================');
+    console.log('📋 Available routes:');
+    console.log(`  - Health:     http://localhost:${PORT}/api/health`);
+    console.log(`  - Auth:       http://localhost:${PORT}/api/auth`);
+    console.log(`  - Dashboard:  http://localhost:${PORT}/api/dashboard/stats`);
+    console.log(`  - Farms:      http://localhost:${PORT}/api/farms`);
+    console.log(`  - Crops:      http://localhost:${PORT}/api/crops`);
+    console.log(`  - Harvests:   http://localhost:${PORT}/api/harvests`);
+    console.log(`  - Activities: http://localhost:${PORT}/api/activities`);
+    console.log(`  - Users:      http://localhost:${PORT}/api/users`);
+    console.log(`  - AI:         http://localhost:${PORT}/api/ai  ← AI CHAT`);
+    console.log('========================================');
+  });
+}
 
 module.exports = app;

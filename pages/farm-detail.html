@@ -451,6 +451,8 @@
         <div class="navbar-menu">
             <a href="dashboard.html">📊 Dashboard</a>
             <a href="farms.html" class="active">🌾 Lahan</a>
+            <a href="harvests.html">📦 Panen</a>
+            <a href="activities.html">📋 Aktivitas</a>
             <a href="users.html">👥 Pengguna</a>
             <a href="ai-assistant.html">🤖 AI Assistant</a>
             <button id="themeToggleBtn" type="button" class="theme-toggle-btn" onclick="toggleTheme()" title="Beralih Mode Terang / Gelap">
@@ -568,8 +570,102 @@
                 </div>
             </div>
 
+            <!-- KARTU 5: Catatan Panen Lahan Ini -->
+            <div class="crops-section" style="margin-top: 24px;">
+                <div class="crops-header">
+                    <div>
+                        <div class="card-title" style="margin-bottom:2px; color:#fef08a;">📦 Riwayat Hasil Panen Lahan Ini</div>
+                        <div style="font-size:12px; color:rgba(255,255,255,0.4);" id="farmHarvestSummary">0 Kg Total Produksi</div>
+                    </div>
+                    <button type="button" class="btn-action" style="background:linear-gradient(135deg, #eab308, #ca8a04); color:#0f172a; padding:8px 16px; border-radius:10px; font-weight:700;" onclick="openFarmHarvestModal()">
+                        ➕ Catat Panen
+                    </button>
+                </div>
+
+                <div id="farmHarvestList">
+                    <!-- Harvest list akan dirender via JS -->
+                </div>
+            </div>
+
+            <!-- KARTU 6: Riwayat Aktivitas Lahan Ini -->
+            <div class="crops-section" style="margin-top: 24px;">
+                <div class="crops-header">
+                    <div>
+                        <div class="card-title" style="margin-bottom:2px; color:#e9d5ff;">📋 Riwayat Aktivitas & Perawatan Padi</div>
+                        <div style="font-size:12px; color:rgba(255,255,255,0.4);" id="farmActivitySummary">0 Kegiatan Tercatat</div>
+                    </div>
+                    <button type="button" class="btn-action" style="background:linear-gradient(135deg, #a855f7, #7c3aed); color:#fff; padding:8px 16px; border-radius:10px; font-weight:700;" onclick="openFarmActivityModal()">
+                        ➕ Catat Aktivitas
+                    </button>
+                </div>
+
+                <div id="farmActivityList">
+                    <!-- Activity list akan dirender via JS -->
+                </div>
+            </div>
+
         </div>
 
+    </div>
+
+    <!-- MODAL CATAT PANEN LAHAN -->
+    <div id="farmHarvestModal" class="modal-backdrop">
+        <div class="modal-box" style="text-align:left; max-width:480px;">
+            <h3 style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">📦 Catat Hasil Panen</h3>
+            <p style="margin-bottom:18px;">Catat hasil panen gabah untuk <strong id="modalFarmHarvestTitle" style="color:#fde047;">lahan ini</strong></p>
+            <form id="farmHarvestForm" onsubmit="submitFarmHarvest(event)">
+                <div style="margin-bottom:14px;">
+                    <label style="display:block; font-size:12px; color:rgba(255,255,255,0.7); margin-bottom:6px;">Varietas Padi *</label>
+                    <input type="text" id="farmHarvestVariety" class="btn-action" style="width:100%; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:#fff; cursor:text;" value="Padi Ciherang" required />
+                </div>
+                <div style="margin-bottom:14px;">
+                    <label style="display:block; font-size:12px; color:rgba(255,255,255,0.7); margin-bottom:6px;">Jumlah Panen (Kilogram / Kg) *</label>
+                    <input type="number" step="any" min="1" id="farmHarvestKg" class="btn-action" style="width:100%; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:#fff; cursor:text;" placeholder="Contoh: 3000" required />
+                </div>
+                <div style="margin-bottom:20px;">
+                    <label style="display:block; font-size:12px; color:rgba(255,255,255,0.7); margin-bottom:6px;">Tanggal Panen *</label>
+                    <input type="date" id="farmHarvestDate" class="btn-action" style="width:100%; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:#fff; cursor:text;" required />
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:10px;">
+                    <button type="button" class="btn-action" style="background:rgba(255,255,255,0.06); color:#fff;" onclick="closeFarmHarvestModal()">Batal</button>
+                    <button type="submit" id="btnSubmitFarmHarvest" class="btn-action" style="background:linear-gradient(135deg, #eab308, #ca8a04); color:#0f172a; font-weight:700;">💾 Simpan Panen</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL CATAT AKTIVITAS LAHAN -->
+    <div id="farmActivityModal" class="modal-backdrop">
+        <div class="modal-box" style="text-align:left; max-width:480px;">
+            <h3 style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">📋 Catat Aktivitas Sawah</h3>
+            <p style="margin-bottom:18px;">Catat kegiatan pemupukan, irigasi, atau penanganan hama</p>
+            <form id="farmActivityForm" onsubmit="submitFarmActivity(event)">
+                <div style="margin-bottom:14px;">
+                    <label style="display:block; font-size:12px; color:rgba(255,255,255,0.7); margin-bottom:6px;">Jenis Aktivitas *</label>
+                    <select id="farmActivityType" class="btn-action" style="width:100%; background:#0f172a; border:1px solid rgba(255,255,255,0.1); color:#fff; cursor:pointer;" required>
+                        <option value="PEMUPUKAN">🧪 Pemupukan (Urea / NPK / Organik)</option>
+                        <option value="IRIGASI">💧 Irigasi / Pengairan Sawah</option>
+                        <option value="PENGENDALIAN_HAMA">🐛 Pengendalian Hama / Wereng</option>
+                        <option value="PENANAMAN">🌱 Penanaman Bibit Padi</option>
+                        <option value="PERAWATAN">✂️ Pembersihan Gulma / Penyiangan</option>
+                        <option value="PANEN">🌾 Panen Padi</option>
+                        <option value="LAINNYA">📌 Lainnya</option>
+                    </select>
+                </div>
+                <div style="margin-bottom:14px;">
+                    <label style="display:block; font-size:12px; color:rgba(255,255,255,0.7); margin-bottom:6px;">Tanggal Pelaksanaan *</label>
+                    <input type="date" id="farmActivityDate" class="btn-action" style="width:100%; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:#fff; cursor:text;" required />
+                </div>
+                <div style="margin-bottom:20px;">
+                    <label style="display:block; font-size:12px; color:rgba(255,255,255,0.7); margin-bottom:6px;">Keterangan / Tindakan</label>
+                    <textarea id="farmActivityDesc" class="btn-action" style="width:100%; height:75px; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); color:#fff; cursor:text; resize:vertical;" placeholder="Contoh: Pemupukan Urea 20kg di petak timur."></textarea>
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:10px;">
+                    <button type="button" class="btn-action" style="background:rgba(255,255,255,0.06); color:#fff;" onclick="closeFarmActivityModal()">Batal</button>
+                    <button type="submit" id="btnSubmitFarmActivity" class="btn-action" style="background:linear-gradient(135deg, #a855f7, #7c3aed); color:#fff; font-weight:700;">💾 Simpan Aktivitas</button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <!-- MODAL KONFIRMASI HAPUS -->
@@ -745,6 +841,273 @@
             // Tampilkan container
             document.getElementById('loadingState').style.display = 'none';
             document.getElementById('detailContainer').style.display = 'block';
+
+            // Muat Panen & Aktivitas untuk Lahan Ini
+            loadFarmHarvests(farm.id);
+            loadFarmActivities(farm.id);
+        }
+
+        // ==========================================
+        // PANEN KHUSUS LAHAN INI
+        // ==========================================
+        async function loadFarmHarvests(fId) {
+            const listEl = document.getElementById('farmHarvestList');
+            const summaryEl = document.getElementById('farmHarvestSummary');
+
+            try {
+                const res = await fetch(`${API_URL}/harvests?farmId=${fId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+
+                if (data.success && Array.isArray(data.data)) {
+                    const harvests = data.data;
+                    const totalKg = harvests.reduce((acc, h) => acc + (Number(h.totalKg) || 0), 0);
+                    const totalTon = (totalKg / 1000).toFixed(2);
+                    summaryEl.textContent = `${new Intl.NumberFormat('id-ID').format(totalKg)} Kg (≈ ${totalTon} Ton) • ${harvests.length} kali panen`;
+
+                    if (harvests.length > 0) {
+                        listEl.innerHTML = harvests.map(h => `
+                            <div class="crop-item" style="border-left: 3px solid #eab308;">
+                                <div>
+                                    <div class="crop-name" style="color:#fef08a;">📦 ${new Intl.NumberFormat('id-ID').format(h.totalKg)} Kg Gabah</div>
+                                    <div class="crop-meta">
+                                        Varietas: ${h.crop?.variety || 'Padi'} • Tanggal: 📅 ${formatTanggal(h.date)}
+                                    </div>
+                                </div>
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                    <span class="crop-status" style="background:rgba(234,179,8,0.15); color:#facc15; border:1px solid rgba(234,179,8,0.3);">
+                                        ≈ ${(h.totalKg / 1000).toFixed(2)} Ton
+                                    </span>
+                                    <button type="button" class="btn-action btn-action-delete" style="padding:4px 10px; font-size:11px;" onclick="deleteFarmHarvest('${h.id}', ${h.totalKg})">
+                                        🗑️
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('');
+                    } else {
+                        listEl.innerHTML = `
+                            <div style="text-align:center; padding:24px 20px; color:rgba(255,255,255,0.4); font-size:13px;">
+                                <div style="font-size:26px; margin-bottom:6px;">📦</div>
+                                Belum ada riwayat hasil panen yang dicatat pada lahan ini.
+                            </div>
+                        `;
+                    }
+                }
+            } catch (err) {
+                console.error('Gagal memuat panen lahan:', err);
+                listEl.innerHTML = `<div style="color:#f87171; font-size:12px; padding:12px;">Gagal memuat riwayat panen.</div>`;
+            }
+        }
+
+        function openFarmHarvestModal() {
+            if (!currentFarm) return;
+            document.getElementById('farmHarvestForm').reset();
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('farmHarvestDate').value = today;
+            document.getElementById('modalFarmHarvestTitle').textContent = `"${currentFarm.name}"`;
+            document.getElementById('farmHarvestModal').classList.add('open');
+        }
+
+        function closeFarmHarvestModal() {
+            document.getElementById('farmHarvestModal').classList.remove('open');
+        }
+
+        async function submitFarmHarvest(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmitFarmHarvest');
+            btn.disabled = true;
+            btn.textContent = 'Menyimpan...';
+
+            const variety = document.getElementById('farmHarvestVariety').value.trim();
+            const totalKg = parseFloat(document.getElementById('farmHarvestKg').value);
+            const date = document.getElementById('farmHarvestDate').value;
+
+            try {
+                const res = await fetch(`${API_URL}/harvests`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        farmId: currentFarm.id,
+                        variety,
+                        totalKg,
+                        date
+                    })
+                });
+
+                const data = await res.json();
+                if (!res.ok || !data.success) {
+                    throw new Error(data.message || 'Gagal menyimpan catatan panen');
+                }
+
+                alert(`🎉 Panen sebesar ${new Intl.NumberFormat('id-ID').format(totalKg)} Kg berhasil dicatat!`);
+                closeFarmHarvestModal();
+                await loadFarmHarvests(currentFarm.id);
+            } catch (err) {
+                alert(`❌ ${err.message}`);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '💾 Simpan Panen';
+            }
+        }
+
+        async function deleteFarmHarvest(id, kg) {
+            if (!confirm(`Hapus catatan panen sebesar ${kg} Kg ini?`)) return;
+
+            try {
+                const res = await fetch(`${API_URL}/harvests/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    alert('✅ Catatan panen dihapus.');
+                    await loadFarmHarvests(currentFarm.id);
+                } else {
+                    throw new Error(data.message || 'Gagal menghapus');
+                }
+            } catch (err) {
+                alert(`❌ ${err.message}`);
+            }
+        }
+
+        // ==========================================
+        // AKTIVITAS KHUSUS LAHAN INI
+        // ==========================================
+        async function loadFarmActivities(fId) {
+            const listEl = document.getElementById('farmActivityList');
+            const summaryEl = document.getElementById('farmActivitySummary');
+
+            try {
+                const res = await fetch(`${API_URL}/activities?farmId=${fId}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+
+                if (data.success && Array.isArray(data.data)) {
+                    const acts = data.data;
+                    summaryEl.textContent = `${acts.length} kegiatan lapangan tercatat`;
+
+                    if (acts.length > 0) {
+                        listEl.innerHTML = acts.map(a => {
+                            let icon = '📋';
+                            let badgeClass = 'rgba(168,85,247,0.15)';
+                            let badgeColor = '#d8b4fe';
+                            if (a.type === 'PEMUPUKAN') { icon = '🧪'; badgeClass = 'rgba(234,179,8,0.15)'; badgeColor = '#fde047'; }
+                            else if (a.type === 'IRIGASI') { icon = '💧'; badgeClass = 'rgba(59,130,246,0.15)'; badgeColor = '#93c5fd'; }
+                            else if (a.type === 'PENGENDALIAN_HAMA') { icon = '🐛'; badgeClass = 'rgba(239,68,68,0.15)'; badgeColor = '#fca5a5'; }
+                            else if (a.type === 'PENANAMAN') { icon = '🌱'; badgeClass = 'rgba(34,197,94,0.15)'; badgeColor = '#86efac'; }
+
+                            return `
+                                <div class="crop-item" style="border-left: 3px solid ${badgeColor};">
+                                    <div>
+                                        <div style="display:flex; align-items:center; gap:8px;">
+                                            <span style="padding:3px 8px; border-radius:50px; font-size:11px; font-weight:700; background:${badgeClass}; color:${badgeColor};">
+                                                ${icon} ${a.type}
+                                            </span>
+                                            <span style="font-size:12px; color:rgba(255,255,255,0.4);">📅 ${formatTanggal(a.date)}</span>
+                                        </div>
+                                        <div style="font-size:13px; color:rgba(255,255,255,0.85); margin-top:6px; line-height:1.4;">
+                                            ${a.description || 'Kegiatan lapangan selesai.'}
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <button type="button" class="btn-action btn-action-delete" style="padding:4px 10px; font-size:11px;" onclick="deleteFarmActivity('${a.id}', '${a.type}')">
+                                            🗑️
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('');
+                    } else {
+                        listEl.innerHTML = `
+                            <div style="text-align:center; padding:24px 20px; color:rgba(255,255,255,0.4); font-size:13px;">
+                                <div style="font-size:26px; margin-bottom:6px;">📋</div>
+                                Belum ada aktivitas lapangan yang dicatat pada lahan ini.
+                            </div>
+                        `;
+                    }
+                }
+            } catch (err) {
+                console.error('Gagal memuat aktivitas lahan:', err);
+                listEl.innerHTML = `<div style="color:#f87171; font-size:12px; padding:12px;">Gagal memuat aktivitas.</div>`;
+            }
+        }
+
+        function openFarmActivityModal() {
+            if (!currentFarm) return;
+            document.getElementById('farmActivityForm').reset();
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('farmActivityDate').value = today;
+            document.getElementById('farmActivityModal').classList.add('open');
+        }
+
+        function closeFarmActivityModal() {
+            document.getElementById('farmActivityModal').classList.remove('open');
+        }
+
+        async function submitFarmActivity(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmitFarmActivity');
+            btn.disabled = true;
+            btn.textContent = 'Menyimpan...';
+
+            const type = document.getElementById('farmActivityType').value;
+            const date = document.getElementById('farmActivityDate').value;
+            const description = document.getElementById('farmActivityDesc').value.trim();
+
+            try {
+                const res = await fetch(`${API_URL}/activities`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        farmId: currentFarm.id,
+                        type,
+                        date,
+                        description
+                    })
+                });
+
+                const data = await res.json();
+                if (!res.ok || !data.success) {
+                    throw new Error(data.message || 'Gagal mencatat aktivitas');
+                }
+
+                alert('🎉 Aktivitas lapangan berhasil dicatat!');
+                closeFarmActivityModal();
+                await loadFarmActivities(currentFarm.id);
+            } catch (err) {
+                alert(`❌ ${err.message}`);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '💾 Simpan Aktivitas';
+            }
+        }
+
+        async function deleteFarmActivity(id, type) {
+            if (!confirm(`Hapus catatan aktivitas ${type} ini?`)) return;
+
+            try {
+                const res = await fetch(`${API_URL}/activities/${id}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (res.ok && data.success) {
+                    alert('✅ Catatan aktivitas dihapus.');
+                    await loadFarmActivities(currentFarm.id);
+                } else {
+                    throw new Error(data.message || 'Gagal menghapus');
+                }
+            } catch (err) {
+                alert(`❌ ${err.message}`);
+            }
         }
 
         // ==========================================
@@ -797,3 +1160,4 @@
 </body>
 
 </html>
+
